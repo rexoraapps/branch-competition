@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏆 شاشة عرض المسابقة</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+
+    :root {
+        --gold: #fbbf24;
+        --silver: #cbd5e1;
+        --bronze: #d97706;
+    }
+
+    body {
+        min-height: 100vh;
+        background: #0a0e27;
+        background-image: 
+            radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.25) 0px, transparent 50%),
+            radial-gradient(at 80% 70%, rgba(225, 48, 108, 0.2) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, rgba(37, 244, 238, 0.15) 0px, transparent 50%);
+        color: white;
+        overflow-x: hidden;
+        padding: 30px;
+    }
+
+    .display-container { max-width: 1400px; margin: 0 auto; }
+
+    .display-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 1s;
+    }
+
+    .display-header h1 {
+        font-size: clamp(36px, 6vw, 64px);
+        background: linear-gradient(135deg, #e1306c, #8b5cf6, #25f4ee, #fbbf24);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+        margin-bottom: 12px;
+        animation: gradient-shift 5s ease infinite;
+    }
+
+    .display-subtitle {
+        font-size: clamp(14px, 2vw, 20px);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 18px;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        border-radius: 20px;
+        font-size: 12px;
+        color: #10b981;
+        margin-top: 16px;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 35px;
+    }
+
+    .view-btn {
+        padding: 12px 30px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        font-family: inherit;
+        transition: all 0.3s;
+    }
+
+    .view-btn:hover { background: rgba(255, 255, 255, 0.08); }
+
+    .view-btn.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 35px;
+    }
+
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .stat-box {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        text-align: center;
+    }
+
+    .stat-box-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 6px;
+    }
+
+    .stat-box-value {
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 800;
+        background: linear-gradient(135deg, #818cf8, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .leaderboard {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .lb-row {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 20px;
+        align-items: center;
+        padding: 22px 28px;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        animation: slideInRight 0.6s ease-out backwards;
+        transition: transform 0.3s;
+    }
+
+    .lb-row:hover { transform: scale(1.01); }
+
+    .lb-row.rank-1 {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.05));
+        border-color: rgba(251, 191, 36, 0.5);
+        box-shadow: 0 12px 40px rgba(251, 191, 36, 0.2);
+        transform: scale(1.03);
+    }
+
+    .lb-row.rank-2 {
+        background: linear-gradient(135deg, rgba(203, 213, 225, 0.15), rgba(203, 213, 225, 0.03));
+        border-color: rgba(203, 213, 225, 0.4);
+    }
+
+    .lb-row.rank-3 {
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.15), rgba(217, 119, 6, 0.03));
+        border-color: rgba(217, 119, 6, 0.4);
+    }
+
+    .lb-rank-badge {
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        font-weight: 900;
+        font-size: 28px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .rank-1 .lb-rank-badge {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #1a1a1a;
+        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+        font-size: 32px;
+    }
+
+    .rank-2 .lb-rank-badge {
+        background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+        color: #1a1a1a;
+    }
+
+    .rank-3 .lb-rank-badge {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        color: white;
+    }
+
+    .lb-info-main {
+        font-size: clamp(20px, 2.5vw, 28px);
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .lb-info-sub {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .lb-stats-display {
+        text-align: center;
+        min-width: 140px;
+    }
+
+    .lb-likes-big {
+        font-size: clamp(24px, 3vw, 36px);
+        font-weight: 900;
+        color: #ef4444;
+        line-height: 1;
+    }
+
+    .lb-likes-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+    }
+
+    .winner-spotlight {
+        text-align: center;
+        padding: 40px;
+        margin-bottom: 35px;
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(236, 72, 153, 0.15));
+        border: 1px solid rgba(251, 191, 36, 0.4);
+        border-radius: 24px;
+        animation: zoomIn 1s;
+    }
+
+    .winner-spotlight .crown-big {
+        font-size: 80px;
+        margin-bottom: 16px;
+        animation: bounce 2s infinite;
+    }
+
+    .winner-spotlight .crown-label {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+    }
+
+    .winner-spotlight .crown-name {
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 900;
+        background: linear-gradient(135deg, #fbbf24, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .winner-spotlight .crown-sub {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .last-update {
+        text-align: center;
+        margin-top: 30px;
+        padding: 12px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .empty {
+        text-align: center;
+        padding: 80px 20px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 18px;
+    }
+
+    .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.3; }
+
+    /* Auto-rotation animation */
+    .lb-row:nth-child(1) { animation-delay: 0.1s; }
+    .lb-row:nth-child(2) { animation-delay: 0.2s; }
+    .lb-row:nth-child(3) { animation-delay: 0.3s; }
+    .lb-row:nth-child(4) { animation-delay: 0.4s; }
+    .lb-row:nth-child(5) { animation-delay: 0.5s; }
+    .lb-row:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes zoomIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .fullscreen-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: inherit;
+        z-index: 100;
+    }
+
+    .fullscreen-btn:hover { background: rgba(255, 255, 255, 0.15); }
+</style>
+</head>
+<body>
+
+<button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ ملء الشاشة</button>
+
+<div class="display-container">
+    <div class="display-header">
+        <h1>🏆 مسابقة الفروع</h1>
+        <div class="display-subtitle">عرض مباشر للنتائج</div>
+        <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>LIVE • تحديث تلقائي</span>
+        </div>
+    </div>
+
+    <div class="winner-spotlight" id="winnerSpotlight" style="display:none;">
+        <div class="crown-big">👑</div>
+        <div class="crown-label" id="winnerLabel">الفائز الحالي</div>
+        <div class="crown-name" id="winnerName">-</div>
+        <div class="crown-sub" id="winnerSub">-</div>
+    </div>
+
+    <div class="view-toggle">
+        <button class="view-btn active" data-view="branches" onclick="setView('branches')">
+            🏢 الفروع
+        </button>
+        <button class="view-btn" data-view="members" onclick="setView('members')">
+            👤 الموظفين
+        </button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="stat-box-label">الفروع</div>
+            <div class="stat-box-value" id="statBranches">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-box-label">الموظفين</div>
+            <div class="stat-box-value" id="statMembers">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-box-label">المنشورات</div>
+            <div class="stat-box-value" id="statPosts">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-box-label">إجمالي اللايكات</div>
+            <div class="stat-box-value" id="statLikes">0</div>
+        </div>
+    </div>
+
+    <div class="leaderboard" id="leaderboardList">
+        <div class="empty">
+            <div class="empty-icon">🎯</div>
+            <div>لا توجد بيانات بعد</div>
+        </div>
+    </div>
+
+    <div class="last-update" id="lastUpdate">
+        آخر تحديث: --
+    </div>
+</div>
+
+<script>
+let state = null;
+let currentView = 'branches';
+let autoRotate = true;
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = String(text || '');
+    return div.innerHTML;
+}
+
+function formatNumber(n) {
+    return (n || 0).toLocaleString('ar-EG');
+}
+
+function setView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    render();
+}
+
+function getMemberTotalLikes(memberId) {
+    if (!state) return 0;
+    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
+    return allPosts
+        .filter(p => p.assignedTo && p.assignedTo.memberId === memberId)
+        .reduce((s, p) => s + (p.likes || 0), 0);
+}
+
+function getMemberPostsCount(memberId) {
+    if (!state) return 0;
+    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
+    return allPosts.filter(p => p.assignedTo && p.assignedTo.memberId === memberId).length;
+}
+
+function getBranchTotalLikes(branch) {
+    return branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
+}
+
+function getBranchPostsCount(branch) {
+    return branch.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0);
+}
+
+async function fetchState() {
+    try {
+        const response = await fetch('/api/state');
+        state = await response.json();
+        render();
+    } catch (e) {
+        console.error('Failed to fetch state:', e);
+    }
+}
+
+function render() {
+    if (!state) return;
+    
+    const branches = state.branches || [];
+    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
+    const assignedPosts = allPosts.filter(p => p.assignedTo);
+    const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
+    
+    document.getElementById('statBranches').textContent = branches.length;
+    document.getElementById('statMembers').textContent = totalMembers;
+    document.getElementById('statPosts').textContent = formatNumber(assignedPosts.length);
+    document.getElementById('statLikes').textContent = formatNumber(totalLikes);
+    
+    const list = document.getElementById('leaderboardList');
+    const spotlight = document.getElementById('winnerSpotlight');
+    
+    if (currentView === 'branches') {
+        renderBranches(list, spotlight);
+    } else {
+        renderMembers(list, spotlight);
+    }
+    
+    // Last update
+    const lastUpdateEl = document.getElementById('lastUpdate');
+    if (state.lastUpdate) {
+        const d = new Date(state.lastUpdate);
+        lastUpdateEl.textContent = `🔄 آخر تحديث: ${d.toLocaleString('ar-EG')}`;
+    } else {
+        lastUpdateEl.textContent = '🔄 لم يتم التحديث بعد';
+    }
+}
+
+function renderBranches(list, spotlight) {
+    const branches = state.branches || [];
+    if (branches.length === 0) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">🏢</div><div>لا توجد فروع بعد</div></div>`;
+        spotlight.style.display = 'none';
+        return;
+    }
+    
+    const sorted = [...branches]
+        .map(b => ({
+            ...b,
+            totalLikes: getBranchTotalLikes(b),
+            postsCount: getBranchPostsCount(b)
+        }))
+        .sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((branch, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        
+        return `
+            <div class="lb-row ${rankClass}">
+                <div class="lb-rank-badge">${medal}</div>
+                <div>
+                    <div class="lb-info-main">🏢 ${escapeHtml(branch.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>${branch.members.length} موظف</span>
+                        <span>•</span>
+                        <span>${formatNumber(branch.postsCount)} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-stats-display">
+                    <div class="lb-likes-big">${formatNumber(branch.totalLikes)}</div>
+                    <div class="lb-likes-label">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        document.getElementById('winnerLabel').textContent = '🏢 الفرع المتصدر';
+        document.getElementById('winnerName').textContent = sorted[0].name;
+        document.getElementById('winnerSub').textContent = `${formatNumber(sorted[0].totalLikes)} لايك • ${sorted[0].postsCount} منشور`;
+        spotlight.style.display = 'block';
+    } else {
+        spotlight.style.display = 'none';
+    }
+}
+
+function renderMembers(list, spotlight) {
+    const branches = state.branches || [];
+    const allMembers = branches.flatMap(b => 
+        b.members.map(m => ({
+            ...m,
+            branchName: b.name,
+            totalLikes: getMemberTotalLikes(m.id),
+            postsCount: getMemberPostsCount(m.id)
+        }))
+    );
+    
+    if (allMembers.length === 0) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div>لا يوجد موظفون بعد</div></div>`;
+        spotlight.style.display = 'none';
+        return;
+    }
+    
+    const sorted = allMembers.sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((member, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        
+        return `
+            <div class="lb-row ${rankClass}">
+                <div class="lb-rank-badge">${medal}</div>
+                <div>
+                    <div class="lb-info-main">👤 ${escapeHtml(member.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>🏢 ${escapeHtml(member.branchName)}</span>
+                        <span>•</span>
+                        <span>${formatNumber(member.postsCount)} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-stats-display">
+                    <div class="lb-likes-big">${formatNumber(member.totalLikes)}</div>
+                    <div class="lb-likes-label">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        document.getElementById('winnerLabel').textContent = '👤 الموظف المتصدر';
+        document.getElementById('winnerName').textContent = sorted[0].name;
+        document.getElementById('winnerSub').textContent = `${escapeHtml(sorted[0].branchName)} • ${formatNumber(sorted[0].totalLikes)} لايك`;
+        spotlight.style.display = 'block';
+    } else {
+        spotlight.style.display = 'none';
+    }
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Auto-rotate between views every 15 seconds
+setInterval(() => {
+    if (autoRotate) {
+        setView(currentView === 'branches' ? 'members' : 'branches');
+    }
+}, 15000);
+
+// Refresh from server every 30 seconds
+setInterval(fetchState, 30000);
+
+// Initial load
+fetchState();
+</script>
+
+</body>
+</html>
