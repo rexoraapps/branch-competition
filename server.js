@@ -1,4 +1,4 @@
-console.log('🚀 Starting Branch Competition Server...');
+console.log('🚀 Starting Branch Competition Server v3...');
 console.log('Node version:', process.version);
 console.log('PORT env:', process.env.PORT);
 
@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 console.log('Using PORT:', PORT);
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname));
 
 function detectPlatform(url) {
@@ -54,6 +54,7 @@ function isInDateRange(uploadDate, startDate, endDate) {
     return true;
 }
 
+// جلب بيانات منشور واحد مع thumbnail
 function fetchPostData(url) {
     return new Promise((resolve, reject) => {
         const command = `yt-dlp --dump-json --no-warnings --no-playlist --skip-download "${url}"`;
@@ -63,18 +64,32 @@ function fetchPostData(url) {
                 const lines = stdout.trim().split('\n').filter(l => l.trim());
                 if (lines.length === 0) { reject(new Error('No data')); return; }
                 const data = JSON.parse(lines[0]);
+                
+                // اختيار أفضل thumbnail
+                let thumbnail = data.thumbnail || '';
+                if (data.thumbnails && data.thumbnails.length > 0) {
+                    // اختيار حجم متوسط
+                    const sorted = data.thumbnails.filter(t => t.url).sort((a, b) => (a.width || 0) - (b.width || 0));
+                    const mid = sorted[Math.floor(sorted.length / 2)] || sorted[sorted.length - 1];
+                    if (mid && mid.url) thumbnail = mid.url;
+                }
+                
                 resolve({
-                    url: url, likes: data.like_count || 0, views: data.view_count || 0,
+                    url: url,
+                    likes: data.like_count || 0,
+                    views: data.view_count || 0,
                     comments: data.comment_count || 0,
-                    title: (data.title || data.description || '').substring(0, 100),
-                    uploader: data.uploader || data.channel || '',
-                    upload_date: data.upload_date || ''
+                    title: (data.title || data.description || '').substring(0, 150),
+                    uploader: data.uploader || data.channel || data.uploader_id || '',
+                    upload_date: data.upload_date || '',
+                    thumbnail: thumbnail
                 });
             } catch (e) { reject(new Error('Parse error: ' + e.message)); }
         });
     });
 }
 
+// اكتشاف منشورات هاشتاق
 function discoverHashtag(hashtag, platform, maxPosts) {
     return new Promise((resolve, reject) => {
         const cleanTag = cleanHashtag(hashtag);
@@ -101,29 +116,48 @@ function discoverHashtag(hashtag, platform, maxPosts) {
     });
 }
 
+// API: اكتشاف هاشتاق مع كل التفاصيل والمصغرات
 app.post('/api/fetch-hashtag', async (req, res) => {
     const { hashtag, platform, startDate, endDate, maxPosts } = req.body;
     if (!hashtag || !platform) return res.status(400).json({ error: 'hashtag and platform required' });
     const limit = parseInt(maxPosts) || 50;
+    
     try {
         if (platform === 'snapchat') return res.status(400).json({ error: 'Snapchat لا يدعم البحث بالهاشتاق' });
+        
         const discoveredUrls = await discoverHashtag(hashtag, platform, limit);
+        
         if (discoveredUrls.length === 0) {
-            return res.json({ hashtag, platform, posts: [], totalLikes: 0, postsCount: 0, discoveredCount: 0, filteredOutCount: 0, failedCount: 0 });
+            return res.json({ hashtag, platform, posts: [], discoveredCount: 0, filteredOutCount: 0, failedCount: 0 });
         }
+        
         const posts = [];
-        let totalLikes = 0, filteredOutCount = 0, failedCount = 0;
+        let filteredOutCount = 0, failedCount = 0;
+        
         for (const url of discoveredUrls) {
             try {
                 const data = await fetchPostData(url);
-                if (!isInDateRange(data.upload_date, startDate, endDate)) { filteredOutCount++; continue; }
-                posts.push(data); totalLikes += data.likes;
-            } catch (e) { failedCount++; }
+                if (!isInDateRange(data.upload_date, startDate, endDate)) {
+                    filteredOutCount++;
+                    continue;
+                }
+                posts.push(data);
+            } catch (e) {
+                failedCount++;
+            }
         }
-        res.json({ hashtag, platform, posts, totalLikes, postsCount: posts.length, discoveredCount: discoveredUrls.length, filteredOutCount, failedCount });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+        
+        res.json({
+            hashtag, platform, posts,
+            discoveredCount: discoveredUrls.length,
+            filteredOutCount, failedCount
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
+// API: جلب رابط واحد
 app.post('/api/fetch-post', async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: 'URL required' });
@@ -132,15 +166,19 @@ app.post('/api/fetch-post', async (req, res) => {
         const data = await fetchPostData(url);
         data.platform = platform;
         res.json(data);
-    } catch (e) { res.status(500).json({ error: e.message, platform }); }
+    } catch (e) {
+        res.status(500).json({ error: e.message, platform });
+    }
 });
 
+// Health
 app.get('/api/health', (req, res) => {
     exec('yt-dlp --version', (error, stdout) => {
         res.json({
             status: 'ok',
             ytdlp_installed: !error,
             ytdlp_version: error ? null : stdout.trim(),
+            version: '3.0',
             timestamp: new Date().toISOString()
         });
     });
@@ -152,7 +190,7 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log('========================================');
-    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`✅ Server v3 running on port ${PORT}`);
     console.log(`✅ Listening on 0.0.0.0:${PORT}`);
     console.log('========================================');
     exec('yt-dlp --version', (error, stdout) => {
