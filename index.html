@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام مسابقة الفروع | Auto-Discovery</title>
+<title>نظام مسابقة الفروع v3</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
 
@@ -30,351 +30,628 @@
         background: var(--bg-primary);
         background-image: 
             radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-            radial-gradient(at 80% 70%, rgba(225, 48, 108, 0.12) 0px, transparent 50%),
-            radial-gradient(at 50% 50%, rgba(37, 244, 238, 0.08) 0px, transparent 50%);
+            radial-gradient(at 80% 70%, rgba(225, 48, 108, 0.12) 0px, transparent 50%);
         color: var(--text-primary);
-        overflow-x: hidden;
-        padding: 20px;
+        padding: 15px;
     }
 
-    .container { max-width: 1500px; margin: 0 auto; }
+    .container { max-width: 1400px; margin: 0 auto; }
 
     .header {
         text-align: center;
-        margin-bottom: 25px;
-        padding: 20px;
-        animation: fadeInDown 0.6s ease-out;
+        margin-bottom: 20px;
+        padding: 15px;
     }
 
     .header h1 {
-        font-size: clamp(26px, 4.5vw, 42px);
-        background: linear-gradient(135deg, #e1306c 0%, #8b5cf6 33%, #25f4ee 66%, #fffc00 100%);
+        font-size: clamp(22px, 4vw, 36px);
+        background: linear-gradient(135deg, #e1306c, #8b5cf6, #25f4ee);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         font-weight: 800;
     }
 
-    .header p { color: var(--text-secondary); font-size: 15px; }
+    .header p { color: var(--text-secondary); font-size: 13px; }
 
     .server-status {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        margin-top: 12px;
-        padding: 6px 16px;
+        margin-top: 10px;
+        padding: 5px 14px;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid var(--border);
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 11px;
     }
 
-    .server-status.connected {
-        background: rgba(16, 185, 129, 0.1);
-        border-color: rgba(16, 185, 129, 0.3);
-        color: var(--success);
-    }
+    .server-status.connected { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
+    .server-status.disconnected { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
 
-    .server-status.disconnected {
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.3);
-        color: var(--danger);
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: var(--text-muted);
-        border-radius: 50%;
-    }
-
-    .server-status.connected .status-dot {
-        background: var(--success);
-        animation: pulse 2s infinite;
-    }
-
+    .status-dot { width: 7px; height: 7px; background: var(--text-muted); border-radius: 50%; }
+    .server-status.connected .status-dot { background: var(--success); animation: pulse 2s infinite; }
     .server-status.disconnected .status-dot { background: var(--danger); }
 
-    .main-grid {
+    /* Main Tabs */
+    .main-tabs {
         display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 25px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 20px;
+        padding: 6px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        backdrop-filter: blur(20px);
     }
 
-    @media (max-width: 1024px) {
-        .main-grid { grid-template-columns: 1fr; }
+    .main-tab {
+        padding: 11px 6px;
+        background: transparent;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-family: inherit;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
     }
+
+    .main-tab .tab-icon { font-size: 18px; }
+
+    .main-tab:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+
+    .main-tab.active {
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .tab-content { display: none; animation: fadeIn 0.3s; }
+    .tab-content.active { display: block; }
 
     .glass-card {
         background: var(--bg-card);
         backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 26px;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 18px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        animation: fadeInUp 0.6s ease-out;
     }
 
     .card-title {
-        font-size: 19px;
+        font-size: 17px;
         font-weight: 700;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
         gap: 10px;
     }
 
-    .card-icon {
-        width: 36px;
-        height: 36px;
+    .card-icon-box {
+        width: 32px;
+        height: 32px;
         background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        border-radius: 10px;
+        border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 16px;
     }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 14px; }
 
     .form-group label {
         display: block;
-        margin-bottom: 7px;
+        margin-bottom: 6px;
         color: var(--text-secondary);
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
     }
 
     .form-group input,
+    .form-group select,
     .form-group textarea {
         width: 100%;
-        padding: 12px 14px;
+        padding: 11px 13px;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--border);
-        border-radius: 11px;
+        border-radius: 10px;
         color: var(--text-primary);
-        font-size: 14px;
-        transition: all 0.3s ease;
+        font-size: 13px;
         font-family: inherit;
     }
 
     .form-group input:focus,
+    .form-group select:focus,
     .form-group textarea:focus {
         outline: none;
         border-color: var(--accent);
         background: rgba(99, 102, 241, 0.05);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        gap: 10px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 600px) {
         .form-row { grid-template-columns: 1fr; }
     }
 
     .platform-select {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-bottom: 16px;
+        gap: 7px;
+        margin-bottom: 14px;
     }
 
     .platform-option {
-        padding: 12px 8px;
+        padding: 10px 6px;
         background: rgba(255, 255, 255, 0.03);
         border: 2px solid var(--border);
-        border-radius: 11px;
+        border-radius: 10px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 600;
     }
 
     .platform-option:hover { background: rgba(255, 255, 255, 0.06); }
+    .platform-option.selected.ig { border-color: var(--instagram); background: rgba(225, 48, 108, 0.1); color: var(--instagram); }
+    .platform-option.selected.tt { border-color: var(--tiktok); background: rgba(37, 244, 238, 0.1); color: var(--tiktok); }
+    .platform-option.selected.sn { border-color: var(--snapchat); background: rgba(255, 252, 0, 0.1); color: var(--snapchat); }
 
-    .platform-option.selected.ig {
-        border-color: var(--instagram);
-        background: rgba(225, 48, 108, 0.1);
-        color: var(--instagram);
-    }
+    .platform-icon { font-size: 18px; display: block; margin-bottom: 3px; }
 
-    .platform-option.selected.tt {
-        border-color: var(--tiktok);
-        background: rgba(37, 244, 238, 0.1);
-        color: var(--tiktok);
-    }
-
-    .platform-option.selected.sn {
-        border-color: var(--snapchat);
-        background: rgba(255, 252, 0, 0.1);
-        color: var(--snapchat);
-    }
-
-    .platform-icon {
-        font-size: 22px;
-        display: block;
-        margin-bottom: 4px;
-    }
-
-    /* Source Type Toggle */
-    .source-toggle {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 16px;
-        padding: 5px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-    }
-
-    .source-option {
-        padding: 12px 8px;
-        background: transparent;
+    .btn {
+        padding: 11px 18px;
         border: none;
-        border-radius: 9px;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        border-radius: 10px;
         font-size: 13px;
         font-weight: 600;
-        color: var(--text-secondary);
+        cursor: pointer;
         font-family: inherit;
-        display: flex;
-        flex-direction: column;
+        display: inline-flex;
         align-items: center;
-        gap: 4px;
+        justify-content: center;
+        gap: 6px;
     }
 
-    .source-option:hover {
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--text-primary);
-    }
-
-    .source-option.active {
+    .btn-primary {
         background: linear-gradient(135deg, var(--accent), #8b5cf6);
         color: white;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+        width: 100%;
     }
 
-    .source-option .source-icon { font-size: 18px; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
 
-    .source-input-container { display: none; }
-    .source-input-container.active { display: block; animation: fadeIn 0.3s ease-out; }
-
-    /* URL Rows */
-    .url-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 10px;
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
     }
 
-    .url-row {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 8px;
-        align-items: center;
-        padding: 10px;
+    .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .btn-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+    }
+
+    .btn-clear {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 30px 15px;
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
+    .empty-state-icon {
+        font-size: 36px;
+        margin-bottom: 8px;
+        opacity: 0.5;
+    }
+
+    /* Branches */
+    .branch-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        animation: slideIn 0.3s ease-out;
+        border-radius: 13px;
+        padding: 14px;
+        margin-bottom: 12px;
     }
 
-    .url-row.fetched {
+    .branch-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .branch-name-display {
+        font-weight: 700;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .members-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .member-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 9px;
+    }
+
+    .member-info { min-width: 0; }
+    .member-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+    .member-meta {
+        font-size: 10px;
+        color: var(--text-muted);
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .member-hashtag {
+        font-family: 'Courier New', monospace;
+        color: var(--accent-hover);
+    }
+
+    .member-stats {
+        text-align: center;
+        font-size: 11px;
+    }
+
+    .member-likes {
+        font-weight: 700;
+        color: var(--danger);
+        font-size: 14px;
+    }
+
+    .platform-badge {
+        padding: 1px 6px;
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: 9px;
+    }
+
+    .platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
+    .platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
+    .platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
+
+    .add-member-btn {
+        width: 100%;
+        padding: 9px;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--accent-hover);
+        border: 1px dashed rgba(99, 102, 241, 0.4);
+        border-radius: 9px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: inherit;
+        margin-top: 10px;
+    }
+
+    .add-member-btn:hover { background: rgba(99, 102, 241, 0.15); }
+
+    /* Posts Grid (Discovery) */
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+    }
+
+    .post-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        overflow: hidden;
+        animation: slideIn 0.3s;
+    }
+
+    .post-card.assigned {
         background: rgba(16, 185, 129, 0.05);
         border-color: rgba(16, 185, 129, 0.3);
     }
 
-    .url-row.error {
-        background: rgba(239, 68, 68, 0.05);
-        border-color: rgba(239, 68, 68, 0.3);
+    .post-thumbnail {
+        width: 100%;
+        height: 200px;
+        background: rgba(0, 0, 0, 0.3);
+        background-size: cover;
+        background-position: center;
+        position: relative;
     }
 
-    .url-row.loading {
-        background: rgba(245, 158, 11, 0.05);
-        border-color: rgba(245, 158, 11, 0.3);
+    .post-thumbnail::before {
+        content: '🖼️';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 32px;
+        opacity: 0.3;
     }
 
-    .url-row input {
-        padding: 9px 11px;
-        background: rgba(0, 0, 0, 0.2);
+    .post-stats-overlay {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(10px);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .post-body {
+        padding: 12px;
+    }
+
+    .post-title {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        max-height: 40px;
+        overflow: hidden;
+        line-height: 1.4;
+    }
+
+    .post-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+    }
+
+    .post-uploader {
+        font-family: 'Courier New', monospace;
+        color: var(--accent-hover);
+    }
+
+    .post-assign-row {
+        display: flex;
+        gap: 6px;
+    }
+
+    .post-assign-select {
+        flex: 1;
+        padding: 8px;
+        background: rgba(0, 0, 0, 0.3);
         border: 1px solid var(--border);
         border-radius: 8px;
         color: var(--text-primary);
-        font-size: 12px;
-        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        font-family: inherit;
     }
 
-    .url-row input:focus {
-        outline: none;
-        border-color: var(--accent);
-    }
-
-    .url-likes-display {
-        min-width: 100px;
-        padding: 9px 11px;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 700;
-        font-size: 13px;
-        color: var(--text-muted);
-        white-space: nowrap;
-    }
-
-    .url-row.fetched .url-likes-display {
-        color: var(--danger);
-        border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .url-row.loading .url-likes-display { color: var(--warning); }
-    .url-row.error .url-likes-display { color: var(--danger); font-size: 11px; }
-
-    .url-actions { display: flex; gap: 4px; }
-
-    .icon-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
+    .post-assign-btn {
+        padding: 8px 12px;
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 14px;
-        color: var(--text-secondary);
-        transition: all 0.3s ease;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: inherit;
     }
 
-    .icon-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-primary);
+    .post-assign-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
-    .icon-btn.fetch-btn {
-        background: rgba(99, 102, 241, 0.1);
+    .assigned-info {
+        padding: 8px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 8px;
+        font-size: 11px;
+        color: var(--success);
+        text-align: center;
+        margin-top: 8px;
+    }
+
+    .assigned-info .reassign-link {
         color: var(--accent-hover);
-        border-color: rgba(99, 102, 241, 0.3);
+        cursor: pointer;
+        text-decoration: underline;
+        margin-right: 5px;
     }
 
-    .icon-btn.fetch-btn:hover { background: rgba(99, 102, 241, 0.2); }
-
-    .icon-btn.remove-btn {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border-color: rgba(239, 68, 68, 0.3);
+    /* Leaderboard */
+    .lb-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 16px;
+        padding: 5px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 11px;
     }
 
-    .icon-btn.remove-btn:hover { background: rgba(239, 68, 68, 0.2); }
+    .lb-tab {
+        padding: 10px;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-family: inherit;
+    }
 
+    .lb-tab.active {
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        color: white;
+    }
+
+    .lb-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+        .lb-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .lb-stat-card {
+        padding: 12px 8px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        text-align: center;
+    }
+
+    .lb-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+    .lb-stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent-hover), #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .lb-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .lb-item {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        animation: slideIn 0.4s;
+    }
+
+    .lb-item.rank-1 {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+        border-color: rgba(251, 191, 36, 0.4);
+    }
+
+    .lb-item.rank-2 {
+        background: linear-gradient(135deg, rgba(203, 213, 225, 0.1), rgba(203, 213, 225, 0.03));
+        border-color: rgba(203, 213, 225, 0.3);
+    }
+
+    .lb-item.rank-3 {
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(217, 119, 6, 0.03));
+        border-color: rgba(217, 119, 6, 0.3);
+    }
+
+    .lb-rank {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        font-weight: 800;
+        font-size: 17px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .rank-1 .lb-rank {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #1a1a1a;
+    }
+    .rank-2 .lb-rank { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #1a1a1a; }
+    .rank-3 .lb-rank { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
+
+    .lb-info-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+    .lb-info-sub { font-size: 11px; color: var(--text-muted); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+    .lb-numbers { text-align: center; }
+    .lb-likes-val { font-weight: 700; font-size: 16px; color: var(--danger); }
+    .lb-likes-lbl { font-size: 9px; color: var(--text-muted); }
+
+    /* Winner */
+    .winner-banner {
+        margin-top: 18px;
+        padding: 18px;
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(236, 72, 153, 0.1));
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 14px;
+        text-align: center;
+        display: none;
+    }
+
+    .winner-banner.active { display: block; }
+
+    .winner-crown { font-size: 36px; margin-bottom: 8px; animation: bounce 2s infinite; }
+    .winner-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+    .winner-name {
+        font-size: 20px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fbbf24, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Loader */
     .spinner {
         display: inline-block;
         width: 14px;
@@ -387,197 +664,6 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 600px) {
-        .url-row {
-            grid-template-columns: 1fr;
-            gap: 6px;
-        }
-        .url-actions { justify-content: flex-end; }
-    }
-
-    .add-url-btn {
-        width: 100%;
-        padding: 10px;
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--accent-hover);
-        border: 1px dashed rgba(99, 102, 241, 0.4);
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        font-family: inherit;
-        transition: all 0.3s ease;
-    }
-
-    .add-url-btn:hover {
-        background: rgba(99, 102, 241, 0.15);
-        border-style: solid;
-    }
-
-    .fetch-all-btn, .discover-btn {
-        width: 100%;
-        padding: 13px;
-        margin-top: 10px;
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-        border: none;
-        border-radius: 11px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 700;
-        font-family: inherit;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    .discover-btn {
-        background: linear-gradient(135deg, #ec4899, #8b5cf6);
-        font-size: 15px;
-        padding: 14px;
-    }
-
-    .fetch-all-btn:hover:not(:disabled),
-    .discover-btn:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
-    }
-
-    .fetch-all-btn:disabled,
-    .discover-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .summary-box {
-        padding: 12px 14px;
-        background: rgba(16, 185, 129, 0.08);
-        border: 1px solid rgba(16, 185, 129, 0.2);
-        border-radius: 10px;
-        margin-top: 10px;
-        font-size: 13px;
-        color: var(--success);
-        display: none;
-    }
-
-    .summary-box.active { display: block; }
-
-    .summary-box.discovery {
-        background: rgba(236, 72, 153, 0.08);
-        border-color: rgba(236, 72, 153, 0.25);
-        color: #f472b6;
-    }
-
-    .btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 11px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: inherit;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--success), #059669);
-        color: white;
-        width: 100%;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    .btn-danger {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
-
-    .btn-warning {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    .btn-warning:hover { background: rgba(245, 158, 11, 0.2); }
-
-    .btn-secondary {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
-
-    .btn-clear {
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .btn-clear:hover { background: rgba(255, 255, 255, 0.05); }
-
-    .helper-text {
-        font-size: 11px;
-        color: var(--text-muted);
-        margin-top: 5px;
-        line-height: 1.5;
-    }
-
-    .info-box {
-        padding: 12px;
-        background: rgba(99, 102, 241, 0.08);
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 10px;
-        margin-bottom: 14px;
-        font-size: 12px;
-        color: var(--accent-hover);
-        line-height: 1.6;
-    }
-
-    .info-box.warning {
-        background: rgba(245, 158, 11, 0.08);
-        border-color: rgba(245, 158, 11, 0.2);
-        color: var(--warning);
-    }
-
-    /* Date Range Card */
-    .date-range-card {
-        padding: 16px;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 13px;
-        margin-bottom: 16px;
-    }
-
-    .date-range-card .card-mini-title {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--accent-hover);
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    /* Discovery Log */
     .discovery-log {
         margin-top: 10px;
         max-height: 150px;
@@ -586,580 +672,350 @@
         background: rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         font-family: 'Courier New', monospace;
-        font-size: 11px;
-        line-height: 1.6;
+        font-size: 10px;
+        line-height: 1.5;
         display: none;
     }
 
     .discovery-log.active { display: block; }
-
     .log-entry { padding: 2px 0; }
     .log-info { color: var(--text-secondary); }
     .log-success { color: var(--success); }
     .log-warning { color: var(--warning); }
     .log-error { color: var(--danger); }
 
-    .branches-list {
-        margin-top: 18px;
-        max-height: 400px;
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-
-    .branches-list::-webkit-scrollbar { width: 6px; }
-    .branches-list::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 3px;
-    }
-    .branches-list::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 3px;
-    }
-
-    .branch-item {
-        padding: 14px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        margin-bottom: 10px;
-        animation: slideIn 0.4s ease-out;
-        transition: all 0.3s ease;
-    }
-
-    .branch-item:hover { background: rgba(255, 255, 255, 0.06); }
-
-    .branch-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
-        margin-bottom: 8px;
-    }
-
-    .branch-info { flex: 1; min-width: 0; }
-
-    .branch-name {
-        font-weight: 700;
-        margin-bottom: 4px;
-        font-size: 15px;
-    }
-
-    .branch-meta {
+    .info-box {
+        padding: 11px;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 9px;
+        margin-bottom: 12px;
         font-size: 11px;
-        color: var(--text-muted);
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-top: 4px;
-    }
-
-    .branch-source-info {
-        font-family: 'Courier New', monospace;
         color: var(--accent-hover);
-        font-size: 11px;
+        line-height: 1.6;
     }
 
-    .source-type-badge {
-        padding: 2px 8px;
-        border-radius: 8px;
-        font-size: 10px;
-        font-weight: 600;
-        background: rgba(99, 102, 241, 0.15);
-        color: var(--accent-hover);
-    }
-
-    .source-type-badge.url {
-        background: rgba(37, 244, 238, 0.15);
-        color: var(--tiktok);
-    }
-
-    .platform-badge {
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 10px;
-    }
-
-    .platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
-    .platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
-    .platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
-
-    .branch-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-    .branch-stats {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px dashed var(--border);
-        display: flex;
-        gap: 18px;
-        font-size: 13px;
-        color: var(--text-secondary);
-    }
-
-    .branch-stats strong { color: var(--text-primary); }
-    .branch-stats .stat-likes { color: var(--danger); font-weight: 700; }
-    .branch-stats .stat-posts { color: var(--accent-hover); font-weight: 700; }
-
-    .branch-urls-detail {
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px dashed var(--border);
-        font-size: 11px;
-        color: var(--text-muted);
-        max-height: 120px;
-        overflow-y: auto;
-    }
-
-    .branch-urls-detail .url-line {
-        display: flex;
-        justify-content: space-between;
-        padding: 3px 0;
-        gap: 10px;
-    }
-
-    .branch-urls-detail .url-text {
-        font-family: 'Courier New', monospace;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-    }
-
-    .branch-urls-detail .url-likes {
-        color: var(--danger);
-        font-weight: 700;
-        flex-shrink: 0;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 30px 20px;
-        color: var(--text-muted);
-        font-size: 14px;
-    }
-
-    .empty-state-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
-        opacity: 0.5;
-    }
-
-    .leaderboard-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 22px;
-    }
-
-    @media (max-width: 600px) {
-        .leaderboard-stats { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .stat-card {
-        padding: 14px 10px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 13px;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-3px);
-        border-color: var(--accent);
-    }
-
-    .stat-label {
-        font-size: 11px;
-        color: var(--text-muted);
-        margin-bottom: 6px;
-    }
-
-    .stat-value {
-        font-size: 20px;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--accent-hover), #ec4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .platform-filter {
+    .filter-bar {
         display: flex;
         gap: 6px;
-        margin-bottom: 18px;
+        margin-bottom: 14px;
         flex-wrap: wrap;
     }
 
-    .filter-btn {
-        padding: 6px 14px;
+    .filter-chip {
+        padding: 5px 12px;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 14px;
         color: var(--text-secondary);
         cursor: pointer;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
-        transition: all 0.3s ease;
         font-family: inherit;
     }
 
-    .filter-btn:hover { background: rgba(255, 255, 255, 0.06); }
-
-    .filter-btn.active {
+    .filter-chip.active {
         background: linear-gradient(135deg, var(--accent), #8b5cf6);
         color: white;
         border-color: transparent;
     }
 
-    .leaderboard-list {
-        display: flex;
-        flex-direction: column;
-        gap: 11px;
-    }
-
-    .leaderboard-item {
-        display: grid;
-        grid-template-columns: 50px 1fr auto;
-        gap: 14px;
-        align-items: center;
-        padding: 14px 18px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        transition: all 0.4s ease;
-        animation: slideIn 0.5s ease-out;
-    }
-
-    .leaderboard-item:hover { background: rgba(255, 255, 255, 0.06); }
-
-    .leaderboard-item.rank-1 {
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
-        border-color: rgba(251, 191, 36, 0.4);
-    }
-
-    .leaderboard-item.rank-2 {
-        background: linear-gradient(135deg, rgba(203, 213, 225, 0.1), rgba(203, 213, 225, 0.03));
-        border-color: rgba(203, 213, 225, 0.3);
-    }
-
-    .leaderboard-item.rank-3 {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(217, 119, 6, 0.03));
-        border-color: rgba(217, 119, 6, 0.3);
-    }
-
-    .rank-badge {
-        width: 44px;
-        height: 44px;
-        display: flex;
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        display: none;
         align-items: center;
         justify-content: center;
-        border-radius: 12px;
-        font-weight: 800;
-        font-size: 18px;
-        background: rgba(255, 255, 255, 0.05);
+        z-index: 100;
+        padding: 15px;
     }
 
-    .rank-1 .rank-badge {
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        color: #1a1a1a;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+    .modal {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: zoomIn 0.3s;
     }
 
-    .rank-2 .rank-badge {
-        background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-        color: #1a1a1a;
+    .modal-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
     }
 
-    .rank-3 .rank-badge {
-        background: linear-gradient(135deg, #d97706, #b45309);
-        color: white;
-    }
-
-    .lb-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
-
-    .lb-meta {
-        font-size: 11px;
-        color: var(--text-muted);
+    .modal-actions {
         display: flex;
         gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
+        margin-top: 14px;
     }
 
-    .lb-stats {
-        display: flex;
-        gap: 18px;
-        align-items: center;
-    }
-
-    .lb-stat { text-align: center; }
-    .lb-stat-value { font-size: 17px; font-weight: 700; }
-    .lb-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-    .lb-likes { color: var(--danger); }
-    .lb-posts { color: var(--accent-hover); }
-
-    @media (max-width: 600px) {
-        .leaderboard-item {
-            grid-template-columns: 40px 1fr;
-            padding: 14px;
-        }
-        .lb-stats {
-            grid-column: 1 / -1;
-            justify-content: space-around;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-            margin-top: 5px;
-        }
-    }
-
-    .winner-banner {
-        margin-top: 20px;
-        padding: 20px;
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(236, 72, 153, 0.1));
-        border: 1px solid rgba(251, 191, 36, 0.3);
-        border-radius: 16px;
-        text-align: center;
-        display: none;
-        animation: zoomIn 0.5s ease-out;
-    }
-
-    .winner-banner.active { display: block; }
-
-    .winner-banner .crown {
-        font-size: 40px;
-        margin-bottom: 10px;
-        animation: bounce 2s infinite;
-    }
-
-    .winner-banner .winner-label {
-        font-size: 13px;
-        color: var(--text-secondary);
-        margin-bottom: 5px;
-    }
-
-    .winner-banner .winner-name {
-        font-size: 24px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #fbbf24, #ec4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
+    .modal-actions .btn { flex: 1; padding: 10px; font-size: 13px; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes zoomIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(15px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
     .toast {
         position: fixed;
-        top: 30px;
+        top: 25px;
         left: 50%;
         transform: translateX(-50%);
-        padding: 14px 24px;
+        padding: 12px 22px;
         background: rgba(16, 185, 129, 0.95);
         color: white;
-        border-radius: 12px;
+        border-radius: 11px;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13px;
         z-index: 200;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.3s;
         pointer-events: none;
     }
 
-    .toast.show { opacity: 1; top: 40px; }
+    .toast.show { opacity: 1; top: 35px; }
     .toast.error { background: rgba(239, 68, 68, 0.95); }
     .toast.warning { background: rgba(245, 158, 11, 0.95); }
+
+    .helper-text {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 16px 0;
+    }
 </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>🏆 نظام مسابقة الفروع</h1>
-        <p>اكتشاف الهاشتاقات تلقائيًا + فلترة بالتاريخ + جلب اللايكات</p>
+        <h1>🏆 نظام مسابقة الفروع v3</h1>
+        <p>فروع • متسابقين • هاشتاقات • مصغرات • ترتيب مزدوج</p>
         <div class="server-status" id="serverStatus">
             <span class="status-dot"></span>
             <span id="serverStatusText">جاري الاتصال...</span>
         </div>
     </div>
 
-    <div class="main-grid">
+    <!-- Main Tabs -->
+    <div class="main-tabs">
+        <button class="main-tab active" data-tab="setup" onclick="switchTab('setup')">
+            <span class="tab-icon">⚙️</span>
+            <span>الإعداد</span>
+        </button>
+        <button class="main-tab" data-tab="branches" onclick="switchTab('branches')">
+            <span class="tab-icon">🏢</span>
+            <span>الفروع</span>
+        </button>
+        <button class="main-tab" data-tab="discovery" onclick="switchTab('discovery')">
+            <span class="tab-icon">🔍</span>
+            <span>اكتشاف</span>
+        </button>
+        <button class="main-tab" data-tab="leaderboard" onclick="switchTab('leaderboard')">
+            <span class="tab-icon">🏅</span>
+            <span>الترتيب</span>
+        </button>
+    </div>
 
-        <div>
-            <!-- Date Range -->
-            <div class="glass-card" style="margin-bottom: 25px;">
-                <div class="card-title">
-                    <div class="card-icon">📅</div>
-                    فترة المسابقة
-                </div>
-                <div class="info-box">
-                    سيتم فلترة المنشورات وعرض المنشورات المنشورة خلال هذه الفترة فقط.
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label>تاريخ البداية</label>
-                        <input type="date" id="globalStartDate">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label>تاريخ النهاية</label>
-                        <input type="date" id="globalEndDate">
-                    </div>
-                </div>
+    <!-- TAB 1: Setup -->
+    <div class="tab-content active" id="tab-setup">
+        <div class="glass-card">
+            <div class="card-title">
+                <div class="card-icon-box">📅</div>
+                فترة المسابقة
             </div>
-
-            <!-- Add Branch -->
-            <div class="glass-card" style="margin-bottom: 25px;">
-                <div class="card-title">
-                    <div class="card-icon">➕</div>
-                    إضافة فرع جديد
-                </div>
-
-                <label style="display:block; margin-bottom: 8px; color: var(--text-secondary); font-size: 13px; font-weight: 500;">المنصة</label>
-                <div class="platform-select">
-                    <div class="platform-option ig selected" data-platform="instagram" onclick="selectPlatform('instagram')">
-                        <span class="platform-icon">📷</span>
-                        Instagram
-                    </div>
-                    <div class="platform-option tt" data-platform="tiktok" onclick="selectPlatform('tiktok')">
-                        <span class="platform-icon">🎵</span>
-                        TikTok
-                    </div>
-                    <div class="platform-option sn" data-platform="snapchat" onclick="selectPlatform('snapchat')">
-                        <span class="platform-icon">👻</span>
-                        Snapchat
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>اسم الفرع</label>
-                    <input type="text" id="branchName" placeholder="مثال: فرع الرياض">
-                </div>
-
-                <label style="display:block; margin-bottom: 8px; color: var(--text-secondary); font-size: 13px; font-weight: 500;">طريقة التتبع</label>
-                <div class="source-toggle">
-                    <button type="button" class="source-option active" data-source="hashtag" onclick="selectSourceType('hashtag')">
-                        <span class="source-icon">#️⃣</span>
-                        <span>هاشتاق (تلقائي)</span>
-                    </button>
-                    <button type="button" class="source-option" data-source="urls" onclick="selectSourceType('urls')">
-                        <span class="source-icon">🔗</span>
-                        <span>روابط يدوية</span>
-                    </button>
-                </div>
-
-                <!-- Hashtag Mode -->
-                <div class="source-input-container active" id="hashtagContainer">
-                    <div class="info-box">
-                        🤖 سيقوم النظام بـ: اكتشاف منشورات الهاشتاق → جلب لايكات كل منشور → فلترة بالتاريخ → جمع النتائج
-                    </div>
-                    <div class="form-group">
-                        <label>الهاشتاق</label>
-                        <input type="text" id="branchHashtag" placeholder="#branch_riyadh">
-                    </div>
-                    <div class="form-group">
-                        <label>الحد الأقصى للمنشورات (للسرعة)</label>
-                        <input type="number" id="maxPosts" value="30" min="5" max="200">
-                        <div class="helper-text">رقم أقل = أسرع. الموصى به: 20-50</div>
-                    </div>
-                </div>
-
-                <!-- URLs Mode -->
-                <div class="source-input-container" id="urlsContainer">
-                    <div class="info-box">
-                        أدخل روابط المنشورات يدويًا واضغط 🔄 لجلب اللايكات
-                    </div>
-                    <label style="display:block; margin-bottom: 8px; color: var(--text-secondary); font-size: 13px; font-weight: 500;">روابط المنشورات</label>
-                    <div class="url-list" id="urlList"></div>
-                    <button type="button" class="add-url-btn" onclick="addUrlRow()">
-                        + إضافة رابط آخر
-                    </button>
-                    <button type="button" class="fetch-all-btn" id="fetchAllBtn" onclick="fetchAllUrls()">
-                        🔄 جلب جميع اللايكات
-                    </button>
-                </div>
-
-                <div class="summary-box" id="summaryBox"></div>
-                <div class="discovery-log" id="discoveryLog"></div>
-
-                <button class="btn btn-primary" onclick="addBranch()" style="margin-top: 14px;">
-                    💾 حفظ الفرع
-                </button>
-
-                <div class="branches-list" id="branchesList">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <div>لا توجد فروع مضافة بعد</div>
-                    </div>
-                </div>
+            <div class="info-box">
+                ⚠️ المنشورات خارج هذه الفترة لن تُحتسب في النتائج
             </div>
-
-            <!-- Tools -->
-            <div class="glass-card">
-                <div class="card-title">
-                    <div class="card-icon">⚙️</div>
-                    أدوات
+            <div class="form-row">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>تاريخ البداية</label>
+                    <input type="date" id="globalStartDate">
                 </div>
-                <button class="btn btn-secondary" onclick="refetchAllBranches()" style="width: 100%; margin-bottom: 10px;">
-                    🔄 تحديث جميع الفروع
-                </button>
-                <button class="btn btn-clear" onclick="clearAll()">
-                    🗑️ مسح كل البيانات
-                </button>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>تاريخ النهاية</label>
+                    <input type="date" id="globalEndDate">
+                </div>
             </div>
         </div>
 
-        <!-- Leaderboard -->
         <div class="glass-card">
             <div class="card-title">
-                <div class="card-icon">🏅</div>
-                لوحة المتصدرين
+                <div class="card-icon-box">📋</div>
+                ملخص الإعدادات
             </div>
-
-            <div class="leaderboard-stats">
-                <div class="stat-card">
-                    <div class="stat-label">عدد الفروع</div>
-                    <div class="stat-value" id="totalBranches">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي اللايكات</div>
-                    <div class="stat-value" id="totalLikes">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي المنشورات</div>
-                    <div class="stat-value" id="totalPosts">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">المنصات</div>
-                    <div class="stat-value" id="totalPlatforms">0</div>
+            <div id="setupSummary">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <div>أضف فروعًا ومتسابقين من تبويب "الفروع"</div>
                 </div>
             </div>
+        </div>
 
-            <div class="platform-filter">
-                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">الكل</button>
-                <button class="filter-btn" data-filter="instagram" onclick="setFilter('instagram')">📷 Instagram</button>
-                <button class="filter-btn" data-filter="tiktok" onclick="setFilter('tiktok')">🎵 TikTok</button>
-                <button class="filter-btn" data-filter="snapchat" onclick="setFilter('snapchat')">👻 Snapchat</button>
+        <div class="glass-card">
+            <div class="card-title">
+                <div class="card-icon-box">🛠️</div>
+                أدوات
+            </div>
+            <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح كل البيانات</button>
+        </div>
+    </div>
+
+    <!-- TAB 2: Branches & Members -->
+    <div class="tab-content" id="tab-branches">
+        <div class="glass-card">
+            <div class="card-title">
+                <div class="card-icon-box">➕</div>
+                إضافة فرع جديد
+            </div>
+            <div class="form-group">
+                <label>اسم الفرع</label>
+                <input type="text" id="newBranchName" placeholder="مثال: فرع الرياض">
+            </div>
+            <button class="btn btn-primary" onclick="addBranch()">إضافة الفرع</button>
+        </div>
+
+        <div class="glass-card">
+            <div class="card-title">
+                <div class="card-icon-box">🏢</div>
+                الفروع والمتسابقين
+            </div>
+            <div id="branchesList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🏢</div>
+                    <div>أضف فرعًا واحدًا على الأقل</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Discovery -->
+    <div class="tab-content" id="tab-discovery">
+        <div class="glass-card">
+            <div class="card-title">
+                <div class="card-icon-box">🔍</div>
+                اكتشاف المنشورات
+            </div>
+            <div class="info-box">
+                🤖 اضغط الزر لجلب منشورات هاشتاقات جميع المتسابقين، ثم اعتمد كل منشور ضمن المسابقة
+            </div>
+            
+            <button class="btn btn-primary" onclick="discoverAllHashtags()" id="discoverBtn">
+                🔄 جلب منشورات جميع المتسابقين
+            </button>
+
+            <div class="discovery-log" id="discoveryLog"></div>
+        </div>
+
+        <div class="filter-bar" id="discoveryFilters" style="display:none;">
+            <button class="filter-chip active" data-filter="all" onclick="setDiscoveryFilter('all')">الكل</button>
+            <button class="filter-chip" data-filter="unassigned" onclick="setDiscoveryFilter('unassigned')">⏳ معلّق</button>
+            <button class="filter-chip" data-filter="assigned" onclick="setDiscoveryFilter('assigned')">✓ مُعتمد</button>
+        </div>
+
+        <div id="postsGrid" class="posts-grid"></div>
+    </div>
+
+    <!-- TAB 4: Leaderboard -->
+    <div class="tab-content" id="tab-leaderboard">
+        <div class="glass-card">
+            <div class="lb-tabs">
+                <button class="lb-tab active" data-lb="branches" onclick="switchLeaderboard('branches')">🏢 الفروع</button>
+                <button class="lb-tab" data-lb="members" onclick="switchLeaderboard('members')">👤 الأشخاص</button>
             </div>
 
-            <div class="leaderboard-list" id="leaderboardList">
+            <div class="lb-stats">
+                <div class="lb-stat-card">
+                    <div class="lb-stat-label">فروع</div>
+                    <div class="lb-stat-value" id="lbTotalBranches">0</div>
+                </div>
+                <div class="lb-stat-card">
+                    <div class="lb-stat-label">متسابقين</div>
+                    <div class="lb-stat-value" id="lbTotalMembers">0</div>
+                </div>
+                <div class="lb-stat-card">
+                    <div class="lb-stat-label">منشورات</div>
+                    <div class="lb-stat-value" id="lbTotalPosts">0</div>
+                </div>
+                <div class="lb-stat-card">
+                    <div class="lb-stat-label">لايكات</div>
+                    <div class="lb-stat-value" id="lbTotalLikes">0</div>
+                </div>
+            </div>
+
+            <div class="lb-list" id="leaderboardList">
                 <div class="empty-state">
                     <div class="empty-state-icon">🎯</div>
-                    <div>أضف فروعًا لعرض الترتيب</div>
+                    <div>أضف فروعًا واعتمد منشورات لعرض الترتيب</div>
                 </div>
             </div>
 
             <div class="winner-banner" id="winnerBanner">
-                <div class="crown">👑</div>
-                <div class="winner-label">الفرع الفائز بالمسابقة</div>
+                <div class="winner-crown">👑</div>
+                <div class="winner-label" id="winnerLabel">الفائز</div>
                 <div class="winner-name" id="winnerName">-</div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal-overlay" id="memberModal">
+    <div class="modal">
+        <div class="modal-title">
+            <div class="card-icon-box">👤</div>
+            <span id="memberModalTitle">إضافة متسابق</span>
+        </div>
+
+        <div class="form-group">
+            <label>اسم المتسابق</label>
+            <input type="text" id="memberName" placeholder="مثال: أحمد محمد">
+        </div>
+
+        <label style="display:block;margin-bottom:6px;color:var(--text-secondary);font-size:12px;font-weight:500;">المنصة</label>
+        <div class="platform-select">
+            <div class="platform-option ig selected" data-mp="instagram" onclick="selectMemberPlatform('instagram')">
+                <span class="platform-icon">📷</span>
+                Instagram
+            </div>
+            <div class="platform-option tt" data-mp="tiktok" onclick="selectMemberPlatform('tiktok')">
+                <span class="platform-icon">🎵</span>
+                TikTok
+            </div>
+            <div class="platform-option sn" data-mp="snapchat" onclick="selectMemberPlatform('snapchat')">
+                <span class="platform-icon">👻</span>
+                Snapchat
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>الهاشتاق الخاص بالمتسابق</label>
+            <input type="text" id="memberHashtag" placeholder="مثال: #ahmed_riyadh">
+            <div class="helper-text">سيتم جلب منشورات هذا الهاشتاق تلقائيًا</div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeMemberModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveMember()" id="saveMemberBtn">حفظ</button>
         </div>
     </div>
 </div>
@@ -1167,668 +1023,784 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    const API_BASE = window.location.origin;
-    let branches = [];
-    let selectedPlatform = 'instagram';
-    let selectedSourceType = 'hashtag';
-    let currentFilter = 'all';
-    let serverConnected = false;
+const API_BASE = window.location.origin;
 
-    const PLATFORMS = {
-        instagram: { name: 'Instagram', icon: '📷', class: 'ig' },
-        tiktok: { name: 'TikTok', icon: '🎵', class: 'tt' },
-        snapchat: { name: 'Snapchat', icon: '👻', class: 'sn' }
-    };
+// State
+let branches = []; // [{id, name, members: [{id, name, platform, hashtag, posts: [postIds]}]}]
+let discoveredPosts = []; // [{id, url, likes, thumbnail, ..., assignedTo: {branchId, memberId} or null, sourceHashtag, sourcePlatform}]
+let serverConnected = false;
+let currentLeaderboardView = 'branches';
+let currentDiscoveryFilter = 'all';
+let editingMember = null; // {branchId, memberId} or {branchId} for new
 
-    // =================== Storage ===================
-    function saveData() {
-        localStorage.setItem('branchCompetitionV6', JSON.stringify({
-            branches,
-            startDate: document.getElementById('globalStartDate').value,
-            endDate: document.getElementById('globalEndDate').value
-        }));
-    }
+const PLATFORMS = {
+    instagram: { name: 'Instagram', icon: '📷', class: 'ig' },
+    tiktok: { name: 'TikTok', icon: '🎵', class: 'tt' },
+    snapchat: { name: 'Snapchat', icon: '👻', class: 'sn' }
+};
 
-    function loadData() {
-        const stored = localStorage.getItem('branchCompetitionV6');
-        if (stored) {
-            try {
-                const data = JSON.parse(stored);
-                branches = data.branches || [];
-                if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
-                if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
-                renderBranches();
-                renderLeaderboard();
-            } catch (e) { console.error(e); }
-        }
-    }
+let selectedMemberPlatform = 'instagram';
 
-    // =================== Server Health ===================
-    async function checkServerHealth() {
+// =================== Storage ===================
+function saveData() {
+    localStorage.setItem('bcV3', JSON.stringify({
+        branches,
+        discoveredPosts,
+        startDate: document.getElementById('globalStartDate').value,
+        endDate: document.getElementById('globalEndDate').value
+    }));
+}
+
+function loadData() {
+    const stored = localStorage.getItem('bcV3');
+    if (stored) {
         try {
-            const response = await fetch(`${API_BASE}/api/health`);
-            const data = await response.json();
-            serverConnected = true;
-            const statusEl = document.getElementById('serverStatus');
-            const textEl = document.getElementById('serverStatusText');
-            statusEl.classList.add('connected');
-            statusEl.classList.remove('disconnected');
-            if (data.ytdlp_installed) {
-                textEl.textContent = `السيرفر متصل ✓ yt-dlp v${data.ytdlp_version}`;
-            } else {
-                textEl.textContent = `السيرفر متصل لكن yt-dlp غير مثبت ⚠️`;
-            }
-        } catch (e) {
-            serverConnected = false;
-            const statusEl = document.getElementById('serverStatus');
-            statusEl.classList.remove('connected');
-            statusEl.classList.add('disconnected');
-            document.getElementById('serverStatusText').textContent = 'السيرفر غير متصل — شغّل start.bat';
+            const data = JSON.parse(stored);
+            branches = data.branches || [];
+            discoveredPosts = data.discoveredPosts || [];
+            if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
+            if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
+            renderBranches();
+            renderDiscovery();
+            renderLeaderboard();
+            renderSetupSummary();
+        } catch (e) { console.error(e); }
+    }
+}
+
+// =================== Helpers ===================
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = String(text || '');
+    return div.innerHTML;
+}
+
+function formatNumber(n) {
+    return (n || 0).toLocaleString('ar-EG');
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+    if (tab === 'leaderboard') renderLeaderboard();
+    if (tab === 'discovery') renderDiscovery();
+    if (tab === 'setup') renderSetupSummary();
+}
+
+function switchLeaderboard(view) {
+    currentLeaderboardView = view;
+    document.querySelectorAll('.lb-tab').forEach(t => t.classList.toggle('active', t.dataset.lb === view));
+    renderLeaderboard();
+}
+
+function setDiscoveryFilter(filter) {
+    currentDiscoveryFilter = filter;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === filter));
+    renderDiscovery();
+}
+
+function logDiscovery(message, type = 'info') {
+    const log = document.getElementById('discoveryLog');
+    log.classList.add('active');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry log-' + type;
+    entry.textContent = message;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+// =================== Server Health ===================
+async function checkServerHealth() {
+    try {
+        const response = await fetch(`${API_BASE}/api/health`);
+        const data = await response.json();
+        serverConnected = true;
+        const statusEl = document.getElementById('serverStatus');
+        const textEl = document.getElementById('serverStatusText');
+        statusEl.classList.add('connected');
+        statusEl.classList.remove('disconnected');
+        if (data.ytdlp_installed) {
+            textEl.textContent = `متصل ✓ yt-dlp ${data.ytdlp_version}`;
+        } else {
+            textEl.textContent = 'متصل لكن yt-dlp غير مثبت ⚠️';
         }
+    } catch (e) {
+        serverConnected = false;
+        const statusEl = document.getElementById('serverStatus');
+        statusEl.classList.remove('connected');
+        statusEl.classList.add('disconnected');
+        document.getElementById('serverStatusText').textContent = 'غير متصل';
     }
+}
 
-    // =================== Helpers ===================
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = 'toast ' + type;
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => toast.classList.remove('show'), 3500);
+// =================== Branches ===================
+function addBranch() {
+    const name = document.getElementById('newBranchName').value.trim();
+    if (!name) {
+        showToast('أدخل اسم الفرع', 'error');
+        return;
     }
+    branches.push({
+        id: 'b_' + Date.now(),
+        name: name,
+        members: []
+    });
+    document.getElementById('newBranchName').value = '';
+    saveData();
+    renderBranches();
+    renderSetupSummary();
+    showToast('تم إضافة الفرع ✓');
+}
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = String(text);
-        return div.innerHTML;
+function removeBranch(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    if (!confirm(`حذف فرع "${branch.name}" وكل متسابقيه؟`)) return;
+    
+    // إزالة الإسنادات
+    discoveredPosts.forEach(p => {
+        if (p.assignedTo && p.assignedTo.branchId === branchId) {
+            p.assignedTo = null;
+        }
+    });
+    
+    branches = branches.filter(b => b.id !== branchId);
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderLeaderboard();
+    renderSetupSummary();
+    showToast('تم الحذف');
+}
+
+function openAddMember(branchId) {
+    editingMember = { branchId };
+    document.getElementById('memberModalTitle').textContent = 'إضافة متسابق';
+    document.getElementById('memberName').value = '';
+    document.getElementById('memberHashtag').value = '';
+    selectMemberPlatform('instagram');
+    document.getElementById('memberModal').classList.add('active');
+    setTimeout(() => document.getElementById('memberName').focus(), 100);
+}
+
+function editMember(branchId, memberId) {
+    const branch = branches.find(b => b.id === branchId);
+    const member = branch?.members.find(m => m.id === memberId);
+    if (!member) return;
+    
+    editingMember = { branchId, memberId };
+    document.getElementById('memberModalTitle').textContent = 'تعديل متسابق';
+    document.getElementById('memberName').value = member.name;
+    document.getElementById('memberHashtag').value = member.hashtag;
+    selectMemberPlatform(member.platform);
+    document.getElementById('memberModal').classList.add('active');
+}
+
+function closeMemberModal() {
+    document.getElementById('memberModal').classList.remove('active');
+    editingMember = null;
+}
+
+function selectMemberPlatform(platform) {
+    selectedMemberPlatform = platform;
+    document.querySelectorAll('.platform-option[data-mp]').forEach(el => {
+        el.classList.toggle('selected', el.dataset.mp === platform);
+    });
+}
+
+function saveMember() {
+    if (!editingMember) return;
+    
+    const name = document.getElementById('memberName').value.trim();
+    let hashtag = document.getElementById('memberHashtag').value.trim();
+    
+    if (!name) { showToast('أدخل اسم المتسابق', 'error'); return; }
+    if (!hashtag) { showToast('أدخل الهاشتاق', 'error'); return; }
+    
+    if (!hashtag.startsWith('#')) hashtag = '#' + hashtag;
+    hashtag = hashtag.replace(/\s+/g, '_').toLowerCase();
+    
+    const branch = branches.find(b => b.id === editingMember.branchId);
+    if (!branch) return;
+    
+    // Check duplicates
+    const existing = branches.flatMap(b => b.members).find(m => 
+        m.hashtag === hashtag && m.platform === selectedMemberPlatform &&
+        m.id !== editingMember.memberId
+    );
+    if (existing) {
+        showToast('هذا الهاشتاق مستخدم لمتسابق آخر', 'error');
+        return;
     }
-
-    function formatNumber(n) {
-        return (n || 0).toLocaleString('ar-EG');
-    }
-
-    function selectPlatform(platform) {
-        selectedPlatform = platform;
-        document.querySelectorAll('.platform-select .platform-option').forEach(el => {
-            el.classList.toggle('selected', el.dataset.platform === platform);
+    
+    if (editingMember.memberId) {
+        // Edit
+        const member = branch.members.find(m => m.id === editingMember.memberId);
+        if (member) {
+            member.name = name;
+            member.platform = selectedMemberPlatform;
+            member.hashtag = hashtag;
+        }
+    } else {
+        // Add
+        branch.members.push({
+            id: 'm_' + Date.now(),
+            name: name,
+            platform: selectedMemberPlatform,
+            hashtag: hashtag
         });
-        
-        // Snapchat لا يدعم اكتشاف الهاشتاق
-        if (platform === 'snapchat' && selectedSourceType === 'hashtag') {
-            selectSourceType('urls');
-            showToast('Snapchat لا يدعم اكتشاف الهاشتاق، تم التحويل لـ روابط يدوية', 'warning');
-        }
     }
+    
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderLeaderboard();
+    renderSetupSummary();
+    closeMemberModal();
+    showToast(editingMember.memberId ? 'تم التعديل ✓' : 'تم إضافة المتسابق ✓');
+}
 
-    function selectSourceType(type) {
-        if (type === 'hashtag' && selectedPlatform === 'snapchat') {
-            showToast('Snapchat لا يدعم البحث بالهاشتاق', 'error');
-            return;
+function removeMember(branchId, memberId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    const member = branch.members.find(m => m.id === memberId);
+    if (!member) return;
+    if (!confirm(`حذف "${member.name}"؟`)) return;
+    
+    // إزالة الإسنادات
+    discoveredPosts.forEach(p => {
+        if (p.assignedTo && p.assignedTo.memberId === memberId) {
+            p.assignedTo = null;
         }
-        selectedSourceType = type;
-        document.querySelectorAll('.source-toggle .source-option').forEach(el => {
-            el.classList.toggle('active', el.dataset.source === type);
-        });
-        document.getElementById('hashtagContainer').classList.toggle('active', type === 'hashtag');
-        document.getElementById('urlsContainer').classList.toggle('active', type === 'urls');
-        
-        if (type === 'urls' && document.querySelectorAll('#urlList .url-row').length === 0) {
-            addUrlRow();
-        }
+    });
+    
+    branch.members = branch.members.filter(m => m.id !== memberId);
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderLeaderboard();
+    renderSetupSummary();
+    showToast('تم الحذف');
+}
 
-        // Reset summary
-        document.getElementById('summaryBox').classList.remove('active');
-        document.getElementById('discoveryLog').classList.remove('active');
-    }
-
-    function logDiscovery(message, type = 'info') {
-        const log = document.getElementById('discoveryLog');
-        log.classList.add('active');
-        const entry = document.createElement('div');
-        entry.className = 'log-entry log-' + type;
-        entry.textContent = message;
-        log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
-    }
-
-    // =================== URL Rows (Manual Mode) ===================
-    function addUrlRow(url = '', likes = null) {
-        const list = document.getElementById('urlList');
-        const row = document.createElement('div');
-        row.className = 'url-row';
-        if (likes !== null && likes !== undefined) row.classList.add('fetched');
-        
-        const likesText = likes !== null && likes !== undefined ? `❤️ ${formatNumber(likes)}` : '— لم يُجلب —';
-        
-        row.innerHTML = `
-            <input type="text" class="url-input" placeholder="https://..." value="${escapeHtml(url)}">
-            <div class="url-likes-display">${likesText}</div>
-            <div class="url-actions">
-                <button type="button" class="icon-btn fetch-btn" onclick="fetchSingleUrl(this)">🔄</button>
-                <button type="button" class="icon-btn remove-btn" onclick="removeUrlRow(this)">✕</button>
+function renderBranches() {
+    const list = document.getElementById('branchesList');
+    if (branches.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🏢</div>
+                <div>أضف فرعًا واحدًا على الأقل</div>
             </div>
         `;
+        return;
+    }
+    
+    list.innerHTML = branches.map(branch => {
+        const membersHtml = branch.members.length === 0 ?
+            `<div class="empty-state" style="padding:15px;">لا متسابقين بعد</div>` :
+            branch.members.map(m => {
+                const p = PLATFORMS[m.platform];
+                const memberLikes = getMemberTotalLikes(m.id);
+                const memberPosts = getMemberPostsCount(m.id);
+                return `
+                    <div class="member-row">
+                        <div class="member-info">
+                            <div class="member-name">👤 ${escapeHtml(m.name)}</div>
+                            <div class="member-meta">
+                                <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
+                                <span class="member-hashtag">${escapeHtml(m.hashtag)}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <div class="member-stats">
+                                <div class="member-likes">${formatNumber(memberLikes)}</div>
+                                <div style="font-size:9px;color:var(--text-muted);">${memberPosts} منشور</div>
+                            </div>
+                            <button class="btn btn-warning" onclick="editMember('${branch.id}','${m.id}')">✏️</button>
+                            <button class="btn btn-danger" onclick="removeMember('${branch.id}','${m.id}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         
-        if (likes !== null && likes !== undefined) row.dataset.likes = likes;
-        list.appendChild(row);
-        updateManualSummary();
+        const branchLikes = branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
+        
+        return `
+            <div class="branch-card">
+                <div class="branch-card-header">
+                    <div class="branch-name-display">
+                        🏢 ${escapeHtml(branch.name)}
+                        <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(${branch.members.length} متسابق)</span>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <div style="text-align:center;">
+                            <div style="font-weight:700;color:var(--danger);font-size:14px;">${formatNumber(branchLikes)} ❤️</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeBranch('${branch.id}')">حذف</button>
+                    </div>
+                </div>
+                <div class="members-list">${membersHtml}</div>
+                <button class="add-member-btn" onclick="openAddMember('${branch.id}')">+ إضافة متسابق</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderSetupSummary() {
+    const summary = document.getElementById('setupSummary');
+    if (branches.length === 0) {
+        summary.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📊</div>
+                <div>أضف فروعًا ومتسابقين من تبويب "الفروع"</div>
+            </div>
+        `;
+        return;
     }
+    
+    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+    const totalHashtags = branches.flatMap(b => b.members).length;
+    const assignedPosts = discoveredPosts.filter(p => p.assignedTo).length;
+    
+    summary.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+            <div class="lb-stat-card">
+                <div class="lb-stat-label">عدد الفروع</div>
+                <div class="lb-stat-value">${branches.length}</div>
+            </div>
+            <div class="lb-stat-card">
+                <div class="lb-stat-label">عدد المتسابقين</div>
+                <div class="lb-stat-value">${totalMembers}</div>
+            </div>
+            <div class="lb-stat-card">
+                <div class="lb-stat-label">هاشتاقات</div>
+                <div class="lb-stat-value">${totalHashtags}</div>
+            </div>
+            <div class="lb-stat-card">
+                <div class="lb-stat-label">منشورات معتمدة</div>
+                <div class="lb-stat-value">${assignedPosts}</div>
+            </div>
+        </div>
+    `;
+}
 
-    function removeUrlRow(btn) {
-        const row = btn.closest('.url-row');
-        row.remove();
-        if (document.querySelectorAll('#urlList .url-row').length === 0) addUrlRow();
-        updateManualSummary();
+// =================== Discovery ===================
+async function discoverAllHashtags() {
+    if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
+    
+    const allMembers = branches.flatMap(b => b.members.map(m => ({ ...m, branchId: b.id, branchName: b.name })));
+    if (allMembers.length === 0) {
+        showToast('أضف متسابقين أولاً', 'error');
+        return;
     }
-
-    async function fetchSingleUrl(btn) {
-        const row = btn.closest('.url-row');
-        const url = row.querySelector('.url-input').value.trim();
-        if (!url) { showToast('أدخل الرابط أولاً', 'error'); return; }
-        if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-
-        const display = row.querySelector('.url-likes-display');
-        row.classList.remove('fetched', 'error');
-        row.classList.add('loading');
-        display.innerHTML = '<span class="spinner"></span>';
-        btn.disabled = true;
-
-        try {
-            const response = await fetch(`${API_BASE}/api/fetch-post`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
-            const data = await response.json();
-            if (!response.ok || data.error) throw new Error(data.error);
-
-            row.classList.remove('loading');
-            row.classList.add('fetched');
-            row.dataset.likes = data.likes;
-            row.dataset.uploadDate = data.upload_date || '';
-            display.innerHTML = `❤️ ${formatNumber(data.likes)}`;
-            showToast(`✓ ${formatNumber(data.likes)} لايك`);
-        } catch (e) {
-            row.classList.remove('loading');
-            row.classList.add('error');
-            display.textContent = '✗ فشل';
-            showToast('فشل: ' + e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            updateManualSummary();
+    
+    const startDate = document.getElementById('globalStartDate').value;
+    const endDate = document.getElementById('globalEndDate').value;
+    
+    const btn = document.getElementById('discoverBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
+    
+    const log = document.getElementById('discoveryLog');
+    log.innerHTML = '';
+    log.classList.add('active');
+    
+    logDiscovery(`🔍 بدء جلب منشورات ${allMembers.length} متسابق`, 'info');
+    logDiscovery(`📅 الفترة: ${startDate || 'الكل'} → ${endDate || 'الكل'}`, 'info');
+    
+    let totalNewPosts = 0;
+    
+    for (const member of allMembers) {
+        if (member.platform === 'snapchat') {
+            logDiscovery(`⊘ ${member.name}: Snapchat لا يدعم الهاشتاق`, 'warning');
+            continue;
         }
-    }
-
-    async function fetchAllUrls() {
-        const rows = document.querySelectorAll('#urlList .url-row');
-        if (rows.length === 0) { showToast('أضف رابطًا أولاً', 'error'); return; }
-        if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-
-        const btn = document.getElementById('fetchAllBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
-
-        let success = 0, failed = 0;
-        for (const row of rows) {
-            const url = row.querySelector('.url-input').value.trim();
-            if (!url) continue;
-            const display = row.querySelector('.url-likes-display');
-            row.classList.remove('fetched', 'error');
-            row.classList.add('loading');
-            display.innerHTML = '<span class="spinner"></span>';
-
-            try {
-                const response = await fetch(`${API_BASE}/api/fetch-post`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
-                });
-                const data = await response.json();
-                if (!response.ok || data.error) throw new Error(data.error);
-                row.classList.remove('loading');
-                row.classList.add('fetched');
-                row.dataset.likes = data.likes;
-                row.dataset.uploadDate = data.upload_date || '';
-                display.innerHTML = `❤️ ${formatNumber(data.likes)}`;
-                success++;
-            } catch (e) {
-                row.classList.remove('loading');
-                row.classList.add('error');
-                display.textContent = '✗ فشل';
-                failed++;
-            }
-        }
-
-        btn.disabled = false;
-        btn.innerHTML = '🔄 جلب جميع اللايكات';
-        showToast(`${success} نجح، ${failed} فشل`, failed > 0 ? 'warning' : 'success');
-        updateManualSummary();
-    }
-
-    function updateManualSummary() {
-        const rows = document.querySelectorAll('#urlList .url-row');
-        let totalLikes = 0, validRows = 0, fetchedRows = 0;
-        rows.forEach(row => {
-            const url = row.querySelector('.url-input').value.trim();
-            if (url) {
-                validRows++;
-                if (row.dataset.likes !== undefined) {
-                    totalLikes += parseInt(row.dataset.likes) || 0;
-                    fetchedRows++;
-                }
-            }
-        });
-        const summary = document.getElementById('summaryBox');
-        if (validRows > 0 && selectedSourceType === 'urls') {
-            summary.classList.add('active');
-            summary.classList.remove('discovery');
-            summary.innerHTML = `📊 <strong>${validRows}</strong> رابط (${fetchedRows} مجلوب) — إجمالي اللايكات: <strong>${formatNumber(totalLikes)}</strong> ❤️`;
-        }
-    }
-
-    // =================== Hashtag Discovery ===================
-    let discoveredPosts = []; // Cached للاستخدام عند الحفظ
-
-    async function discoverHashtag() {
-        const hashtag = document.getElementById('branchHashtag').value.trim();
-        const maxPosts = parseInt(document.getElementById('maxPosts').value) || 30;
-        const startDate = document.getElementById('globalStartDate').value;
-        const endDate = document.getElementById('globalEndDate').value;
-
-        if (!hashtag) {
-            showToast('أدخل الهاشتاق أولاً', 'error');
-            return null;
-        }
-
-        if (!serverConnected) {
-            showToast('السيرفر غير متصل', 'error');
-            return null;
-        }
-
-        const log = document.getElementById('discoveryLog');
-        log.innerHTML = '';
-        log.classList.add('active');
-
-        const summary = document.getElementById('summaryBox');
-        summary.classList.add('active', 'discovery');
-        summary.innerHTML = '<span class="spinner"></span> جاري البحث في الهاشتاق...';
-
-        logDiscovery(`🔍 البحث عن: #${hashtag.replace('#', '')}`, 'info');
-        logDiscovery(`📱 المنصة: ${PLATFORMS[selectedPlatform].name}`, 'info');
-        logDiscovery(`📅 الفترة: ${startDate || 'الكل'} → ${endDate || 'الكل'}`, 'info');
-        logDiscovery(`📊 الحد الأقصى: ${maxPosts} منشور`, 'info');
-        logDiscovery(`⏳ جاري الاتصال... (قد يستغرق وقتًا)`, 'warning');
-
+        
+        logDiscovery(`━━ ${member.name} (${member.hashtag}) ━━`, 'info');
+        
         try {
             const response = await fetch(`${API_BASE}/api/fetch-hashtag`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    hashtag: hashtag.replace('#', ''),
-                    platform: selectedPlatform,
-                    startDate, endDate, maxPosts
+                    hashtag: member.hashtag.replace('#', ''),
+                    platform: member.platform,
+                    startDate, endDate,
+                    maxPosts: 30
                 })
             });
-
-            const data = await response.json();
-            if (!response.ok || data.error) throw new Error(data.error);
-
-            logDiscovery(`✓ اكتُشف ${data.discoveredCount} منشور`, 'success');
-            logDiscovery(`✓ ضمن النطاق الزمني: ${data.postsCount}`, 'success');
-            if (data.filteredOutCount > 0) {
-                logDiscovery(`⊘ خارج النطاق: ${data.filteredOutCount}`, 'warning');
-            }
-            if (data.failedCount > 0) {
-                logDiscovery(`✗ فشل جلب: ${data.failedCount}`, 'error');
-            }
-            logDiscovery(`❤️ إجمالي اللايكات: ${data.totalLikes}`, 'success');
-
-            summary.innerHTML = `
-                ✅ <strong>${data.postsCount}</strong> منشور ضمن الفترة 
-                (من أصل ${data.discoveredCount} اكتُشف)<br>
-                ❤️ إجمالي اللايكات: <strong>${formatNumber(data.totalLikes)}</strong>
-            `;
-
-            discoveredPosts = data.posts;
-            return data;
-        } catch (e) {
-            logDiscovery(`✗ خطأ: ${e.message}`, 'error');
-            summary.innerHTML = `❌ فشل: ${e.message}`;
-            showToast('فشل اكتشاف الهاشتاق: ' + e.message, 'error');
-            return null;
-        }
-    }
-
-    // =================== Add Branch ===================
-    async function addBranch() {
-        const name = document.getElementById('branchName').value.trim();
-        if (!name) {
-            showToast('أدخل اسم الفرع', 'error');
-            return;
-        }
-
-        let branchData = {
-            id: Date.now(),
-            name: name,
-            platform: selectedPlatform,
-            sourceType: selectedSourceType,
-            createdAt: new Date().toISOString()
-        };
-
-        if (selectedSourceType === 'hashtag') {
-            const hashtag = document.getElementById('branchHashtag').value.trim();
-            if (!hashtag) {
-                showToast('أدخل الهاشتاق', 'error');
-                return;
-            }
-
-            // اكتشاف الهاشتاق تلقائيًا
-            const result = await discoverHashtag();
-            if (!result) return;
-
-            branchData.hashtag = hashtag.startsWith('#') ? hashtag : '#' + hashtag;
-            branchData.urls = result.posts.map(p => ({
-                url: p.url,
-                likes: p.likes,
-                upload_date: p.upload_date,
-                title: p.title
-            }));
-            branchData.totalLikes = result.totalLikes;
-            branchData.postsCount = result.postsCount;
-            branchData.discoveredCount = result.discoveredCount;
-            branchData.maxPosts = parseInt(document.getElementById('maxPosts').value) || 30;
-        } else {
-            // Manual URLs
-            const rows = document.querySelectorAll('#urlList .url-row');
-            const urls = [];
-            let totalLikes = 0;
-            rows.forEach(row => {
-                const url = row.querySelector('.url-input').value.trim();
-                const likes = parseInt(row.dataset.likes) || 0;
-                const uploadDate = row.dataset.uploadDate || '';
-                if (url) {
-                    urls.push({ url, likes, upload_date: uploadDate });
-                    totalLikes += likes;
-                }
-            });
-
-            if (urls.length === 0) {
-                showToast('أضف رابطًا واحدًا على الأقل', 'error');
-                return;
-            }
-
-            branchData.hashtag = '';
-            branchData.urls = urls;
-            branchData.totalLikes = totalLikes;
-            branchData.postsCount = urls.length;
-        }
-
-        branches.push(branchData);
-        saveData();
-        renderBranches();
-        renderLeaderboard();
-        showToast('تمت إضافة الفرع ✓');
-
-        // Reset
-        document.getElementById('branchName').value = '';
-        document.getElementById('branchHashtag').value = '';
-        document.getElementById('urlList').innerHTML = '';
-        document.getElementById('summaryBox').classList.remove('active');
-        document.getElementById('discoveryLog').classList.remove('active');
-        if (selectedSourceType === 'urls') addUrlRow();
-        document.getElementById('branchName').focus();
-    }
-
-    function removeBranch(id) {
-        if (!confirm('حذف هذا الفرع؟')) return;
-        branches = branches.filter(b => b.id !== id);
-        saveData();
-        renderBranches();
-        renderLeaderboard();
-        showToast('تم الحذف');
-    }
-
-    async function refetchBranch(id) {
-        const branch = branches.find(b => b.id === id);
-        if (!branch) return;
-        if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-
-        showToast('جاري التحديث...', 'success');
-
-        if (branch.sourceType === 'hashtag') {
-            const startDate = document.getElementById('globalStartDate').value;
-            const endDate = document.getElementById('globalEndDate').value;
-            try {
-                const response = await fetch(`${API_BASE}/api/fetch-hashtag`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        hashtag: branch.hashtag.replace('#', ''),
-                        platform: branch.platform,
-                        startDate, endDate,
-                        maxPosts: branch.maxPosts || 30
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok || data.error) throw new Error(data.error);
-                branch.urls = data.posts.map(p => ({
-                    url: p.url, likes: p.likes,
-                    upload_date: p.upload_date, title: p.title
-                }));
-                branch.totalLikes = data.totalLikes;
-                branch.postsCount = data.postsCount;
-                branch.discoveredCount = data.discoveredCount;
-                showToast(`✓ ${branch.name}: ${data.postsCount} منشور، ${formatNumber(data.totalLikes)} لايك`);
-            } catch (e) {
-                showToast('فشل: ' + e.message, 'error');
-            }
-        } else {
-            // Refetch URLs
-            let total = 0;
-            for (const urlObj of branch.urls) {
-                try {
-                    const response = await fetch(`${API_BASE}/api/fetch-post`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: urlObj.url })
-                    });
-                    const data = await response.json();
-                    if (response.ok && !data.error) {
-                        urlObj.likes = data.likes;
-                        urlObj.upload_date = data.upload_date;
-                        total += data.likes;
-                    } else { total += urlObj.likes || 0; }
-                } catch (e) { total += urlObj.likes || 0; }
-            }
-            branch.totalLikes = total;
-            showToast(`✓ تم تحديث ${branch.name}`);
-        }
-
-        saveData();
-        renderBranches();
-        renderLeaderboard();
-    }
-
-    async function refetchAllBranches() {
-        if (branches.length === 0) { showToast('لا توجد فروع', 'error'); return; }
-        if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-        if (!confirm('تحديث جميع الفروع؟ (قد يستغرق وقتًا)')) return;
-
-        showToast('بدء التحديث...', 'success');
-        for (const branch of branches) {
-            await refetchBranch(branch.id);
-        }
-        showToast('تم تحديث الكل ✓');
-    }
-
-    function renderBranches() {
-        const list = document.getElementById('branchesList');
-        if (branches.length === 0) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">📭</div>
-                    <div>لا توجد فروع مضافة بعد</div>
-                </div>
-            `;
-            return;
-        }
-
-        list.innerHTML = branches.map(b => {
-            const p = PLATFORMS[b.platform];
-            const sourceType = b.sourceType || 'urls';
             
-            let sourceDisplay;
-            if (sourceType === 'hashtag') {
-                sourceDisplay = `<span class="source-type-badge">#️⃣ ${escapeHtml(b.hashtag)}</span>`;
-            } else {
-                sourceDisplay = `<span class="source-type-badge url">🔗 ${b.urls.length} رابط</span>`;
+            const data = await response.json();
+            if (!response.ok || data.error) {
+                logDiscovery(`✗ خطأ: ${data.error || 'unknown'}`, 'error');
+                continue;
             }
-
-            const urlsDetail = b.urls.length > 0 ? `
-                <div class="branch-urls-detail">
-                    ${b.urls.map(u => `
-                        <div class="url-line">
-                            <span class="url-text">${escapeHtml(u.url)}</span>
-                            <span class="url-likes">${formatNumber(u.likes)} ❤️</span>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '';
-
-            return `
-                <div class="branch-item">
-                    <div class="branch-header">
-                        <div class="branch-info">
-                            <div class="branch-name">${escapeHtml(b.name)}</div>
-                            <div class="branch-meta">
-                                <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
-                                ${sourceDisplay}
-                            </div>
-                        </div>
-                        <div class="branch-actions">
-                            <button class="btn btn-warning" onclick="refetchBranch(${b.id})">🔄</button>
-                            <button class="btn btn-danger" onclick="removeBranch(${b.id})">حذف</button>
-                        </div>
-                    </div>
-                    <div class="branch-stats">
-                        <span>❤️ <strong class="stat-likes">${formatNumber(b.totalLikes)}</strong> لايك</span>
-                        <span>📝 <strong class="stat-posts">${b.postsCount}</strong> منشور</span>
-                    </div>
-                    ${urlsDetail}
-                </div>
-            `;
-        }).join('');
-    }
-
-    // =================== Leaderboard ===================
-    function setFilter(filter) {
-        currentFilter = filter;
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === filter);
-        });
-        renderLeaderboard();
-    }
-
-    function renderLeaderboard() {
-        const list = document.getElementById('leaderboardList');
-        const winnerBanner = document.getElementById('winnerBanner');
-        const winnerName = document.getElementById('winnerName');
-
-        const totalLikes = branches.reduce((s, b) => s + (b.totalLikes || 0), 0);
-        const totalPosts = branches.reduce((s, b) => s + (b.postsCount || 0), 0);
-        const platforms = new Set(branches.map(b => b.platform));
-
-        document.getElementById('totalBranches').textContent = branches.length;
-        document.getElementById('totalLikes').textContent = formatNumber(totalLikes);
-        document.getElementById('totalPosts').textContent = formatNumber(totalPosts);
-        document.getElementById('totalPlatforms').textContent = platforms.size;
-
-        let filtered = branches;
-        if (currentFilter !== 'all') filtered = branches.filter(b => b.platform === currentFilter);
-
-        if (filtered.length === 0) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">🎯</div>
-                    <div>${branches.length === 0 ? 'أضف فروعًا لعرض النتائج' : 'لا توجد نتائج لهذا الفلتر'}</div>
-                </div>
-            `;
-            winnerBanner.classList.remove('active');
-            return;
+            
+            logDiscovery(`✓ اكتُشف: ${data.discoveredCount} / ضمن النطاق: ${data.posts.length}`, 'success');
+            
+            // أضف المنشورات الجديدة فقط (تجنب التكرار)
+            for (const post of data.posts) {
+                const exists = discoveredPosts.find(p => p.url === post.url);
+                if (exists) continue;
+                
+                discoveredPosts.push({
+                    id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                    url: post.url,
+                    likes: post.likes,
+                    views: post.views,
+                    title: post.title,
+                    thumbnail: post.thumbnail,
+                    upload_date: post.upload_date,
+                    uploader: post.uploader,
+                    platform: member.platform,
+                    sourceHashtag: member.hashtag,
+                    suggestedBranchId: member.branchId,
+                    suggestedMemberId: member.id,
+                    assignedTo: null
+                });
+                totalNewPosts++;
+            }
+        } catch (e) {
+            logDiscovery(`✗ فشل: ${e.message}`, 'error');
         }
+    }
+    
+    logDiscovery(`━━━━━━━━━━━━━━━━━━━━`, 'info');
+    logDiscovery(`✅ تمت إضافة ${totalNewPosts} منشور جديد`, 'success');
+    
+    saveData();
+    renderDiscovery();
+    
+    btn.disabled = false;
+    btn.innerHTML = '🔄 جلب منشورات جميع المتسابقين';
+    
+    if (totalNewPosts > 0) {
+        showToast(`✓ تم جلب ${totalNewPosts} منشور`);
+    } else {
+        showToast('لم يتم العثور على منشورات جديدة', 'warning');
+    }
+}
 
-        const sorted = [...filtered].sort((a, b) => (b.totalLikes || 0) - (a.totalLikes || 0));
-
-        list.innerHTML = sorted.map((b, idx) => {
-            const rank = idx + 1;
-            const rankClass = rank <= 3 ? `rank-${rank}` : '';
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-            const p = PLATFORMS[b.platform];
-            const trackingType = b.sourceType === 'hashtag' ? `#️⃣ ${b.hashtag}` : `🔗 ${b.urls.length} رابط`;
-
-            return `
-                <div class="leaderboard-item ${rankClass}">
-                    <div class="rank-badge">${medal}</div>
-                    <div>
-                        <div class="lb-name">${escapeHtml(b.name)}</div>
-                        <div class="lb-meta">
-                            <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
-                            <span>${escapeHtml(trackingType)}</span>
-                        </div>
-                    </div>
-                    <div class="lb-stats">
-                        <div class="lb-stat">
-                            <div class="lb-stat-value lb-likes">${formatNumber(b.totalLikes)}</div>
-                            <div class="lb-stat-label">❤️ لايك</div>
-                        </div>
-                        <div class="lb-stat">
-                            <div class="lb-stat-value lb-posts">${b.postsCount}</div>
-                            <div class="lb-stat-label">📝 منشور</div>
-                        </div>
-                    </div>
+function renderDiscovery() {
+    const grid = document.getElementById('postsGrid');
+    const filters = document.getElementById('discoveryFilters');
+    
+    if (discoveredPosts.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-state-icon">🔍</div>
+                <div>اضغط زر "جلب المنشورات" لبدء الاكتشاف</div>
+            </div>
+        `;
+        filters.style.display = 'none';
+        return;
+    }
+    
+    filters.style.display = 'flex';
+    
+    let filtered = discoveredPosts;
+    if (currentDiscoveryFilter === 'unassigned') {
+        filtered = discoveredPosts.filter(p => !p.assignedTo);
+    } else if (currentDiscoveryFilter === 'assigned') {
+        filtered = discoveredPosts.filter(p => p.assignedTo);
+    }
+    
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-state-icon">📭</div>
+                <div>لا منشورات في هذا التصنيف</div>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = filtered.map(post => {
+        const p = PLATFORMS[post.platform];
+        const thumb = post.thumbnail ? `background-image:url('${escapeHtml(post.thumbnail)}');` : '';
+        
+        // قائمة كل المتسابقين
+        const optionsHtml = ['<option value="">-- اختر متسابق --</option>'].concat(
+            branches.flatMap(b => b.members.map(m => {
+                const selected = (post.suggestedBranchId === b.id && post.suggestedMemberId === m.id) ? 'selected' : '';
+                return `<option value="${b.id}|${m.id}" ${!post.assignedTo ? selected : ''}>${escapeHtml(b.name)} > ${escapeHtml(m.name)}</option>`;
+            }))
+        ).join('');
+        
+        let assignSection;
+        if (post.assignedTo) {
+            const branch = branches.find(b => b.id === post.assignedTo.branchId);
+            const member = branch?.members.find(m => m.id === post.assignedTo.memberId);
+            const displayName = member ? `${branch.name} > ${member.name}` : 'محذوف';
+            assignSection = `
+                <div class="assigned-info">
+                    ✓ مُعتمد لـ <strong>${escapeHtml(displayName)}</strong>
+                    <br>
+                    <span class="reassign-link" onclick="unassignPost('${post.id}')">إلغاء الاعتماد</span>
                 </div>
             `;
-        }).join('');
-
-        if (sorted.length > 0 && (sorted[0].totalLikes || 0) > 0) {
-            winnerName.textContent = sorted[0].name + ' (' + PLATFORMS[sorted[0].platform].icon + ' ' + PLATFORMS[sorted[0].platform].name + ')';
-            winnerBanner.classList.add('active');
         } else {
-            winnerBanner.classList.remove('active');
+            assignSection = `
+                <div class="post-assign-row">
+                    <select class="post-assign-select" id="select_${post.id}">
+                        ${optionsHtml}
+                    </select>
+                    <button class="post-assign-btn" onclick="assignPost('${post.id}')">✓ تأكيد</button>
+                </div>
+            `;
         }
+        
+        return `
+            <div class="post-card ${post.assignedTo ? 'assigned' : ''}">
+                <div class="post-thumbnail" style="${thumb}">
+                    <div class="post-stats-overlay">❤️ ${formatNumber(post.likes)}</div>
+                </div>
+                <div class="post-body">
+                    <div class="post-title">${escapeHtml(post.title || '(بدون عنوان)')}</div>
+                    <div class="post-meta">
+                        <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
+                        <span class="post-uploader">@${escapeHtml(post.uploader || 'مجهول')}</span>
+                    </div>
+                    <div class="post-meta" style="margin-bottom:10px;">
+                        <span style="font-size:10px;">📅 ${post.upload_date || 'تاريخ مجهول'}</span>
+                        <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--accent-hover);font-size:10px;">فتح ↗</a>
+                    </div>
+                    ${assignSection}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function assignPost(postId) {
+    const post = discoveredPosts.find(p => p.id === postId);
+    if (!post) return;
+    
+    const select = document.getElementById('select_' + postId);
+    const value = select.value;
+    if (!value) { showToast('اختر متسابق أولاً', 'error'); return; }
+    
+    const [branchId, memberId] = value.split('|');
+    post.assignedTo = { branchId, memberId };
+    
+    saveData();
+    renderDiscovery();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast('✓ تم اعتماد المنشور');
+}
+
+function unassignPost(postId) {
+    const post = discoveredPosts.find(p => p.id === postId);
+    if (!post) return;
+    if (!confirm('إلغاء اعتماد هذا المنشور؟')) return;
+    
+    post.assignedTo = null;
+    saveData();
+    renderDiscovery();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast('تم الإلغاء');
+}
+
+// =================== Calculations ===================
+function getMemberTotalLikes(memberId) {
+    return discoveredPosts
+        .filter(p => p.assignedTo && p.assignedTo.memberId === memberId)
+        .reduce((s, p) => s + (p.likes || 0), 0);
+}
+
+function getMemberPostsCount(memberId) {
+    return discoveredPosts.filter(p => p.assignedTo && p.assignedTo.memberId === memberId).length;
+}
+
+function getBranchTotalLikes(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return 0;
+    return branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
+}
+
+function getBranchPostsCount(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return 0;
+    return branch.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0);
+}
+
+// =================== Leaderboard ===================
+function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    const winnerBanner = document.getElementById('winnerBanner');
+    const winnerName = document.getElementById('winnerName');
+    const winnerLabel = document.getElementById('winnerLabel');
+    
+    // Stats
+    const totalBranches = branches.length;
+    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+    const totalPosts = discoveredPosts.filter(p => p.assignedTo).length;
+    const totalLikes = discoveredPosts
+        .filter(p => p.assignedTo)
+        .reduce((s, p) => s + (p.likes || 0), 0);
+    
+    document.getElementById('lbTotalBranches').textContent = totalBranches;
+    document.getElementById('lbTotalMembers').textContent = totalMembers;
+    document.getElementById('lbTotalPosts').textContent = formatNumber(totalPosts);
+    document.getElementById('lbTotalLikes').textContent = formatNumber(totalLikes);
+    
+    if (currentLeaderboardView === 'branches') {
+        renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel);
+    } else {
+        renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel);
     }
+}
 
-    function clearAll() {
-        if (!confirm('مسح جميع البيانات؟')) return;
-        branches = [];
-        localStorage.removeItem('branchCompetitionV6');
-        renderBranches();
-        renderLeaderboard();
-        showToast('تم المسح');
+function renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
+    if (branches.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div>أضف فروعًا واعتمد منشورات</div></div>`;
+        winnerBanner.classList.remove('active');
+        return;
     }
-
-    function initDates() {
-        const today = new Date();
-        const weekAgo = new Date();
-        weekAgo.setDate(today.getDate() - 30);
-        const startInput = document.getElementById('globalStartDate');
-        const endInput = document.getElementById('globalEndDate');
-        if (!startInput.value) startInput.value = weekAgo.toISOString().split('T')[0];
-        if (!endInput.value) endInput.value = today.toISOString().split('T')[0];
+    
+    const sorted = [...branches]
+        .map(b => ({
+            ...b,
+            totalLikes: getBranchTotalLikes(b.id),
+            postsCount: getBranchPostsCount(b.id)
+        }))
+        .sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((branch, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        
+        return `
+            <div class="lb-item ${rankClass}">
+                <div class="lb-rank">${medal}</div>
+                <div>
+                    <div class="lb-info-name">🏢 ${escapeHtml(branch.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>${branch.members.length} متسابق</span>
+                        <span>•</span>
+                        <span>${branch.postsCount} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-numbers">
+                    <div class="lb-likes-val">${formatNumber(branch.totalLikes)}</div>
+                    <div class="lb-likes-lbl">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        winnerLabel.textContent = '🏢 الفرع الفائز';
+        winnerName.textContent = sorted[0].name;
+        winnerBanner.classList.add('active');
+    } else {
+        winnerBanner.classList.remove('active');
     }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadData();
-        initDates();
-        checkServerHealth();
-        setInterval(checkServerHealth, 10000);
+function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
+    const allMembers = branches.flatMap(b => 
+        b.members.map(m => ({
+            ...m,
+            branchName: b.name,
+            totalLikes: getMemberTotalLikes(m.id),
+            postsCount: getMemberPostsCount(m.id)
+        }))
+    );
+    
+    if (allMembers.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👤</div><div>أضف متسابقين واعتمد منشورات</div></div>`;
+        winnerBanner.classList.remove('active');
+        return;
+    }
+    
+    const sorted = allMembers.sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((member, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const p = PLATFORMS[member.platform];
+        
+        return `
+            <div class="lb-item ${rankClass}">
+                <div class="lb-rank">${medal}</div>
+                <div>
+                    <div class="lb-info-name">👤 ${escapeHtml(member.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>🏢 ${escapeHtml(member.branchName)}</span>
+                        <span>•</span>
+                        <span class="platform-badge ${p.class}">${p.icon}</span>
+                        <span>${member.postsCount} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-numbers">
+                    <div class="lb-likes-val">${formatNumber(member.totalLikes)}</div>
+                    <div class="lb-likes-lbl">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        winnerLabel.textContent = '👤 المتسابق الفائز';
+        winnerName.textContent = `${sorted[0].name} (${sorted[0].branchName})`;
+        winnerBanner.classList.add('active');
+    } else {
+        winnerBanner.classList.remove('active');
+    }
+}
 
-        document.getElementById('globalStartDate').addEventListener('change', saveData);
-        document.getElementById('globalEndDate').addEventListener('change', saveData);
+// =================== Clear ===================
+function clearAll() {
+    if (!confirm('مسح جميع البيانات (الفروع، المتسابقين، المنشورات)؟')) return;
+    branches = [];
+    discoveredPosts = [];
+    localStorage.removeItem('bcV3');
+    renderBranches();
+    renderDiscovery();
+    renderLeaderboard();
+    renderSetupSummary();
+    showToast('تم المسح');
+}
 
-        document.addEventListener('input', (e) => {
-            if (e.target.classList.contains('url-input')) updateManualSummary();
-        });
+// =================== Init ===================
+function initDates() {
+    const today = new Date();
+    const monthAgo = new Date();
+    monthAgo.setDate(today.getDate() - 30);
+    const startInput = document.getElementById('globalStartDate');
+    const endInput = document.getElementById('globalEndDate');
+    if (!startInput.value) startInput.value = monthAgo.toISOString().split('T')[0];
+    if (!endInput.value) endInput.value = today.toISOString().split('T')[0];
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    initDates();
+    checkServerHealth();
+    setInterval(checkServerHealth, 15000);
+    
+    document.getElementById('globalStartDate').addEventListener('change', saveData);
+    document.getElementById('globalEndDate').addEventListener('change', saveData);
+    
+    document.getElementById('memberModal').addEventListener('click', (e) => {
+        if (e.target.id === 'memberModal') closeMemberModal();
     });
+});
 </script>
 
 </body>
