@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# تثبيت yt-dlp عبر pip (يجلب أحدث نسخة دائمًا)
-RUN pip3 install --no-cache-dir --break-system-packages --upgrade yt-dlp \
+# تثبيت أحدث نسخة nightly من yt-dlp مباشرة من GitHub
+# هذي الأحدث دائمًا وتدعم آخر تغييرات Instagram
+RUN pip3 install --no-cache-dir --break-system-packages --upgrade --pre "yt-dlp[default]" \
+    && yt-dlp --update-to nightly \
     && yt-dlp --version
 
 WORKDIR /app
