@@ -1,3 +1,4 @@
+# Updated: 2026-05-23-v3 - Force rebuild
 FROM node:20-slim
 
 RUN apt-get update && apt-get install -y \
@@ -9,10 +10,9 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# تثبيت أحدث نسخة nightly من yt-dlp مباشرة من GitHub
-# هذي الأحدث دائمًا وتدعم آخر تغييرات Instagram
+# تثبيت أحدث nightly من yt-dlp
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade --pre "yt-dlp[default]" \
-    && yt-dlp --update-to nightly \
+    && yt-dlp -U --update-to nightly \
     && yt-dlp --version
 
 WORKDIR /app
