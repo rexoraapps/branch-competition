@@ -1505,6 +1505,24 @@ body::before {
             </button>
         </div>
 
+        <div class="luxury-card" style="border:1px solid var(--gold);">
+            <div class="card-title">
+                <div class="card-icon-box">🔬</div>
+                اختبار جلب Instagram
+            </div>
+            <div class="info-box">
+                🧪 لاختبار كم لايك يجلب النظام من رابط Instagram (يعرض نتيجة كل طريقة)
+            </div>
+            <div class="form-group">
+                <label>رابط منشور Instagram</label>
+                <input type="text" id="testIgUrl" placeholder="https://www.instagram.com/p/...">
+            </div>
+            <button class="btn btn-primary" onclick="testInstagramFetch()" id="testIgBtn">
+                🔬 اختبر الرابط
+            </button>
+            <div id="testIgResult" style="margin-top:12px;"></div>
+        </div>
+
         <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🔄</div>
@@ -1533,6 +1551,9 @@ body::before {
                 الحالة: متوقف
             </div>
             <button class="btn btn-primary" id="autoUpdateBtn" onclick="toggleAutoUpdate()">▶️ تفعيل التحديث التلقائي</button>
+            <div class="helper-text" style="margin-top:8px;color:var(--warning);">
+                ⚠️ التحديث التلقائي قد يكتب فوق الأرقام المعدّلة يدوياً
+            </div>
             <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-gold);">
                 <button class="btn btn-primary" onclick="refreshAllNow()" id="refreshNowBtn" style="background:linear-gradient(135deg,#10b981,#059669);">
                     🔄 تحديث الآن (يدوي)
@@ -2436,6 +2457,12 @@ function renderPostCard(post, source) {
         `;
     }
     
+    const editLikesBtn = `<button class="btn btn-warning" style="width:100%;margin-bottom:7px;padding:8px;font-size:11px;background:rgba(251,191,36,0.15);" onclick="editPostLikes('${post.id}','${source}')">✏️ تعديل اللايكات يدوياً</button>`;
+    
+    const editedBadge = post.manuallyEdited
+        ? `<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--warning);padding:4px 8px;border-radius:6px;font-size:10px;text-align:center;margin-bottom:7px;">✏️ معدّل يدوياً</div>`
+        : '';
+    
     const removeBtn = source === 'manual'
         ? `<button class="btn btn-danger" style="width:100%;margin-bottom:7px;" onclick="removeManualPost('${post.id}')">🗑️ حذف الرابط</button>`
         : '';
@@ -2456,6 +2483,8 @@ function renderPostCard(post, source) {
                     <span style="font-size:10px;">📅 ${formatDate(post.upload_date)}</span>
                     <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--gold);font-size:10px;">فتح ↗</a>
                 </div>
+                ${editedBadge}
+                ${editLikesBtn}
                 ${removeBtn}
                 ${assignSection}
             </div>
@@ -2571,6 +2600,38 @@ async function addManualLink() {
     
     btn.disabled = false;
     btn.innerHTML = '➕ إضافة الرابط';
+}
+
+function editPostLikes(postId, source) {
+    const list = source === 'manual' ? manualPosts : discoveredPosts;
+    const post = list.find(p => p.id === postId);
+    if (!post) return;
+    
+    const currentLikes = post.likes || 0;
+    const newLikesStr = prompt(
+        `📝 تعديل اللايكات يدوياً\n\n` +
+        `الرقم الحالي: ${formatNumber(currentLikes)}\n\n` +
+        `أدخل الرقم الصحيح من Instagram:`,
+        currentLikes
+    );
+    
+    if (newLikesStr === null) return; // إلغاء
+    
+    const newLikes = parseInt(newLikesStr.replace(/,/g, '').replace(/[^\d]/g, ''));
+    if (isNaN(newLikes) || newLikes < 0) {
+        showToast('❌ رقم غير صحيح', 'error');
+        return;
+    }
+    
+    post.likes = newLikes;
+    post.manuallyEdited = true; // علامة إن الرقم محرّر يدوياً
+    saveData();
+    
+    if (source === 'manual') renderManualPosts(); else renderDiscovery();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast(`✓ تم التحديث: ${formatNumber(newLikes)} لايك`);
 }
 
 function removeManualPost(postId) {
@@ -2868,6 +2929,67 @@ async function deleteCookies() {
 }
 
 // =================== Auto Update ===================
+async function testInstagramFetch() {
+    const url = document.getElementById('testIgUrl').value.trim();
+    if (!url) { showToast('أدخل رابط', 'error'); return; }
+    if (!url.includes('instagram.com')) { showToast('رابط Instagram فقط', 'error'); return; }
+    
+    const btn = document.getElementById('testIgBtn');
+    const resultEl = document.getElementById('testIgResult');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري الاختبار...';
+    resultEl.innerHTML = '';
+    
+    try {
+        const response = await fetch('/api/test-instagram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+        
+        let html = '<div style="background:rgba(20,20,28,0.6);border:1px solid var(--border-gold);border-radius:11px;padding:14px;font-size:12px;">';
+        html += '<div style="font-weight:700;margin-bottom:10px;color:var(--gold-light);">📊 نتيجة الاختبار:</div>';
+        
+        for (const [method, result] of Object.entries(data.methods)) {
+            const methodName = method === 'embed' ? '📄 Embed Endpoint' :
+                              method === 'public' ? '🌐 Public Page' :
+                              method === 'ytdlp' ? '🛠️ yt-dlp' : method;
+            
+            if (result.ok) {
+                html += `<div style="margin-bottom:6px;padding:8px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:8px;">
+                    ✅ ${methodName}: <strong style="color:var(--danger);">${formatNumber(result.likes)} ❤️</strong>
+                    ${result.comments ? ` · 💬 ${formatNumber(result.comments)}` : ''}
+                </div>`;
+            } else {
+                html += `<div style="margin-bottom:6px;padding:8px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:var(--text-muted);">
+                    ❌ ${methodName}: ${escapeHtml(result.error || 'فشل')}
+                </div>`;
+            }
+        }
+        
+        if (data.final && !data.final.error) {
+            html += `<div style="margin-top:10px;padding:10px;background:linear-gradient(135deg,var(--gold-dark),var(--gold));border-radius:8px;color:var(--bg-deep);font-weight:700;">
+                🏆 النتيجة النهائية: ${formatNumber(data.final.likes)} ❤️<br>
+                <span style="font-size:10px;opacity:0.8;">المصادر: ${escapeHtml(data.final.sources || 'لا شي')}</span>
+            </div>`;
+        } else if (data.final && data.final.error) {
+            html += `<div style="margin-top:10px;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:var(--danger);">
+                ❌ كل الطرق فشلت<br>
+                <span style="font-size:10px;">${escapeHtml(data.final.error)}</span>
+            </div>`;
+        }
+        
+        html += '</div>';
+        resultEl.innerHTML = html;
+    } catch (e) {
+        resultEl.innerHTML = '<div class="info-box warning">❌ ' + escapeHtml(e.message) + '</div>';
+    }
+    
+    btn.disabled = false;
+    btn.innerHTML = '🔬 اختبر الرابط';
+}
+
 async function checkAutoUpdateStatus() {
     try {
         const response = await fetch('/api/health');

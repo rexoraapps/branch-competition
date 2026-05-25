@@ -1,7 +1,7 @@
 {
   "name": "branch-competition",
-  "version": "5.0.0",
-  "description": "Branch competition system with auto-update and TV display",
+  "version": "7.0.0",
+  "description": "Branch competition system with multi-source Instagram likes fetching",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
