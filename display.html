@@ -1778,11 +1778,18 @@ function getAllPosts() {
 }
 
 function getFilteredPosts() {
-    return getAllPosts().filter(p => p.assignedTo && isPostInPeriod(p));
+    return getAllPosts().filter(p => p.assignedTo && (p.assignedTo.memberId || typeof p.assignedTo === 'string') && isPostInPeriod(p));
+}
+
+function getPostMemberId(p) {
+    if (!p.assignedTo) return null;
+    // assignedTo قد يكون object {memberId, branchId} أو string قديم
+    if (typeof p.assignedTo === 'object') return p.assignedTo.memberId;
+    return p.assignedTo; // string قديم
 }
 
 function getMemberPosts(memberId) {
-    return getFilteredPosts().filter(p => p.assignedTo === memberId);
+    return getFilteredPosts().filter(p => getPostMemberId(p) === memberId);
 }
 
 function getMemberStats(memberId) {
@@ -1797,7 +1804,7 @@ function getMemberStats(memberId) {
 
 function getBranchStats(branch) {
     const memberIds = (branch.members || []).map(m => m.id);
-    const posts = getFilteredPosts().filter(p => memberIds.includes(p.assignedTo));
+    const posts = getFilteredPosts().filter(p => memberIds.includes(getPostMemberId(p)));
     return {
         posts: posts.length,
         likes: posts.reduce((s, p) => s + (p.likes || 0), 0),
@@ -2099,7 +2106,7 @@ function getDetailsPosts() {
         const branch = (state.branches || []).find(b => b.id === currentDetailsId);
         if (!branch) return [];
         const memberIds = (branch.members || []).map(m => m.id);
-        return getFilteredPosts().filter(p => memberIds.includes(p.assignedTo));
+        return getFilteredPosts().filter(p => memberIds.includes(getPostMemberId(p)));
     } else if (currentDetailsType === 'member') {
         return getMemberPosts(currentDetailsId);
     }

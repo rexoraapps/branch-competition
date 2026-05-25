@@ -717,6 +717,12 @@ function setPeriod(period) {
     renderAll();
 }
 
+function getPostMemberId(p) {
+    if (!p.assignedTo) return null;
+    if (typeof p.assignedTo === 'object') return p.assignedTo.memberId;
+    return p.assignedTo;
+}
+
 function getFilteredPosts() {
     if (!state) return [];
     const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])]
@@ -769,7 +775,7 @@ function renderBranchComparison() {
     // حساب لايكات كل فرع
     const branchData = branches.map(branch => {
         const memberIds = (branch.members || []).map(m => m.id);
-        const branchPosts = posts.filter(p => memberIds.includes(p.assignedTo));
+        const branchPosts = posts.filter(p => memberIds.includes(getPostMemberId(p)));
         const likes = branchPosts.reduce((s,p) => s + (p.likes||0), 0);
         return { name: branch.name, likes, posts: branchPosts.length };
     });
@@ -974,8 +980,9 @@ function renderTopPosts() {
         const platName = PLATFORM_NAMES[post.platform] || 'Instagram';
         // ابحث عن اسم الموظف
         let memberName = '';
+        const mid = getPostMemberId(post);
         for (const branch of state.branches || []) {
-            const m = (branch.members || []).find(m => m.id === post.assignedTo);
+            const m = (branch.members || []).find(m => m.id === mid);
             if (m) { memberName = m.name; break; }
         }
         const title = post.title || 'منشور بدون عنوان';
@@ -1003,13 +1010,14 @@ function renderTopMembers() {
     const memberStats = {};
     
     posts.forEach(p => {
-        if (!p.assignedTo) return;
-        if (!memberStats[p.assignedTo]) {
-            memberStats[p.assignedTo] = { likes: 0, posts: 0, views: 0, name: '', branchName: '' };
+        const mid = getPostMemberId(p);
+        if (!mid) return;
+        if (!memberStats[mid]) {
+            memberStats[mid] = { likes: 0, posts: 0, views: 0, name: '', branchName: '' };
         }
-        memberStats[p.assignedTo].likes += (p.likes || 0);
-        memberStats[p.assignedTo].views += (p.views || 0);
-        memberStats[p.assignedTo].posts++;
+        memberStats[mid].likes += (p.likes || 0);
+        memberStats[mid].views += (p.views || 0);
+        memberStats[mid].posts++;
     });
     
     // أضف الأسماء
@@ -1063,7 +1071,7 @@ function renderBranchStats() {
     
     container.innerHTML = branches.map(branch => {
         const memberIds = (branch.members || []).map(m => m.id);
-        const branchPosts = posts.filter(p => memberIds.includes(p.assignedTo));
+        const branchPosts = posts.filter(p => memberIds.includes(getPostMemberId(p)));
         const likes = branchPosts.reduce((s,p) => s + (p.likes||0), 0);
         const views = branchPosts.reduce((s,p) => s + (p.views||0), 0);
         const comments = branchPosts.reduce((s,p) => s + (p.comments||0), 0);

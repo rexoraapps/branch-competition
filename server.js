@@ -1097,8 +1097,15 @@ app.post('/api/fix-orphaned', (req, res) => {
     let removed = 0;
     
     // إزالة الـ assignedTo من المنشورات اللي يشير لـ ID غير موجود
+    function getPostMemberId(p) {
+        if (!p.assignedTo) return null;
+        if (typeof p.assignedTo === 'object') return p.assignedTo.memberId;
+        return p.assignedTo;
+    }
+    
     allPosts.forEach(p => {
-        if (p.assignedTo && !allMemberIds.has(p.assignedTo)) {
+        const mid = getPostMemberId(p);
+        if (mid && !allMemberIds.has(mid)) {
             p.assignedTo = null;
             removed++;
         }
