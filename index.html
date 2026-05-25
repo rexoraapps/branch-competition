@@ -1,0 +1,3499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💎 مجوهرات نفائس الألماس</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+    /* Luxury Color Palette */
+    --bg-deep: #0a0a0f;
+    --bg-card: #14141c;
+    --bg-glass: rgba(212, 175, 55, 0.04);
+    --gold: #d4af37;
+    --gold-light: #f4e5b0;
+    --gold-dark: #a58020;
+    --gold-glow: rgba(212, 175, 55, 0.3);
+    --champagne: #f7e7ce;
+    --pearl: #f0ead6;
+    --text-primary: #f7e7ce;
+    --text-secondary: #b8a888;
+    --text-muted: #7a6f56;
+    --border-gold: rgba(212, 175, 55, 0.15);
+    --border-gold-strong: rgba(212, 175, 55, 0.35);
+    --success: #4ade80;
+    --danger: #ef4444;
+    --warning: #fbbf24;
+    --instagram: #e1306c;
+    --tiktok: #25f4ee;
+    --snapchat: #fffc00;
+    --shadow-gold: 0 8px 32px rgba(212, 175, 55, 0.15);
+    --shadow-deep: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+    min-height: 100vh;
+    background: var(--bg-deep);
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08) 0px, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(180, 130, 40, 0.04) 0px, transparent 60%);
+    color: var(--text-primary);
+    padding: 12px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+        linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.02) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 8s infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: -200% 0; }
+    50% { background-position: 200% 0; }
+}
+
+.container { max-width: 1500px; margin: 0 auto; position: relative; z-index: 1; }
+
+/* ============== LUXURY HEADER ============== */
+.luxury-header {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.95) 0%, rgba(30, 25, 15, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 20px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-gold), var(--shadow-deep);
+}
+
+.luxury-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+}
+
+.header-logo-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid var(--gold);
+    box-shadow: 0 4px 20px var(--gold-glow);
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.header-logo-wrap:hover { transform: scale(1.05); box-shadow: 0 6px 28px var(--gold-glow); }
+
+.header-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-logo-placeholder {
+    font-size: 32px;
+    color: var(--bg-deep);
+}
+
+.header-title {
+    font-family: 'Playfair Display', 'Tajawal', serif;
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.header-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.header-refresh-btn {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 11px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 16px var(--gold-glow);
+    transition: all 0.3s;
+}
+
+.header-refresh-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px var(--gold-glow);
+}
+
+.header-refresh-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.header-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-gold);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.header-date {
+    font-size: 13px;
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.server-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    border-radius: 18px;
+    font-size: 11px;
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid var(--border-gold);
+    color: var(--text-secondary);
+}
+
+.server-status.connected {
+    background: rgba(74, 222, 128, 0.08);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: var(--success);
+}
+
+.server-status.disconnected {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+}
+
+.status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-muted);
+    animation: pulse 2s infinite;
+}
+
+.server-status.connected .status-dot { background: var(--success); }
+.server-status.disconnected .status-dot { background: var(--danger); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ============== MAIN TABS ============== */
+.main-tabs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 18px;
+    padding: 5px;
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.8), rgba(30, 25, 15, 0.8));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    box-shadow: var(--shadow-deep);
+}
+
+.main-tab {
+    padding: 10px 4px;
+    background: transparent;
+    border: none;
+    border-radius: 11px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.main-tab .tab-icon { font-size: 17px; transition: transform 0.3s; }
+.main-tab:hover { background: rgba(212, 175, 55, 0.06); color: var(--gold-light); }
+.main-tab:hover .tab-icon { transform: translateY(-2px); }
+
+.main-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    box-shadow: 0 4px 16px var(--gold-glow);
+}
+
+.tab-content { display: none; animation: fadeInUp 0.4s ease-out; }
+.tab-content.active { display: block; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============== LUXURY CARDS ============== */
+.luxury-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.5));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-deep);
+    position: relative;
+    overflow: hidden;
+}
+
+.luxury-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold-light);
+}
+
+.card-icon-box {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--bg-deep);
+    box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+/* ============== INPUTS ============== */
+.form-group { margin-bottom: 13px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 11px 13px;
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.04);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+@media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+}
+
+/* ============== BUTTONS ============== */
+.btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    width: 100%;
+    box-shadow: 0 4px 14px var(--gold-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--gold-glow);
+}
+
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--gold-light);
+    border: 1px solid var(--border-gold-strong);
+}
+
+.btn-secondary:hover { background: rgba(212, 175, 55, 0.15); }
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 7px 11px;
+    font-size: 11px;
+}
+
+.btn-warning {
+    background: rgba(251, 191, 36, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 7px 11px;
+    font-size: 11px;
+}
+
+.btn-clear {
+    background: transparent;
+    border: 1px solid var(--border-gold);
+    color: var(--text-secondary);
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* ============== PLATFORM SELECTOR ============== */
+.platform-select {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 14px;
+}
+
+.platform-option {
+    padding: 11px 6px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 2px solid var(--border-gold);
+    border-radius: 11px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+}
+
+.platform-option:hover { background: rgba(212, 175, 55, 0.06); }
+.platform-option.selected.ig { border-color: var(--instagram); background: rgba(225, 48, 108, 0.1); color: var(--instagram); }
+.platform-option.selected.tt { border-color: var(--tiktok); background: rgba(37, 244, 238, 0.1); color: var(--tiktok); }
+.platform-option.selected.sn { border-color: var(--snapchat); background: rgba(255, 252, 0, 0.1); color: var(--snapchat); }
+
+.platform-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+
+/* ============== EMPTY STATES ============== */
+.empty-state {
+    text-align: center;
+    padding: 35px 15px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.empty-state-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+    color: var(--gold);
+}
+
+/* ============== BRANCH CARDS ============== */
+.branch-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.6), rgba(20, 20, 28, 0.4));
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 13px;
+    transition: all 0.3s;
+}
+
+.branch-card:hover {
+    border-color: var(--border-gold-strong);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.08);
+}
+
+.branch-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-gold);
+    gap: 10px;
+}
+
+.branch-header-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: 1;
+    min-width: 0;
+}
+
+.branch-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid var(--gold);
+    transition: transform 0.3s;
+}
+
+.branch-avatar:hover { transform: scale(1.05); }
+.branch-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.branch-name-display {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gold-light);
+    margin-bottom: 2px;
+}
+
+.branch-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.branch-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.branch-likes-pill {
+    text-align: center;
+    padding: 6px 11px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.members-list { display: flex; flex-direction: column; gap: 7px; }
+
+.member-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 9px 11px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.member-row:hover { background: rgba(212, 175, 55, 0.04); }
+
+.member-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid var(--border-gold-strong);
+}
+
+.member-avatar:hover { border-color: var(--gold); }
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.member-info { min-width: 0; }
+.member-name { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+.member-stats-mini { text-align: center; font-size: 11px; min-width: 70px; }
+.member-likes { font-weight: 700; color: var(--danger); font-size: 13px; }
+
+.add-member-btn {
+    width: 100%;
+    padding: 9px;
+    background: rgba(212, 175, 55, 0.05);
+    color: var(--gold);
+    border: 1px dashed var(--border-gold-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.add-member-btn:hover { background: rgba(212, 175, 55, 0.1); }
+
+/* ============== POSTS GRID ============== */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.post-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.5));
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: slideIn 0.4s;
+    transition: all 0.3s;
+}
+
+.post-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+.post-card.assigned {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.06), rgba(20, 20, 28, 0.5));
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.post-thumbnail {
+    width: 100%;
+    height: 210px;
+    background: rgba(0, 0, 0, 0.4);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.post-thumbnail.no-image::before {
+    content: '🖼️';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+.play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.post-thumbnail:hover .play-overlay { opacity: 1; }
+
+.play-btn-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    color: var(--bg-deep);
+    padding-right: 3px;
+}
+
+.post-stats-overlay {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 4px 11px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold-light);
+    border: 1px solid var(--border-gold);
+}
+
+.post-body { padding: 12px; }
+.post-title { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; max-height: 38px; overflow: hidden; line-height: 1.5; }
+.post-meta { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text-muted); margin-bottom: 8px; }
+
+.post-assign-row { display: flex; gap: 6px; }
+
+.post-assign-select {
+    flex: 1;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-gold);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 11px;
+    font-family: inherit;
+}
+
+.post-assign-select option { background: var(--bg-card); }
+
+.post-assign-btn {
+    padding: 8px 13px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.assigned-info {
+    padding: 8px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--success);
+    text-align: center;
+    margin-top: 7px;
+}
+
+.reassign-link { color: var(--gold); cursor: pointer; text-decoration: underline; margin-right: 5px; }
+
+.platform-badge { padding: 2px 7px; border-radius: 6px; font-weight: 700; font-size: 9px; }
+.platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
+.platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
+.platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
+
+/* ============== LUXURY LEADERBOARD ============== */
+.lb-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 14px;
+    padding: 4px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+}
+
+.lb-tab {
+    padding: 9px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.lb-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    box-shadow: 0 3px 10px var(--gold-glow);
+}
+
+.lb-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+    .lb-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.lb-stat-card {
+    padding: 11px 7px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(20, 20, 28, 0.5));
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    text-align: center;
+}
+
+.lb-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+.lb-stat-value {
+    font-size: 19px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.lb-list { display: flex; flex-direction: column; gap: 10px; }
+
+.lb-item {
+    display: grid;
+    grid-template-columns: 48px 56px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 15px;
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.4));
+    border: 1px solid var(--border-gold);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+
+.lb-item:hover {
+    transform: translateX(-4px);
+    border-color: var(--border-gold-strong);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.1);
+}
+
+.lb-item.rank-1 {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(20, 20, 28, 0.5));
+    border-color: var(--gold);
+    box-shadow: 0 6px 24px var(--gold-glow);
+}
+
+.lb-item.rank-1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+    pointer-events: none;
+}
+
+.lb-item.rank-2 {
+    background: linear-gradient(135deg, rgba(203, 213, 225, 0.08), rgba(20, 20, 28, 0.5));
+    border-color: rgba(203, 213, 225, 0.4);
+}
+
+.lb-item.rank-3 {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(20, 20, 28, 0.5));
+    border-color: rgba(217, 119, 6, 0.4);
+}
+
+.lb-rank {
+    width: 44px; height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    font-weight: 800;
+    font-size: 17px;
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    color: var(--gold-light);
+}
+
+.rank-1 .lb-rank {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    color: var(--bg-deep);
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+.rank-2 .lb-rank { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: var(--bg-deep); }
+.rank-3 .lb-rank { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
+
+.lb-avatar {
+    width: 48px; height: 48px;
+    border-radius: 11px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 800;
+    border: 2px solid var(--border-gold);
+    flex-shrink: 0;
+}
+
+.lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.lb-info-name { font-weight: 700; font-size: 14px; color: var(--gold-light); margin-bottom: 3px; }
+.lb-info-sub { font-size: 10px; color: var(--text-muted); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+.lb-numbers { text-align: center; }
+.lb-likes-val { font-weight: 800; font-size: 16px; color: var(--danger); }
+.lb-likes-lbl { font-size: 9px; color: var(--text-muted); }
+
+/* ============== WINNER BANNER ============== */
+.winner-banner {
+    margin-top: 18px;
+    padding: 22px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(20, 20, 28, 0.6));
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    text-align: center;
+    display: none;
+    box-shadow: 0 8px 32px var(--gold-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.winner-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    animation: rotateShine 6s linear infinite;
+}
+
+@keyframes rotateShine {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.winner-banner.active { display: block; }
+.winner-crown { font-size: 38px; margin-bottom: 8px; animation: bounce 2s infinite; position: relative; }
+.winner-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; letter-spacing: 1.5px; position: relative; }
+.winner-name {
+    font-size: 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+}
+
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+/* ============== SPINNER ============== */
+.spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============== INFO BOXES ============== */
+.info-box {
+    padding: 11px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(212, 175, 55, 0.02));
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 9px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--gold-light);
+    line-height: 1.6;
+}
+
+.info-box.warning {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02));
+    border-color: rgba(251, 191, 36, 0.3);
+    color: var(--warning);
+}
+
+/* ============== FILTERS ============== */
+.filter-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+
+.filter-chip {
+    padding: 6px 12px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.filter-chip.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border-color: transparent;
+}
+
+/* ============== MODALS ============== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 12px;
+}
+
+.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+.modal {
+    background: linear-gradient(135deg, var(--bg-card), rgba(30, 25, 15, 0.95));
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 16px;
+    padding: 22px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: zoomIn 0.3s;
+    box-shadow: var(--shadow-deep), 0 0 60px rgba(212, 175, 55, 0.15);
+    position: relative;
+}
+
+.modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--gold-light);
+}
+
+.modal-actions { display: flex; gap: 8px; margin-top: 14px; }
+.modal-actions .btn { flex: 1; padding: 10px; font-size: 13px; }
+
+/* ============== AVATAR UPLOADER ============== */
+.avatar-uploader {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 800;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 0 auto 14px;
+    border: 3px solid var(--gold);
+    box-shadow: 0 6px 20px var(--gold-glow);
+    transition: transform 0.3s;
+}
+
+.avatar-uploader:hover { transform: scale(1.05); }
+.avatar-uploader img { width: 100%; height: 100%; object-fit: cover; }
+
+.avatar-uploader::after {
+    content: '📷';
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 26px; height: 26px;
+    background: var(--bg-deep);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* ============== BRANCH DETAILS MODAL ============== */
+.details-modal {
+    max-width: 900px;
+}
+
+.details-platforms-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin: 14px 0;
+    padding: 4px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+}
+
+.details-platform-tab {
+    padding: 9px 6px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.details-platform-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+}
+
+.details-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.detail-post-card {
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    overflow: hidden;
+}
+
+.detail-post-thumb {
+    width: 100%;
+    height: 110px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.detail-post-info { padding: 8px; font-size: 10px; }
+.detail-post-likes { color: var(--danger); font-weight: 700; }
+
+/* ============== TOAST ============== */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 22px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: var(--shadow-deep), 0 0 24px var(--gold-glow);
+}
+
+.toast.show { opacity: 1; top: 30px; }
+.toast.error { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4); }
+.toast.warning { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; }
+
+/* ============== ANIMATIONS ============== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* ============== DISCOVERY LOG ============== */
+.discovery-log {
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-gold);
+    border-radius: 9px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    display: none;
+}
+
+.discovery-log.active { display: block; }
+.log-info { color: var(--text-secondary); }
+.log-success { color: var(--success); }
+.log-warning { color: var(--warning); }
+.log-error { color: var(--danger); }
+
+.helper-text { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+/* ============== VIDEO MODAL ============== */
+.video-modal { max-width: 700px; padding: 0; }
+
+.video-modal-header {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid var(--border-gold);
+}
+
+.video-modal-close {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.video-container { background: #000; }
+.video-container video { width: 100%; max-height: 70vh; display: block; }
+
+.video-fallback { padding: 30px; text-align: center; color: var(--text-secondary); }
+
+/* ============== HIDDEN FILE INPUT ============== */
+.hidden-file-input { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ============== LUXURY HEADER ============== -->
+    <header class="luxury-header">
+        <div class="header-content">
+            <!-- Logo -->
+            <div class="header-logo-wrap" onclick="document.getElementById('logoFileInput').click()" title="انقر لتغيير الشعار">
+                <div class="header-logo-placeholder" id="headerLogoPlaceholder">💎</div>
+                <img id="headerLogoImg" style="display:none;" alt="logo">
+            </div>
+            <input type="file" id="logoFileInput" class="hidden-file-input" accept="image/*" onchange="uploadSystemLogo(event)">
+
+            <!-- Title -->
+            <div>
+                <div class="header-title" id="headerSystemName">مجوهرات نفائس الألماس</div>
+                <div class="header-subtitle">نظام مسابقة الفروع · Premium Edition</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <button class="header-refresh-btn" id="headerRefreshBtn" onclick="refreshFromHeader()">
+                    <span id="headerRefreshIcon">🔄</span>
+                    <span>تحديث</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="header-info-row">
+            <div class="header-date">
+                📅 <span id="headerDate">--</span>
+            </div>
+            <div class="server-status" id="serverStatus">
+                <span class="status-dot"></span>
+                <span id="serverStatusText">جاري الاتصال...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============== MAIN TABS ============== -->
+    <div class="main-tabs">
+        <button class="main-tab active" data-tab="setup" onclick="switchTab('setup')">
+            <span class="tab-icon">⚙️</span>
+            <span>إعداد</span>
+        </button>
+        <button class="main-tab" data-tab="branches" onclick="switchTab('branches')">
+            <span class="tab-icon">🏢</span>
+            <span>الفروع</span>
+        </button>
+        <button class="main-tab" data-tab="discovery" onclick="switchTab('discovery')">
+            <span class="tab-icon">🔍</span>
+            <span>اكتشاف</span>
+        </button>
+        <button class="main-tab" data-tab="manual" onclick="switchTab('manual')">
+            <span class="tab-icon">🔗</span>
+            <span>روابط</span>
+        </button>
+        <button class="main-tab" data-tab="leaderboard" onclick="switchTab('leaderboard')">
+            <span class="tab-icon">🏅</span>
+            <span>ترتيب</span>
+        </button>
+        <button class="main-tab" data-tab="advanced" onclick="switchTab('advanced')">
+            <span class="tab-icon">🔧</span>
+            <span>متقدم</span>
+        </button>
+    </div>
+
+    <!-- ============== TAB 1: SETUP ============== -->
+    <div class="tab-content active" id="tab-setup">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">💎</div>
+                اسم النظام
+            </div>
+            <div class="form-group">
+                <label>اسم النظام (يظهر في الـ Header وشاشة العرض)</label>
+                <input type="text" id="systemNameInput" placeholder="مجوهرات نفائس الألماس">
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">👤</div>
+                إعدادات الحساب المصدر
+            </div>
+            <div class="info-box">
+                🤖 النظام سيجلب كل منشورات هذا الحساب خلال الفترة المحددة
+            </div>
+
+            <label style="display:block;margin-bottom:6px;color:var(--text-secondary);font-size:12px;font-weight:500;">المنصة</label>
+            <div class="platform-select">
+                <div class="platform-option ig selected" data-sp="instagram" onclick="selectSourcePlatform('instagram')">
+                    <span class="platform-icon">📷</span>Instagram
+                </div>
+                <div class="platform-option tt" data-sp="tiktok" onclick="selectSourcePlatform('tiktok')">
+                    <span class="platform-icon">🎵</span>TikTok
+                </div>
+                <div class="platform-option sn" data-sp="snapchat" onclick="selectSourcePlatform('snapchat')">
+                    <span class="platform-icon">👻</span>Snapchat
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>يوزر الحساب</label>
+                <input type="text" id="sourceUsername" placeholder="@company_official">
+            </div>
+
+            <div class="form-group">
+                <label>الحد الأقصى للمنشورات</label>
+                <input type="number" id="maxPosts" value="50" min="10" max="200">
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">📅</div>
+                فترة المسابقة
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>تاريخ البداية</label>
+                    <input type="date" id="globalStartDate">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>تاريخ النهاية</label>
+                    <input type="date" id="globalEndDate">
+                </div>
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">📊</div>
+                ملخص
+            </div>
+            <div id="setupSummary">
+                <div class="empty-state"><div class="empty-state-icon">📊</div><div>أضف فروع وموظفين</div></div>
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🛠️</div>
+                أدوات
+            </div>
+            <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح كل البيانات</button>
+        </div>
+    </div>
+
+    <!-- ============== TAB 2: BRANCHES ============== -->
+    <div class="tab-content" id="tab-branches">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">➕</div>
+                إضافة فرع جديد
+            </div>
+            <div class="form-group">
+                <label>اسم الفرع</label>
+                <input type="text" id="newBranchName" placeholder="فرع الرياض">
+            </div>
+            <button class="btn btn-primary" onclick="addBranch()">إضافة الفرع</button>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🏢</div>
+                الفروع والموظفين
+            </div>
+            <div id="branchesList">
+                <div class="empty-state"><div class="empty-state-icon">🏢</div><div>أضف فرعًا واحدًا على الأقل</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============== TAB 3: DISCOVERY ============== -->
+    <div class="tab-content" id="tab-discovery">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🔍</div>
+                جلب منشورات الحساب
+            </div>
+            <div class="info-box">
+                🤖 اضغط الزر لجلب كل منشورات الحساب خلال الفترة المحددة
+            </div>
+            <button class="btn btn-primary" onclick="discoverUserPosts()" id="discoverBtn">
+                🔄 جلب جميع منشورات الحساب
+            </button>
+            <div class="discovery-log" id="discoveryLog"></div>
+        </div>
+
+        <div class="filter-bar" id="discoveryFilters" style="display:none;">
+            <button class="filter-chip active" data-filter="all" onclick="setDiscoveryFilter('all')">الكل</button>
+            <button class="filter-chip" data-filter="unassigned" onclick="setDiscoveryFilter('unassigned')">⏳ معلّق</button>
+            <button class="filter-chip" data-filter="assigned" onclick="setDiscoveryFilter('assigned')">✓ مُعتمد</button>
+        </div>
+
+        <div id="postsGrid" class="posts-grid"></div>
+    </div>
+
+    <!-- ============== TAB 4: MANUAL ============== -->
+    <div class="tab-content" id="tab-manual">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🔗</div>
+                إضافة رابط يدوي
+            </div>
+            <div class="info-box">
+                📎 لإضافة منشور من حساب آخر أو منشور لم يظهر في الاكتشاف
+            </div>
+            <div class="form-group">
+                <label>رابط المنشور</label>
+                <input type="text" id="manualUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>إسناد لموظف</label>
+                <select id="manualAssignSelect"><option value="">-- اختر موظف --</option></select>
+            </div>
+            <button class="btn btn-primary" onclick="addManualLink()" id="addManualBtn">➕ إضافة الرابط</button>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">📋</div>
+                الروابط اليدوية
+            </div>
+            <div id="manualPostsList">
+                <div class="empty-state"><div class="empty-state-icon">🔗</div><div>لم تضف روابط بعد</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============== TAB 5: LEADERBOARD ============== -->
+    <div class="tab-content" id="tab-leaderboard">
+        <div class="luxury-card">
+            <div class="lb-tabs">
+                <button class="lb-tab active" data-lb="branches" onclick="switchLeaderboard('branches')">🏢 الفروع</button>
+                <button class="lb-tab" data-lb="members" onclick="switchLeaderboard('members')">👤 الموظفين</button>
+            </div>
+
+            <div class="lb-stats">
+                <div class="lb-stat-card"><div class="lb-stat-label">فروع</div><div class="lb-stat-value" id="lbTotalBranches">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">موظفين</div><div class="lb-stat-value" id="lbTotalMembers">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">منشورات</div><div class="lb-stat-value" id="lbTotalPosts">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">لايكات</div><div class="lb-stat-value" id="lbTotalLikes">0</div></div>
+            </div>
+
+            <div class="lb-list" id="leaderboardList">
+                <div class="empty-state"><div class="empty-state-icon">🎯</div><div>أضف فروع واعتمد منشورات</div></div>
+            </div>
+
+            <div class="winner-banner" id="winnerBanner">
+                <div class="winner-crown">👑</div>
+                <div class="winner-label" id="winnerLabel">الفائز</div>
+                <div class="winner-name" id="winnerName">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============== TAB 6: ADVANCED ============== -->
+    <div class="tab-content" id="tab-advanced">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🍪</div>
+                Cookies (لـ Instagram)
+            </div>
+            <div class="info-box warning">
+                ⚠️ Instagram يحظر السيرفرات. ارفع cookies من متصفحك ليعمل
+            </div>
+            <div id="cookiesStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);font-size:12px;text-align:center;">
+                جاري التحقق...
+            </div>
+            <input type="file" id="cookiesFile" class="hidden-file-input" accept=".txt" onchange="uploadCookies()">
+            <button class="btn btn-primary" onclick="document.getElementById('cookiesFile').click()" style="margin-bottom:8px;">
+                📤 رفع ملف cookies.txt
+            </button>
+            <button class="btn btn-danger" onclick="deleteCookies()" style="width:100%;padding:10px;">
+                🗑️ حذف Cookies
+            </button>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">🔄</div>
+                التحديث التلقائي
+            </div>
+            <div class="info-box">
+                🤖 السيرفر يحدّث لايكات المنشورات تلقائيًا، حتى لو متصفحك مغلق
+            </div>
+            <div class="form-group">
+                <label>الفترة الزمنية</label>
+                <select id="autoUpdateInterval">
+                    <option value="0.083">⚡ كل 5 دقائق (سريع - أنصح به)</option>
+                    <option value="0.25">🔄 كل 15 دقيقة</option>
+                    <option value="0.5">🔄 كل 30 دقيقة</option>
+                    <option value="1">كل ساعة</option>
+                    <option value="3">كل 3 ساعات</option>
+                    <option value="6" selected>كل 6 ساعات</option>
+                    <option value="12">كل 12 ساعة</option>
+                    <option value="24">كل 24 ساعة</option>
+                </select>
+                <div class="helper-text">
+                    ⚠️ ملاحظة: التحديث السريع (كل 5 دقائق) يستهلك موارد السيرفر. استخدمه فقط أثناء المسابقة النشطة.
+                </div>
+            </div>
+            <div id="autoUpdateStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);font-size:12px;text-align:center;">
+                الحالة: متوقف
+            </div>
+            <button class="btn btn-primary" id="autoUpdateBtn" onclick="toggleAutoUpdate()">▶️ تفعيل التحديث التلقائي</button>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-gold);">
+                <button class="btn btn-primary" onclick="refreshAllNow()" id="refreshNowBtn" style="background:linear-gradient(135deg,#10b981,#059669);">
+                    🔄 تحديث الآن (يدوي)
+                </button>
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">📺</div>
+                شاشة العرض المباشر
+            </div>
+            <button class="btn btn-primary" onclick="openDisplay()">📺 فتح شاشة العرض</button>
+            <button class="btn btn-secondary" onclick="copyDisplayLink()" style="margin-top:8px;width:100%;padding:10px;">📋 نسخ رابط الشاشة</button>
+        </div>
+
+        <div class="luxury-card" style="border: 2px solid var(--gold); background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(20, 20, 28, 0.5));">
+            <div class="card-title">
+                <div class="card-icon-box">💾</div>
+                النسخة الاحتياطية (مهم!)
+            </div>
+            <div class="info-box warning">
+                ⚠️ <strong>احفظ نسخة احتياطية بشكل دوري!</strong>
+                <br>عند تحديث النظام أو إعادة بناء السيرفر، قد تُمسح البيانات. النسخة الاحتياطية تحميك من فقدان البيانات.
+            </div>
+            
+            <div id="backupStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);font-size:12px;text-align:center;">
+                جاري التحقق...
+            </div>
+            
+            <button class="btn btn-primary" onclick="exportBackup()" style="margin-bottom:8px;background:linear-gradient(135deg,var(--success),#059669);">
+                📥 تصدير نسخة احتياطية كاملة
+            </button>
+            
+            <input type="file" id="backupFileInput" class="hidden-file-input" accept=".json" onchange="importBackup(event)">
+            <button class="btn btn-secondary" onclick="document.getElementById('backupFileInput').click()" style="width:100%;padding:10px;margin-bottom:8px;">
+                📤 استيراد نسخة احتياطية
+            </button>
+            
+            <button class="btn btn-secondary" onclick="restoreFromLocalStorage()" style="width:100%;padding:10px;">
+                🔄 استرجاع البيانات من ذاكرة المتصفح
+            </button>
+            <div class="helper-text" style="text-align:center;margin-top:6px;">
+                لو السيرفر فاضي، هذا الزر يسترجع آخر بيانات محفوظة في متصفحك
+            </div>
+        </div>
+
+        <div class="luxury-card" style="border: 2px solid var(--gold-dark);">
+            <div class="card-title">
+                <div class="card-icon-box">🕐</div>
+                النسخ الاحتياطية في السيرفر
+            </div>
+            <div class="info-box">
+                🤖 السيرفر يحفظ نسخة كل ساعة + عند التغييرات الكبيرة. يحتفظ بآخر 14 نسخة.
+            </div>
+            
+            <button class="btn btn-primary" onclick="createServerBackup()" style="margin-bottom:10px;">
+                💾 إنشاء نسخة احتياطية الآن
+            </button>
+            
+            <button class="btn btn-secondary" onclick="loadServerBackups()" style="width:100%;padding:10px;margin-bottom:10px;">
+                🔄 تحديث قائمة النسخ
+            </button>
+            
+            <div id="serverBackupsList" style="margin-top:10px;">
+                <div class="helper-text" style="text-align:center;padding:14px;">اضغط "تحديث قائمة النسخ" لعرضها</div>
+            </div>
+        </div>
+
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">📥</div>
+                تصدير النتائج
+            </div>
+            <button class="btn btn-primary" onclick="exportPDF()" style="margin-bottom:8px;">📄 تصدير تقرير PDF</button>
+            <button class="btn btn-primary" onclick="exportWinnerImage()" style="background:linear-gradient(135deg,#fbbf24,#ec4899);">
+                🏆 تصدير صورة الفائز
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ============== MEMBER MODAL ============== -->
+<div class="modal-overlay" id="memberModal">
+    <div class="modal">
+        <div class="modal-title">
+            <div class="card-icon-box">👤</div>
+            <span id="memberModalTitle">إضافة موظف</span>
+        </div>
+
+        <!-- Member Avatar Uploader -->
+        <div class="avatar-uploader" id="memberAvatarUploader" onclick="document.getElementById('memberAvatarInput').click()">
+            <span id="memberAvatarPlaceholder">👤</span>
+            <img id="memberAvatarImg" style="display:none;" alt="avatar">
+        </div>
+        <input type="file" id="memberAvatarInput" class="hidden-file-input" accept="image/*" onchange="uploadMemberAvatar(event)">
+
+        <div class="form-group">
+            <label>اسم الموظف</label>
+            <input type="text" id="memberName" placeholder="أحمد محمد">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeMemberModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveMember()">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============== BRANCH MODAL ============== -->
+<div class="modal-overlay" id="branchModal">
+    <div class="modal">
+        <div class="modal-title">
+            <div class="card-icon-box">🏢</div>
+            <span id="branchModalTitle">تعديل الفرع</span>
+        </div>
+
+        <div class="avatar-uploader" id="branchAvatarUploader" onclick="document.getElementById('branchAvatarInput').click()">
+            <span id="branchAvatarPlaceholder">🏢</span>
+            <img id="branchAvatarImg" style="display:none;" alt="avatar">
+        </div>
+        <input type="file" id="branchAvatarInput" class="hidden-file-input" accept="image/*" onchange="uploadBranchAvatar(event)">
+
+        <div class="form-group">
+            <label>اسم الفرع</label>
+            <input type="text" id="branchNameEdit" placeholder="فرع الرياض">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeBranchModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveBranchEdit()">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============== BRANCH DETAILS MODAL ============== -->
+<div class="modal-overlay" id="detailsModal">
+    <div class="modal details-modal">
+        <div class="modal-title">
+            <div class="card-icon-box" id="detailsAvatar">🏢</div>
+            <span id="detailsTitle">تفاصيل الفرع</span>
+            <button class="video-modal-close" style="margin-right:auto;" onclick="closeDetailsModal()">✕</button>
+        </div>
+
+        <div id="detailsStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;"></div>
+
+        <div class="details-platforms-tabs">
+            <button class="details-platform-tab active" data-dp="all" onclick="setDetailsPlatform('all')">الكل</button>
+            <button class="details-platform-tab" data-dp="instagram" onclick="setDetailsPlatform('instagram')">📷 Instagram</button>
+            <button class="details-platform-tab" data-dp="tiktok" onclick="setDetailsPlatform('tiktok')">🎵 TikTok</button>
+            <button class="details-platform-tab" data-dp="snapchat" onclick="setDetailsPlatform('snapchat')">👻 Snap</button>
+        </div>
+
+        <div class="details-posts" id="detailsPosts"></div>
+    </div>
+</div>
+
+<!-- ============== VIDEO MODAL ============== -->
+<div class="modal-overlay" id="videoModal">
+    <div class="modal video-modal">
+        <div class="video-modal-header">
+            <div style="font-weight:700;font-size:13px;color:var(--gold-light);" id="videoModalTitle">عرض المنشور</div>
+            <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
+        </div>
+        <div class="video-container" id="videoContainer"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = window.location.origin;
+
+// =================== State ===================
+let branches = [];
+let discoveredPosts = [];
+let manualPosts = [];
+let serverConnected = false;
+let currentLeaderboardView = 'branches';
+let currentDiscoveryFilter = 'all';
+let currentDetailsBranchId = null;
+let currentDetailsPlatform = 'all';
+let editingMember = null;
+let editingBranch = null;
+let editingMemberImage = null;
+let editingBranchImage = null;
+let sourcePlatform = 'instagram';
+let systemName = 'مجوهرات نفائس الألماس';
+let systemLogo = null;
+let autoUpdateEnabled = false;
+
+const PLATFORMS = {
+    instagram: { name: 'Instagram', icon: '📷', class: 'ig' },
+    tiktok: { name: 'TikTok', icon: '🎵', class: 'tt' },
+    snapchat: { name: 'Snapchat', icon: '👻', class: 'sn' }
+};
+
+// =================== Helpers ===================
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = String(text || '');
+    return div.innerHTML;
+}
+
+function formatNumber(n) { return (n || 0).toLocaleString('ar-EG'); }
+
+function formatDate(dateStr) {
+    if (!dateStr || dateStr.length !== 8) return 'غير معروف';
+    return `${dateStr.substring(0, 4)}/${dateStr.substring(4, 6)}/${dateStr.substring(6, 8)}`;
+}
+
+function updateHeaderDate() {
+    const today = new Date();
+    document.getElementById('headerDate').textContent = today.toLocaleDateString('ar-EG', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+}
+
+// =================== Storage & Sync ===================
+function getElValue(id, fallback = '') {
+    const el = document.getElementById(id);
+    return el ? el.value : fallback;
+}
+
+function saveData() {
+    const data = {
+        branches, discoveredPosts, manualPosts, sourcePlatform, systemName, systemLogo,
+        sourceUsername: getElValue('sourceUsername'),
+        maxPosts: getElValue('maxPosts', '50'),
+        startDate: getElValue('globalStartDate'),
+        endDate: getElValue('globalEndDate')
+    };
+    try {
+        localStorage.setItem('bcV6', JSON.stringify(data));
+    } catch (e) { console.warn('localStorage failed:', e); }
+    syncStateToServer(data);
+}
+
+async function syncStateToServer(data) {
+    try {
+        await fetch('/api/save-state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+    } catch (e) { console.error('Sync error:', e); }
+}
+
+async function loadStateFromServer() {
+    try {
+        const response = await fetch('/api/state');
+        const data = await response.json();
+        
+        // فحص: هل السيرفر فاضي بينما عندنا بيانات محلية؟
+        const serverEmpty = (!data.branches || data.branches.length === 0) &&
+                           (!data.discoveredPosts || data.discoveredPosts.length === 0) &&
+                           (!data.manualPosts || data.manualPosts.length === 0);
+        
+        if (serverEmpty) {
+            const localStored = localStorage.getItem('bcV6');
+            if (localStored) {
+                try {
+                    const localData = JSON.parse(localStored);
+                    const hasLocalData = (localData.branches && localData.branches.length > 0) ||
+                                        (localData.discoveredPosts && localData.discoveredPosts.length > 0) ||
+                                        (localData.manualPosts && localData.manualPosts.length > 0);
+                    if (hasLocalData) {
+                        console.log('[Recovery] Server empty but local has data - restoring!');
+                        applyLoadedState(localData);
+                        // أعد رفعها للسيرفر
+                        setTimeout(() => {
+                            saveData();
+                            showToast('🔄 تم استرجاع بياناتك من ذاكرة المتصفح وإعادة رفعها للسيرفر');
+                        }, 500);
+                        return;
+                    }
+                } catch (e) { console.warn('Local restore failed:', e); }
+            }
+        }
+        
+        applyLoadedState(data);
+    } catch (e) {
+        console.error('Load server state error:', e);
+        loadFromLocalStorage();
+    }
+}
+
+function loadFromLocalStorage() {
+    const stored = localStorage.getItem('bcV6');
+    if (stored) {
+        try { applyLoadedState(JSON.parse(stored)); } catch (e) { console.error(e); }
+    }
+}
+
+function setElValue(id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) el.value = value;
+}
+
+function setElText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function applyLoadedState(data) {
+    if (!data) return;
+    branches = data.branches || [];
+    discoveredPosts = data.discoveredPosts || [];
+    manualPosts = data.manualPosts || [];
+    systemName = data.systemName || 'مجوهرات نفائس الألماس';
+    systemLogo = data.systemLogo || null;
+    
+    // ضبط المنصة بدون استدعاء saveData
+    if (data.sourcePlatform) {
+        sourcePlatform = data.sourcePlatform;
+        document.querySelectorAll('.platform-option[data-sp]').forEach(el => {
+            el.classList.toggle('selected', el.dataset.sp === sourcePlatform);
+        });
+    }
+    
+    setElValue('sourceUsername', data.sourceUsername);
+    setElValue('maxPosts', data.maxPosts);
+    setElValue('globalStartDate', data.startDate);
+    setElValue('globalEndDate', data.endDate);
+    setElValue('systemNameInput', systemName);
+    setElText('headerSystemName', systemName);
+    document.title = '💎 ' + systemName;
+    
+    try {
+        updateLogoDisplay();
+        renderBranches();
+        renderDiscovery();
+        renderManualPosts();
+        renderLeaderboard();
+        renderSetupSummary();
+        updateMemberSelects();
+    } catch (e) {
+        console.error('Render error:', e);
+    }
+}
+
+// =================== Tabs ===================
+function switchTab(tab) {
+    try {
+        document.querySelectorAll('.main-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+        if (tab === 'leaderboard') renderLeaderboard();
+        else if (tab === 'discovery') renderDiscovery();
+        else if (tab === 'setup') renderSetupSummary();
+        else if (tab === 'manual') { renderManualPosts(); updateMemberSelects(); }
+        else if (tab === 'advanced') { checkCookiesStatus(); checkAutoUpdateStatus(); updateBackupStatus(); loadServerBackups(); }
+    } catch (e) {
+        console.error('switchTab error:', e);
+    }
+}
+
+function switchLeaderboard(view) {
+    currentLeaderboardView = view;
+    document.querySelectorAll('.lb-tab').forEach(t => t.classList.toggle('active', t.dataset.lb === view));
+    renderLeaderboard();
+}
+
+function setDiscoveryFilter(filter) {
+    currentDiscoveryFilter = filter;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === filter));
+    renderDiscovery();
+}
+
+function selectSourcePlatform(platform) {
+    sourcePlatform = platform;
+    document.querySelectorAll('.platform-option[data-sp]').forEach(el => {
+        el.classList.toggle('selected', el.dataset.sp === platform);
+    });
+    saveData();
+}
+
+// =================== Server Health ===================
+async function checkServerHealth() {
+    const statusEl = document.getElementById('serverStatus');
+    const textEl = document.getElementById('serverStatusText');
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const response = await fetch(`${API_BASE}/api/health`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        serverConnected = true;
+        statusEl.classList.add('connected');
+        statusEl.classList.remove('disconnected');
+        textEl.textContent = data.ytdlp_installed
+            ? `متصل · yt-dlp ${data.ytdlp_version}`
+            : 'متصل (yt-dlp غير مثبت)';
+        console.log('[Health] OK:', data);
+    } catch (e) {
+        serverConnected = false;
+        statusEl.classList.remove('connected');
+        statusEl.classList.add('disconnected');
+        textEl.textContent = 'غير متصل · ' + (e.message || 'فشل');
+        console.error('[Health] FAIL:', e);
+    }
+}
+
+// =================== Header Refresh ===================
+async function refreshFromHeader() {
+    const btn = document.getElementById('headerRefreshBtn');
+    const icon = document.getElementById('headerRefreshIcon');
+    btn.disabled = true;
+    icon.innerHTML = '<span class="spinner"></span>';
+    
+    try {
+        const response = await fetch('/api/refresh-all', { method: 'POST' });
+        const data = await response.json();
+        await loadStateFromServer();
+        showToast(`✓ تم تحديث ${data.updated} منشور`);
+    } catch (e) {
+        showToast('فشل التحديث: ' + e.message, 'error');
+    }
+    
+    btn.disabled = false;
+    icon.textContent = '🔄';
+}
+
+// =================== Image Uploads ===================
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await fetch('/api/upload-image', { method: 'POST', body: formData });
+    const data = await response.json();
+    if (!response.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+}
+
+async function uploadSystemLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        systemLogo = url;
+        updateLogoDisplay();
+        saveData();
+        showToast('✓ تم رفع الشعار');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+function updateLogoDisplay() {
+    const img = document.getElementById('headerLogoImg');
+    const placeholder = document.getElementById('headerLogoPlaceholder');
+    if (systemLogo) {
+        img.src = systemLogo;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+}
+
+async function uploadMemberAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        editingMemberImage = url;
+        const img = document.getElementById('memberAvatarImg');
+        const placeholder = document.getElementById('memberAvatarPlaceholder');
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        showToast('✓ تم رفع الصورة');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+async function uploadBranchAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        editingBranchImage = url;
+        const img = document.getElementById('branchAvatarImg');
+        const placeholder = document.getElementById('branchAvatarPlaceholder');
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        showToast('✓ تم رفع الصورة');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+// =================== Branches ===================
+function addBranch() {
+    const name = document.getElementById('newBranchName').value.trim();
+    if (!name) { showToast('أدخل اسم الفرع', 'error'); return; }
+    branches.push({ id: 'b_' + Date.now(), name: name, image: null, members: [] });
+    document.getElementById('newBranchName').value = '';
+    saveData();
+    renderBranches();
+    renderSetupSummary();
+    updateMemberSelects();
+    showToast('تم إضافة الفرع ✓');
+}
+
+function removeBranch(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    if (!confirm(`حذف فرع "${branch.name}" وكل موظفيه؟`)) return;
+    [...discoveredPosts, ...manualPosts].forEach(p => {
+        if (p.assignedTo && p.assignedTo.branchId === branchId) p.assignedTo = null;
+    });
+    branches = branches.filter(b => b.id !== branchId);
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderManualPosts();
+    renderLeaderboard();
+    renderSetupSummary();
+    updateMemberSelects();
+    showToast('تم الحذف');
+}
+
+function openEditBranch(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    editingBranch = branchId;
+    editingBranchImage = branch.image || null;
+    document.getElementById('branchNameEdit').value = branch.name;
+    
+    const img = document.getElementById('branchAvatarImg');
+    const placeholder = document.getElementById('branchAvatarPlaceholder');
+    if (branch.image) {
+        img.src = branch.image;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+    
+    document.getElementById('branchModal').classList.add('active');
+}
+
+function closeBranchModal() {
+    document.getElementById('branchModal').classList.remove('active');
+    editingBranch = null;
+    editingBranchImage = null;
+}
+
+function saveBranchEdit() {
+    if (!editingBranch) return;
+    const branch = branches.find(b => b.id === editingBranch);
+    if (!branch) return;
+    const name = document.getElementById('branchNameEdit').value.trim();
+    if (!name) { showToast('أدخل الاسم', 'error'); return; }
+    branch.name = name;
+    branch.image = editingBranchImage;
+    saveData();
+    renderBranches();
+    renderLeaderboard();
+    updateMemberSelects();
+    closeBranchModal();
+    showToast('تم التعديل ✓');
+}
+
+// =================== Members ===================
+function openAddMember(branchId) {
+    editingMember = { branchId };
+    editingMemberImage = null;
+    document.getElementById('memberModalTitle').textContent = 'إضافة موظف';
+    document.getElementById('memberName').value = '';
+    document.getElementById('memberAvatarImg').style.display = 'none';
+    document.getElementById('memberAvatarPlaceholder').style.display = 'block';
+    document.getElementById('memberModal').classList.add('active');
+    setTimeout(() => document.getElementById('memberName').focus(), 100);
+}
+
+function editMember(branchId, memberId) {
+    const branch = branches.find(b => b.id === branchId);
+    const member = branch?.members.find(m => m.id === memberId);
+    if (!member) return;
+    editingMember = { branchId, memberId };
+    editingMemberImage = member.image || null;
+    document.getElementById('memberModalTitle').textContent = 'تعديل موظف';
+    document.getElementById('memberName').value = member.name;
+    
+    const img = document.getElementById('memberAvatarImg');
+    const placeholder = document.getElementById('memberAvatarPlaceholder');
+    if (member.image) {
+        img.src = member.image;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+    
+    document.getElementById('memberModal').classList.add('active');
+}
+
+function closeMemberModal() {
+    document.getElementById('memberModal').classList.remove('active');
+    editingMember = null;
+    editingMemberImage = null;
+}
+
+function saveMember() {
+    if (!editingMember) return;
+    const name = document.getElementById('memberName').value.trim();
+    if (!name) { showToast('أدخل الاسم', 'error'); return; }
+    
+    const branch = branches.find(b => b.id === editingMember.branchId);
+    if (!branch) return;
+    
+    if (editingMember.memberId) {
+        const member = branch.members.find(m => m.id === editingMember.memberId);
+        if (member) {
+            member.name = name;
+            member.image = editingMemberImage;
+        }
+    } else {
+        branch.members.push({
+            id: 'm_' + Date.now(),
+            name: name,
+            image: editingMemberImage
+        });
+    }
+    
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderLeaderboard();
+    renderSetupSummary();
+    updateMemberSelects();
+    closeMemberModal();
+    showToast(editingMember.memberId ? 'تم التعديل ✓' : 'تم الإضافة ✓');
+}
+
+function removeMember(branchId, memberId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    const member = branch.members.find(m => m.id === memberId);
+    if (!member) return;
+    if (!confirm(`حذف "${member.name}"؟`)) return;
+    [...discoveredPosts, ...manualPosts].forEach(p => {
+        if (p.assignedTo && p.assignedTo.memberId === memberId) p.assignedTo = null;
+    });
+    branch.members = branch.members.filter(m => m.id !== memberId);
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderManualPosts();
+    renderLeaderboard();
+    renderSetupSummary();
+    updateMemberSelects();
+    showToast('تم الحذف');
+}
+
+// =================== Render Branches ===================
+function renderBranches() {
+    const list = document.getElementById('branchesList');
+    if (branches.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏢</div><div>أضف فرعًا</div></div>`;
+        return;
+    }
+    
+    list.innerHTML = branches.map(branch => {
+        const branchLikes = branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
+        const branchAvatar = branch.image
+            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
+            : (branch.name[0] || '🏢');
+        
+        const membersHtml = branch.members.length === 0
+            ? `<div class="empty-state" style="padding:14px;">لا موظفين بعد</div>`
+            : branch.members.map(m => {
+                const likes = getMemberTotalLikes(m.id);
+                const posts = getMemberPostsCount(m.id);
+                const avatar = m.image
+                    ? `<img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}">`
+                    : (m.name[0] || '👤');
+                return `
+                    <div class="member-row">
+                        <div class="member-avatar" onclick="editMember('${branch.id}','${m.id}')">${avatar}</div>
+                        <div class="member-info">
+                            <div class="member-name">${escapeHtml(m.name)}</div>
+                            <div style="font-size:10px;color:var(--text-muted);">${posts} منشور</div>
+                        </div>
+                        <div style="display:flex;gap:5px;align-items:center;">
+                            <div class="member-stats-mini">
+                                <div class="member-likes">${formatNumber(likes)}</div>
+                                <div style="font-size:9px;color:var(--text-muted);">❤️</div>
+                            </div>
+                            <button class="btn btn-warning" onclick="editMember('${branch.id}','${m.id}')">✏️</button>
+                            <button class="btn btn-danger" onclick="removeMember('${branch.id}','${m.id}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        
+        return `
+            <div class="branch-card">
+                <div class="branch-card-header">
+                    <div class="branch-header-info">
+                        <div class="branch-avatar" onclick="openEditBranch('${branch.id}')">${branchAvatar}</div>
+                        <div>
+                            <div class="branch-name-display">${escapeHtml(branch.name)}</div>
+                            <div class="branch-meta">${branch.members.length} موظف</div>
+                        </div>
+                    </div>
+                    <div class="branch-actions">
+                        <div class="branch-likes-pill">${formatNumber(branchLikes)} ❤️</div>
+                        <button class="btn btn-warning" onclick="openEditBranch('${branch.id}')">✏️</button>
+                        <button class="btn btn-danger" onclick="removeBranch('${branch.id}')">حذف</button>
+                    </div>
+                </div>
+                <div class="members-list">${membersHtml}</div>
+                <button class="add-member-btn" onclick="openAddMember('${branch.id}')">+ إضافة موظف</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderSetupSummary() {
+    const summary = document.getElementById('setupSummary');
+    if (branches.length === 0) {
+        summary.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><div>أضف فروع</div></div>`;
+        return;
+    }
+    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+    const allPosts = [...discoveredPosts, ...manualPosts];
+    const assignedPosts = allPosts.filter(p => p.assignedTo).length;
+    summary.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+            <div class="lb-stat-card"><div class="lb-stat-label">الفروع</div><div class="lb-stat-value">${branches.length}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">الموظفين</div><div class="lb-stat-value">${totalMembers}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">منشورات مجلوبة</div><div class="lb-stat-value">${discoveredPosts.length}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">روابط يدوية</div><div class="lb-stat-value">${manualPosts.length}</div></div>
+            <div class="lb-stat-card" style="grid-column:span 2;"><div class="lb-stat-label">منشورات معتمدة</div><div class="lb-stat-value">${assignedPosts}</div></div>
+        </div>
+    `;
+}
+
+function getMemberOptionsHtml(currentAssignment) {
+    let html = '<option value="">-- اختر موظف --</option>';
+    branches.forEach(b => {
+        b.members.forEach(m => {
+            const selected = currentAssignment && currentAssignment.branchId === b.id && currentAssignment.memberId === m.id ? 'selected' : '';
+            html += `<option value="${b.id}|${m.id}" ${selected}>${escapeHtml(b.name)} > ${escapeHtml(m.name)}</option>`;
+        });
+    });
+    return html;
+}
+
+function updateMemberSelects() {
+    const select = document.getElementById('manualAssignSelect');
+    if (select) select.innerHTML = getMemberOptionsHtml();
+}
+
+// =================== Logging ===================
+function logDiscovery(message, type = 'info') {
+    const log = document.getElementById('discoveryLog');
+    log.classList.add('active');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry log-' + type;
+    entry.textContent = message;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+// =================== Discovery ===================
+async function discoverUserPosts() {
+    if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
+    const username = document.getElementById('sourceUsername').value.trim();
+    if (!username) { showToast('أدخل يوزر الحساب', 'error'); return; }
+    if (sourcePlatform === 'snapchat') { showToast('Snapchat لا يدعم جلب الحساب', 'error'); return; }
+    if (branches.length === 0 || branches.every(b => b.members.length === 0)) {
+        showToast('أضف موظفين أولاً', 'error');
+        return;
+    }
+    
+    const maxPosts = parseInt(document.getElementById('maxPosts').value) || 50;
+    const startDate = document.getElementById('globalStartDate').value;
+    const endDate = document.getElementById('globalEndDate').value;
+    
+    const btn = document.getElementById('discoverBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
+    
+    const log = document.getElementById('discoveryLog');
+    log.innerHTML = '';
+    log.classList.add('active');
+    
+    logDiscovery(`🔍 جلب منشورات: @${username.replace('@', '')}`, 'info');
+    logDiscovery(`⏳ جاري الاتصال...`, 'warning');
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/fetch-user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username.replace('@', ''),
+                platform: sourcePlatform,
+                startDate, endDate, maxPosts
+            })
+        });
+        
+        const data = await response.json();
+        if (!response.ok || data.error) {
+            logDiscovery(`✗ خطأ: ${data.error}`, 'error');
+            showToast('فشل: ' + data.error, 'error');
+            btn.disabled = false;
+            btn.innerHTML = '🔄 جلب جميع منشورات الحساب';
+            return;
+        }
+        
+        logDiscovery(`✓ اكتُشف: ${data.discoveredCount}`, 'success');
+        logDiscovery(`✓ ضمن النطاق: ${data.posts.length}`, 'success');
+        
+        let newCount = 0;
+        for (const post of data.posts) {
+            const exists = [...discoveredPosts, ...manualPosts].find(p => p.url === post.url);
+            if (exists) continue;
+            discoveredPosts.push({
+                id: 'd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                url: post.url, likes: post.likes, views: post.views,
+                title: post.title, thumbnail: post.thumbnail, video_url: post.video_url,
+                upload_date: post.upload_date, uploader: post.uploader,
+                platform: sourcePlatform, assignedTo: null
+            });
+            newCount++;
+        }
+        
+        logDiscovery(`✅ أضيف ${newCount} منشور جديد`, 'success');
+        saveData();
+        renderDiscovery();
+        renderSetupSummary();
+        showToast(`✓ تم جلب ${newCount} منشور`);
+    } catch (e) {
+        logDiscovery(`✗ فشل: ${e.message}`, 'error');
+        showToast('فشل: ' + e.message, 'error');
+    }
+    
+    btn.disabled = false;
+    btn.innerHTML = '🔄 جلب جميع منشورات الحساب';
+}
+
+function renderDiscovery() {
+    const grid = document.getElementById('postsGrid');
+    const filters = document.getElementById('discoveryFilters');
+    
+    if (discoveredPosts.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><div>اضغط زر "جلب"</div></div>`;
+        filters.style.display = 'none';
+        return;
+    }
+    
+    filters.style.display = 'flex';
+    let filtered = discoveredPosts;
+    if (currentDiscoveryFilter === 'unassigned') filtered = discoveredPosts.filter(p => !p.assignedTo);
+    else if (currentDiscoveryFilter === 'assigned') filtered = discoveredPosts.filter(p => p.assignedTo);
+    
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">📭</div><div>لا منشورات</div></div>`;
+        return;
+    }
+    
+    grid.innerHTML = filtered.map(post => renderPostCard(post, 'discovered')).join('');
+}
+
+function renderPostCard(post, source) {
+    const p = PLATFORMS[post.platform] || PLATFORMS.instagram;
+    const thumb = post.thumbnail ? `background-image:url('${escapeHtml(post.thumbnail)}');` : '';
+    const noImageClass = post.thumbnail ? '' : 'no-image';
+    const optionsHtml = getMemberOptionsHtml(post.assignedTo);
+    
+    let assignSection;
+    if (post.assignedTo) {
+        const branch = branches.find(b => b.id === post.assignedTo.branchId);
+        const member = branch?.members.find(m => m.id === post.assignedTo.memberId);
+        const displayName = member ? `${branch.name} > ${member.name}` : 'محذوف';
+        assignSection = `
+            <div class="assigned-info">
+                ✓ مُعتمد لـ <strong>${escapeHtml(displayName)}</strong>
+                <br><span class="reassign-link" onclick="unassignPost('${post.id}','${source}')">إلغاء</span>
+            </div>
+        `;
+    } else {
+        assignSection = `
+            <div class="post-assign-row">
+                <select class="post-assign-select" id="select_${post.id}">${optionsHtml}</select>
+                <button class="post-assign-btn" onclick="assignPost('${post.id}','${source}')">✓</button>
+            </div>
+        `;
+    }
+    
+    const removeBtn = source === 'manual'
+        ? `<button class="btn btn-danger" style="width:100%;margin-bottom:7px;" onclick="removeManualPost('${post.id}')">🗑️ حذف الرابط</button>`
+        : '';
+    
+    return `
+        <div class="post-card ${post.assignedTo ? 'assigned' : ''}">
+            <div class="post-thumbnail ${noImageClass}" style="${thumb}" onclick="playVideo('${post.id}','${source}')">
+                <div class="play-overlay"><div class="play-btn-circle">▶</div></div>
+                <div class="post-stats-overlay">❤️ ${formatNumber(post.likes)}</div>
+            </div>
+            <div class="post-body">
+                <div class="post-title">${escapeHtml(post.title || '(بدون نص)')}</div>
+                <div class="post-meta">
+                    <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
+                    <span>@${escapeHtml(post.uploader || 'مجهول')}</span>
+                </div>
+                <div class="post-meta" style="margin-bottom:9px;">
+                    <span style="font-size:10px;">📅 ${formatDate(post.upload_date)}</span>
+                    <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--gold);font-size:10px;">فتح ↗</a>
+                </div>
+                ${removeBtn}
+                ${assignSection}
+            </div>
+        </div>
+    `;
+}
+
+function assignPost(postId, source) {
+    const list = source === 'manual' ? manualPosts : discoveredPosts;
+    const post = list.find(p => p.id === postId);
+    if (!post) return;
+    const select = document.getElementById('select_' + postId);
+    if (!select.value) { showToast('اختر موظف', 'error'); return; }
+    const [branchId, memberId] = select.value.split('|');
+    post.assignedTo = { branchId, memberId };
+    saveData();
+    if (source === 'manual') renderManualPosts(); else renderDiscovery();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast('✓ تم الاعتماد');
+}
+
+function unassignPost(postId, source) {
+    const list = source === 'manual' ? manualPosts : discoveredPosts;
+    const post = list.find(p => p.id === postId);
+    if (!post || !confirm('إلغاء الاعتماد؟')) return;
+    post.assignedTo = null;
+    saveData();
+    if (source === 'manual') renderManualPosts(); else renderDiscovery();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast('تم الإلغاء');
+}
+
+// =================== Video ===================
+function playVideo(postId, source) {
+    const list = source === 'manual' ? manualPosts : discoveredPosts;
+    const post = list.find(p => p.id === postId);
+    if (!post) return;
+    
+    const container = document.getElementById('videoContainer');
+    document.getElementById('videoModalTitle').textContent = post.title || 'عرض المنشور';
+    
+    if (post.video_url) {
+        container.innerHTML = `<video controls autoplay><source src="${escapeHtml(post.video_url)}" type="video/mp4"></video>`;
+    } else {
+        container.innerHTML = `
+            <div class="video-fallback">
+                <div style="font-size:36px;margin-bottom:10px;">📹</div>
+                <div>الفيديو غير قابل للتشغيل المباشر</div>
+                <button class="btn btn-primary" style="margin-top:14px;" onclick="window.open('${escapeHtml(post.url)}','_blank')">فتح في المنصة ↗</button>
+            </div>
+        `;
+    }
+    
+    document.getElementById('videoModal').classList.add('active');
+}
+
+function closeVideoModal() {
+    document.getElementById('videoModal').classList.remove('active');
+    document.getElementById('videoContainer').innerHTML = '';
+}
+
+// =================== Manual URLs ===================
+async function addManualLink() {
+    if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
+    const url = document.getElementById('manualUrl').value.trim();
+    if (!url) { showToast('أدخل الرابط', 'error'); return; }
+    const assignValue = document.getElementById('manualAssignSelect').value;
+    if (!assignValue) { showToast('اختر موظف', 'error'); return; }
+    
+    const exists = [...discoveredPosts, ...manualPosts].find(p => p.url === url);
+    if (exists) { showToast('هذا الرابط موجود', 'error'); return; }
+    
+    const btn = document.getElementById('addManualBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
+    
+    try {
+        const response = await fetch('/api/fetch-post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+        if (!response.ok || data.error) {
+            showToast('فشل: ' + (data.error || 'unknown'), 'error');
+            btn.disabled = false;
+            btn.innerHTML = '➕ إضافة الرابط';
+            return;
+        }
+        
+        const [branchId, memberId] = assignValue.split('|');
+        manualPosts.push({
+            id: 'mn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            url, likes: data.likes, views: data.views, title: data.title,
+            thumbnail: data.thumbnail, video_url: data.video_url,
+            upload_date: data.upload_date, uploader: data.uploader,
+            platform: data.platform, assignedTo: { branchId, memberId }
+        });
+        
+        document.getElementById('manualUrl').value = '';
+        document.getElementById('manualAssignSelect').value = '';
+        saveData();
+        renderManualPosts();
+        renderLeaderboard();
+        renderBranches();
+        renderSetupSummary();
+        showToast(`✓ تم إضافة (${formatNumber(data.likes)} لايك)`);
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    
+    btn.disabled = false;
+    btn.innerHTML = '➕ إضافة الرابط';
+}
+
+function removeManualPost(postId) {
+    if (!confirm('حذف هذا الرابط؟')) return;
+    manualPosts = manualPosts.filter(p => p.id !== postId);
+    saveData();
+    renderManualPosts();
+    renderLeaderboard();
+    renderBranches();
+    renderSetupSummary();
+    showToast('تم الحذف');
+}
+
+function renderManualPosts() {
+    const list = document.getElementById('manualPostsList');
+    if (manualPosts.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔗</div><div>لم تضف روابط بعد</div></div>`;
+        return;
+    }
+    list.innerHTML = `<div class="posts-grid">${manualPosts.map(post => renderPostCard(post, 'manual')).join('')}</div>`;
+}
+
+// =================== Calculations ===================
+function getMemberTotalLikes(memberId) {
+    return [...discoveredPosts, ...manualPosts]
+        .filter(p => p.assignedTo && p.assignedTo.memberId === memberId)
+        .reduce((s, p) => s + (p.likes || 0), 0);
+}
+
+function getMemberPostsCount(memberId) {
+    return [...discoveredPosts, ...manualPosts].filter(p => p.assignedTo && p.assignedTo.memberId === memberId).length;
+}
+
+function getBranchTotalLikes(branchId) {
+    const b = branches.find(x => x.id === branchId);
+    return b ? b.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0) : 0;
+}
+
+function getBranchPostsCount(branchId) {
+    const b = branches.find(x => x.id === branchId);
+    return b ? b.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0) : 0;
+}
+
+function getBranchPosts(branchId) {
+    const b = branches.find(x => x.id === branchId);
+    if (!b) return [];
+    const memberIds = b.members.map(m => m.id);
+    return [...discoveredPosts, ...manualPosts].filter(p => p.assignedTo && memberIds.includes(p.assignedTo.memberId));
+}
+
+// =================== Leaderboard ===================
+function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    const winnerBanner = document.getElementById('winnerBanner');
+    const winnerName = document.getElementById('winnerName');
+    const winnerLabel = document.getElementById('winnerLabel');
+    
+    const totalBranches = branches.length;
+    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+    const allPosts = [...discoveredPosts, ...manualPosts];
+    const assignedPosts = allPosts.filter(p => p.assignedTo);
+    const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
+    
+    document.getElementById('lbTotalBranches').textContent = totalBranches;
+    document.getElementById('lbTotalMembers').textContent = totalMembers;
+    document.getElementById('lbTotalPosts').textContent = formatNumber(assignedPosts.length);
+    document.getElementById('lbTotalLikes').textContent = formatNumber(totalLikes);
+    
+    if (currentLeaderboardView === 'branches') {
+        renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel);
+    } else {
+        renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel);
+    }
+}
+
+function renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
+    if (branches.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div>أضف فروع</div></div>`;
+        winnerBanner.classList.remove('active');
+        return;
+    }
+    
+    const sorted = [...branches].map(b => ({
+        ...b,
+        totalLikes: getBranchTotalLikes(b.id),
+        postsCount: getBranchPostsCount(b.id)
+    })).sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((branch, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const avatar = branch.image
+            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
+            : (branch.name[0] || '🏢');
+        return `
+            <div class="lb-item ${rankClass}" onclick="openBranchDetails('${branch.id}')">
+                <div class="lb-rank">${medal}</div>
+                <div class="lb-avatar">${avatar}</div>
+                <div>
+                    <div class="lb-info-name">${escapeHtml(branch.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>${branch.members.length} موظف</span>
+                        <span>•</span>
+                        <span>${formatNumber(branch.postsCount)} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-numbers">
+                    <div class="lb-likes-val">${formatNumber(branch.totalLikes)}</div>
+                    <div class="lb-likes-lbl">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        winnerLabel.textContent = '🏢 الفرع المتصدر';
+        winnerName.textContent = sorted[0].name;
+        winnerBanner.classList.add('active');
+    } else {
+        winnerBanner.classList.remove('active');
+    }
+}
+
+function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
+    const allMembers = branches.flatMap(b =>
+        b.members.map(m => ({
+            ...m,
+            branchName: b.name,
+            branchId: b.id,
+            totalLikes: getMemberTotalLikes(m.id),
+            postsCount: getMemberPostsCount(m.id)
+        }))
+    );
+    
+    if (allMembers.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👤</div><div>أضف موظفين</div></div>`;
+        winnerBanner.classList.remove('active');
+        return;
+    }
+    
+    const sorted = allMembers.sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    list.innerHTML = sorted.map((member, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const avatar = member.image
+            ? `<img src="${escapeHtml(member.image)}" alt="${escapeHtml(member.name)}">`
+            : (member.name[0] || '👤');
+        return `
+            <div class="lb-item ${rankClass}">
+                <div class="lb-rank">${medal}</div>
+                <div class="lb-avatar">${avatar}</div>
+                <div>
+                    <div class="lb-info-name">${escapeHtml(member.name)}</div>
+                    <div class="lb-info-sub">
+                        <span>🏢 ${escapeHtml(member.branchName)}</span>
+                        <span>•</span>
+                        <span>${formatNumber(member.postsCount)} منشور</span>
+                    </div>
+                </div>
+                <div class="lb-numbers">
+                    <div class="lb-likes-val">${formatNumber(member.totalLikes)}</div>
+                    <div class="lb-likes-lbl">❤️ لايك</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
+        winnerLabel.textContent = '👤 الموظف المتصدر';
+        winnerName.textContent = `${sorted[0].name} (${sorted[0].branchName})`;
+        winnerBanner.classList.add('active');
+    } else {
+        winnerBanner.classList.remove('active');
+    }
+}
+
+// =================== Branch Details Modal ===================
+function openBranchDetails(branchId) {
+    currentDetailsBranchId = branchId;
+    currentDetailsPlatform = 'all';
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    
+    const avatarEl = document.getElementById('detailsAvatar');
+    avatarEl.innerHTML = branch.image
+        ? `<img src="${escapeHtml(branch.image)}" style="width:100%;height:100%;border-radius:10px;object-fit:cover;">`
+        : (branch.name[0] || '🏢');
+    
+    document.getElementById('detailsTitle').textContent = branch.name;
+    
+    // Stats
+    const branchPosts = getBranchPosts(branchId);
+    const totalLikes = branchPosts.reduce((s, p) => s + (p.likes || 0), 0);
+    document.getElementById('detailsStats').innerHTML = `
+        <div class="lb-stat-card"><div class="lb-stat-label">المنشورات</div><div class="lb-stat-value">${branchPosts.length}</div></div>
+        <div class="lb-stat-card"><div class="lb-stat-label">اللايكات</div><div class="lb-stat-value">${formatNumber(totalLikes)}</div></div>
+        <div class="lb-stat-card"><div class="lb-stat-label">الموظفين</div><div class="lb-stat-value">${branch.members.length}</div></div>
+    `;
+    
+    // Reset platform tabs
+    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === 'all'));
+    
+    renderDetailsPosts();
+    document.getElementById('detailsModal').classList.add('active');
+}
+
+function setDetailsPlatform(platform) {
+    currentDetailsPlatform = platform;
+    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === platform));
+    renderDetailsPosts();
+}
+
+function renderDetailsPosts() {
+    if (!currentDetailsBranchId) return;
+    let posts = getBranchPosts(currentDetailsBranchId);
+    if (currentDetailsPlatform !== 'all') {
+        posts = posts.filter(p => p.platform === currentDetailsPlatform);
+    }
+    
+    const container = document.getElementById('detailsPosts');
+    if (posts.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">📭</div><div>لا منشورات</div></div>`;
+        return;
+    }
+    
+    const sorted = [...posts].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    container.innerHTML = sorted.map(post => {
+        const p = PLATFORMS[post.platform] || PLATFORMS.instagram;
+        const thumb = post.thumbnail ? `background-image:url('${escapeHtml(post.thumbnail)}');` : '';
+        return `
+            <div class="detail-post-card">
+                <div class="detail-post-thumb" style="${thumb}"></div>
+                <div class="detail-post-info">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <span class="platform-badge ${p.class}">${p.icon}</span>
+                        <span class="detail-post-likes">❤️ ${formatNumber(post.likes)}</span>
+                    </div>
+                    <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--gold);font-size:10px;">فتح ↗</a>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.remove('active');
+    currentDetailsBranchId = null;
+}
+
+// =================== Cookies ===================
+async function checkCookiesStatus() {
+    try {
+        const response = await fetch('/api/cookies-status');
+        const data = await response.json();
+        const el = document.getElementById('cookiesStatus');
+        if (!el) return;
+        if (data.exists) {
+            const d = new Date(data.mtime);
+            el.style.color = 'var(--success)';
+            el.innerHTML = '✓ Cookies مرفوعة<br><span style="font-size:10px;opacity:0.7;">آخر تحديث: ' + d.toLocaleString('ar-EG') + '</span>';
+        } else {
+            el.style.color = 'var(--warning)';
+            el.innerHTML = '⚠️ لا توجد cookies';
+        }
+    } catch (e) {}
+}
+
+async function uploadCookies() {
+    const fileInput = document.getElementById('cookiesFile');
+    const file = fileInput.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('cookies', file);
+    try {
+        const response = await fetch('/api/upload-cookies', { method: 'POST', body: formData });
+        const data = await response.json();
+        if (data.ok) {
+            showToast('✓ تم رفع cookies');
+            checkCookiesStatus();
+        } else { showToast('فشل', 'error'); }
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    fileInput.value = '';
+}
+
+async function deleteCookies() {
+    if (!confirm('حذف cookies؟')) return;
+    try {
+        await fetch('/api/cookies', { method: 'DELETE' });
+        showToast('تم الحذف');
+        checkCookiesStatus();
+    } catch (e) {}
+}
+
+// =================== Auto Update ===================
+async function checkAutoUpdateStatus() {
+    try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        autoUpdateEnabled = data.auto_update_enabled;
+        
+        const el = document.getElementById('autoUpdateStatus');
+        const btn = document.getElementById('autoUpdateBtn');
+        const intervalSelect = document.getElementById('autoUpdateInterval');
+        if (!el || !btn) return;
+        
+        if (data.auto_update_enabled) {
+            el.style.color = 'var(--success)';
+            // تنسيق الفترة الزمنية
+            let intervalText;
+            const intervalVal = parseFloat(data.auto_update_interval);
+            if (intervalVal < 1) {
+                const minutes = Math.round(intervalVal * 60);
+                intervalText = 'كل ' + minutes + ' دقيقة';
+            } else {
+                intervalText = 'كل ' + Math.round(intervalVal) + ' ساعة';
+            }
+            let html = '✅ مفعّل · ' + intervalText;
+            if (data.last_update) {
+                const d = new Date(data.last_update);
+                html += '<br><span style="font-size:10px;opacity:0.7;">آخر تحديث: ' + d.toLocaleString('ar-EG') + '</span>';
+            }
+            el.innerHTML = html;
+            btn.innerHTML = '⏸️ إيقاف التحديث التلقائي';
+        } else {
+            el.style.color = 'var(--text-muted)';
+            el.innerHTML = '⏸️ متوقف';
+            btn.innerHTML = '▶️ تفعيل التحديث التلقائي';
+        }
+        
+        if (intervalSelect && data.auto_update_interval) {
+            intervalSelect.value = data.auto_update_interval;
+        }
+    } catch (e) {}
+}
+
+async function toggleAutoUpdate() {
+    const interval = parseFloat(document.getElementById('autoUpdateInterval').value) || 6;
+    try {
+        const response = await fetch('/api/auto-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: !autoUpdateEnabled, interval })
+        });
+        const data = await response.json();
+        if (data.ok) {
+            showToast(data.enabled ? '✓ تم التفعيل' : '✓ تم الإيقاف');
+            checkAutoUpdateStatus();
+        }
+    } catch (e) {}
+}
+
+async function refreshAllNow() {
+    const btn = document.getElementById('refreshNowBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> جاري التحديث...';
+    try {
+        const response = await fetch('/api/refresh-all', { method: 'POST' });
+        const data = await response.json();
+        showToast('✓ تم تحديث ' + data.updated + ' منشور');
+        await loadStateFromServer();
+        checkAutoUpdateStatus();
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    btn.disabled = false;
+    btn.innerHTML = '🔄 تحديث الآن (يدوي)';
+}
+
+// =================== Display Page ===================
+function openDisplay() { window.open('/display', '_blank'); }
+function copyDisplayLink() {
+    const url = window.location.origin + '/display';
+    navigator.clipboard.writeText(url).then(() => showToast('✓ تم نسخ الرابط')).catch(() => prompt('انسخ:', url));
+}
+
+// =================== Export PDF ===================
+async function exportPDF() {
+    if (branches.length === 0) { showToast('لا توجد بيانات', 'error'); return; }
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let y = 20;
+        
+        doc.setFillColor(212, 175, 55);
+        doc.rect(0, 0, pageWidth, 30, 'F');
+        doc.setTextColor(10, 10, 15);
+        doc.setFontSize(18);
+        doc.text(systemName + ' - Competition Report', pageWidth / 2, 15, { align: 'center' });
+        doc.setFontSize(9);
+        doc.text(new Date().toLocaleString('en-US'), pageWidth / 2, 23, { align: 'center' });
+        
+        y = 40;
+        doc.setTextColor(0, 0, 0);
+        const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
+        const allPosts = [...discoveredPosts, ...manualPosts];
+        const assignedPosts = allPosts.filter(p => p.assignedTo);
+        const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
+        
+        doc.setFontSize(13);
+        doc.text('Summary', 14, y);
+        y += 8;
+        doc.setFontSize(10);
+        doc.text(`Branches: ${branches.length}  Members: ${totalMembers}`, 14, y); y += 6;
+        doc.text(`Posts: ${assignedPosts.length}  Total Likes: ${totalLikes.toLocaleString('en-US')}`, 14, y); y += 12;
+        
+        doc.setFillColor(212, 175, 55);
+        doc.rect(10, y - 5, pageWidth - 20, 8, 'F');
+        doc.setTextColor(10, 10, 15);
+        doc.setFontSize(11);
+        doc.text('Branches Ranking', 14, y);
+        y += 10;
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(9);
+        
+        const sortedBranches = [...branches].map(b => ({
+            ...b, totalLikes: getBranchTotalLikes(b.id), postsCount: getBranchPostsCount(b.id)
+        })).sort((a, b) => b.totalLikes - a.totalLikes);
+        
+        sortedBranches.forEach((b, i) => {
+            if (i === 0) doc.setFillColor(251, 191, 36);
+            else if (i === 1) doc.setFillColor(203, 213, 225);
+            else if (i === 2) doc.setFillColor(217, 119, 6);
+            else doc.setFillColor(245, 245, 245);
+            doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
+            doc.text(`#${i + 1}  ${b.name.substring(0, 30)}`, 14, y);
+            doc.text(`${b.members.length} members`, 100, y);
+            doc.text(`${b.postsCount} posts`, 130, y);
+            doc.text(`${b.totalLikes.toLocaleString('en-US')} likes`, 160, y);
+            y += 7;
+            if (y > 270) { doc.addPage(); y = 20; }
+        });
+        
+        y += 10;
+        if (y > 240) { doc.addPage(); y = 20; }
+        doc.setFillColor(212, 175, 55);
+        doc.rect(10, y - 5, pageWidth - 20, 8, 'F');
+        doc.setTextColor(10, 10, 15);
+        doc.setFontSize(11);
+        doc.text('Members Ranking', 14, y);
+        y += 10;
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(9);
+        
+        const allMembers = branches.flatMap(b => b.members.map(m => ({
+            ...m, branchName: b.name, totalLikes: getMemberTotalLikes(m.id), postsCount: getMemberPostsCount(m.id)
+        }))).sort((a, b) => b.totalLikes - a.totalLikes);
+        
+        allMembers.forEach((m, i) => {
+            if (i === 0) doc.setFillColor(251, 191, 36);
+            else if (i === 1) doc.setFillColor(203, 213, 225);
+            else if (i === 2) doc.setFillColor(217, 119, 6);
+            else doc.setFillColor(245, 245, 245);
+            doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
+            doc.text(`#${i + 1}  ${m.name.substring(0, 22)}`, 14, y);
+            doc.text(m.branchName.substring(0, 22), 90, y);
+            doc.text(`${m.postsCount} posts`, 140, y);
+            doc.text(`${m.totalLikes.toLocaleString('en-US')} likes`, 170, y);
+            y += 7;
+            if (y > 270) { doc.addPage(); y = 20; }
+        });
+        
+        doc.save(`${systemName}-${new Date().toISOString().split('T')[0]}.pdf`);
+        showToast('✓ تم تصدير PDF');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+}
+
+// =================== Winner Image ===================
+const WINNER_QUOTES = [
+    'إبداع لا يضاهى! 🌟', 'أنت الأول وستبقى الأفضل! 👑', 'نجاحك إلهام لنا جميعًا 🚀',
+    'بصمتك واضحة في كل عمل 💎', 'الإصرار ثمرته الفوز 🏆', 'أنت تصنع الفرق! 🔥',
+    'تستحق كل التقدير 🌹', 'القمة لمن يستحقها 🏔️', 'أبدعت فتألقت! ✨', 'فخر لكل من حولك 🎖️'
+];
+
+async function exportWinnerImage() {
+    if (branches.length === 0) { showToast('لا توجد بيانات', 'error'); return; }
+    
+    const allMembers = branches.flatMap(b => b.members.map(m => ({
+        ...m, branchName: b.name, totalLikes: getMemberTotalLikes(m.id), postsCount: getMemberPostsCount(m.id)
+    }))).sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    const sortedBranches = [...branches].map(b => ({
+        ...b, totalLikes: getBranchTotalLikes(b.id), postsCount: getBranchPostsCount(b.id)
+    })).sort((a, b) => b.totalLikes - a.totalLikes);
+    
+    if (allMembers.length === 0 || allMembers[0].totalLikes === 0) { showToast('لا يوجد فائز', 'error'); return; }
+    
+    const winner = allMembers[0];
+    const quote = WINNER_QUOTES[Math.floor(Math.random() * WINNER_QUOTES.length)];
+    
+    const canvas = document.createElement('div');
+    canvas.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1080px;padding:60px;font-family:Tajawal,Tahoma,sans-serif;direction:rtl;background:linear-gradient(135deg,#0a0a0f 0%,#1a1408 100%);color:#f7e7ce;';
+    
+    canvas.innerHTML = `
+        <div style="text-align:center;">
+            <div style="font-size:64px;margin-bottom:20px;">💎</div>
+            <div style="font-size:38px;font-weight:900;background:linear-gradient(135deg,#f4e5b0,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">${escapeHtml(systemName)}</div>
+            <div style="font-size:20px;opacity:0.7;margin-bottom:40px;">نتائج المسابقة</div>
+            <div style="background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(20,20,15,0.6));border:3px solid #d4af37;border-radius:30px;padding:40px;margin-bottom:35px;">
+                <div style="font-size:80px;margin-bottom:15px;">👑</div>
+                <div style="font-size:24px;opacity:0.8;margin-bottom:10px;">المركز الأول</div>
+                <div style="font-size:54px;font-weight:900;background:linear-gradient(135deg,#f4e5b0,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;">${escapeHtml(winner.name)}</div>
+                <div style="font-size:24px;opacity:0.85;margin-bottom:20px;">🏢 ${escapeHtml(winner.branchName)}</div>
+                <div style="display:inline-flex;gap:30px;padding:18px 35px;background:rgba(212,175,55,0.1);border-radius:18px;">
+                    <div><div style="font-size:36px;font-weight:900;color:#ef4444;">${formatNumber(winner.totalLikes)}</div><div style="font-size:14px;opacity:0.7;">❤️ لايك</div></div>
+                    <div><div style="font-size:36px;font-weight:900;color:#d4af37;">${winner.postsCount}</div><div style="font-size:14px;opacity:0.7;">📝 منشور</div></div>
+                </div>
+                <div style="margin-top:25px;font-size:22px;font-style:italic;color:#f4e5b0;">"${quote}"</div>
+            </div>
+            <div style="background:rgba(20,20,15,0.5);border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:30px;margin-bottom:30px;">
+                <div style="font-size:24px;font-weight:700;margin-bottom:18px;color:#d4af37;">🏢 ترتيب الفروع</div>
+                ${sortedBranches.slice(0, 5).map((b, i) => {
+                    const rank = i + 1;
+                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+                    let bg = 'rgba(20,20,15,0.4)';
+                    if (rank === 1) bg = 'linear-gradient(135deg,rgba(212,175,55,0.18),rgba(20,20,15,0.5))';
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:8px;background:${bg};border:1px solid rgba(212,175,55,0.2);border-radius:14px;"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:28px;font-weight:900;min-width:60px;">${medal}</div><div><div style="font-size:22px;font-weight:700;">${escapeHtml(b.name)}</div><div style="font-size:13px;opacity:0.6;">${b.members.length} موظف · ${b.postsCount} منشور</div></div></div><div style="font-size:26px;font-weight:900;color:#ef4444;">${formatNumber(b.totalLikes)} ❤️</div></div>`;
+                }).join('')}
+            </div>
+            <div style="background:rgba(20,20,15,0.5);border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:30px;margin-bottom:30px;">
+                <div style="font-size:24px;font-weight:700;margin-bottom:18px;color:#d4af37;">👤 أفضل 5 موظفين</div>
+                ${allMembers.slice(0, 5).map((m, i) => {
+                    const rank = i + 1;
+                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+                    let bg = 'rgba(20,20,15,0.4)';
+                    if (rank === 1) bg = 'linear-gradient(135deg,rgba(212,175,55,0.18),rgba(20,20,15,0.5))';
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:8px;background:${bg};border:1px solid rgba(212,175,55,0.2);border-radius:14px;"><div style="display:flex;align-items:center;gap:14px;"><div style="font-size:28px;font-weight:900;min-width:60px;">${medal}</div><div><div style="font-size:22px;font-weight:700;">${escapeHtml(m.name)}</div><div style="font-size:13px;opacity:0.6;">🏢 ${escapeHtml(m.branchName)} · ${m.postsCount} منشور</div></div></div><div style="font-size:26px;font-weight:900;color:#ef4444;">${formatNumber(m.totalLikes)} ❤️</div></div>`;
+                }).join('')}
+            </div>
+            <div style="margin-top:30px;opacity:0.5;font-size:14px;">📅 ${new Date().toLocaleDateString('ar-EG')} · ${escapeHtml(systemName)}</div>
+        </div>
+    `;
+    
+    document.body.appendChild(canvas);
+    try {
+        showToast('جاري إنشاء الصورة...');
+        const result = await html2canvas(canvas, { backgroundColor: '#0a0a0f', scale: 2, useCORS: true });
+        const link = document.createElement('a');
+        link.download = `winner-${new Date().toISOString().split('T')[0]}.png`;
+        link.href = result.toDataURL('image/png');
+        link.click();
+        showToast('✓ تم تصدير الصورة');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    document.body.removeChild(canvas);
+}
+
+// =================== Clear ===================
+function clearAll() {
+    if (!confirm('مسح جميع البيانات؟')) return;
+    branches = [];
+    discoveredPosts = [];
+    manualPosts = [];
+    localStorage.removeItem('bcV6');
+    saveData();
+    renderBranches();
+    renderDiscovery();
+    renderManualPosts();
+    renderLeaderboard();
+    renderSetupSummary();
+    updateMemberSelects();
+    showToast('تم المسح');
+}
+
+// =================== Backup System ===================
+function getBackupKey() {
+    return 'bcV6_lastBackup';
+}
+
+function updateBackupStatus() {
+    const el = document.getElementById('backupStatus');
+    if (!el) return;
+    const lastBackup = localStorage.getItem(getBackupKey());
+    if (lastBackup) {
+        const d = new Date(lastBackup);
+        const hoursAgo = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60));
+        if (hoursAgo < 24) {
+            el.style.color = 'var(--success)';
+            el.innerHTML = '✅ آخر نسخة احتياطية: ' + d.toLocaleString('ar-EG') + '<br><span style="font-size:10px;opacity:0.7;">منذ ' + hoursAgo + ' ساعة</span>';
+        } else {
+            el.style.color = 'var(--warning)';
+            el.innerHTML = '⚠️ آخر نسخة: ' + d.toLocaleString('ar-EG') + '<br><span style="font-size:10px;opacity:0.7;">منذ ' + hoursAgo + ' ساعة - يفضّل تصدير نسخة جديدة</span>';
+        }
+    } else {
+        el.style.color = 'var(--danger)';
+        el.innerHTML = '🚨 لا توجد نسخة احتياطية - يُنصح بشدة التصدير الآن!';
+    }
+}
+
+function exportBackup() {
+    try {
+        const data = {
+            version: '6.0',
+            exportDate: new Date().toISOString(),
+            branches: branches,
+            discoveredPosts: discoveredPosts,
+            manualPosts: manualPosts,
+            sourcePlatform: sourcePlatform,
+            systemName: systemName,
+            systemLogo: systemLogo,
+            sourceUsername: getElValue('sourceUsername'),
+            maxPosts: getElValue('maxPosts', '50'),
+            startDate: getElValue('globalStartDate'),
+            endDate: getElValue('globalEndDate')
+        };
+        
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        const dateStr = new Date().toISOString().split('T')[0];
+        const timeStr = new Date().toTimeString().substring(0, 5).replace(':', '-');
+        a.download = `backup-${dateStr}-${timeStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // سجّل وقت آخر backup
+        localStorage.setItem(getBackupKey(), new Date().toISOString());
+        updateBackupStatus();
+        
+        showToast(`✅ تم حفظ النسخة الاحتياطية (${branches.length} فرع، ${discoveredPosts.length + manualPosts.length} منشور)`);
+    } catch (e) {
+        showToast('❌ فشل التصدير: ' + e.message, 'error');
+        console.error('Backup export error:', e);
+    }
+}
+
+function importBackup(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!confirm('⚠️ سيتم استبدال البيانات الحالية بمحتوى الملف. هل أنت متأكد؟')) {
+        event.target.value = '';
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            
+            if (!data.branches && !data.discoveredPosts && !data.manualPosts) {
+                showToast('❌ الملف لا يحتوي على بيانات صحيحة', 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            branches = data.branches || [];
+            discoveredPosts = data.discoveredPosts || [];
+            manualPosts = data.manualPosts || [];
+            sourcePlatform = data.sourcePlatform || 'instagram';
+            systemName = data.systemName || 'مجوهرات نفائس الألماس';
+            systemLogo = data.systemLogo || null;
+            
+            // تطبيق على DOM
+            setElValue('sourceUsername', data.sourceUsername);
+            setElValue('maxPosts', data.maxPosts || '50');
+            setElValue('globalStartDate', data.startDate);
+            setElValue('globalEndDate', data.endDate);
+            setElValue('systemNameInput', systemName);
+            setElText('headerSystemName', systemName);
+            document.title = '💎 ' + systemName;
+            
+            // ضبط المنصة
+            document.querySelectorAll('.platform-option[data-sp]').forEach(el => {
+                el.classList.toggle('selected', el.dataset.sp === sourcePlatform);
+            });
+            
+            updateLogoDisplay();
+            saveData(); // يحفظ في localStorage والسيرفر
+            renderBranches();
+            renderDiscovery();
+            renderManualPosts();
+            renderLeaderboard();
+            renderSetupSummary();
+            updateMemberSelects();
+            updateBackupStatus();
+            
+            showToast(`✅ تم استيراد البيانات بنجاح! (${branches.length} فرع، ${discoveredPosts.length + manualPosts.length} منشور)`);
+        } catch (err) {
+            showToast('❌ ملف غير صالح: ' + err.message, 'error');
+            console.error('Import error:', err);
+        }
+        event.target.value = '';
+    };
+    reader.onerror = function() {
+        showToast('❌ فشل قراءة الملف', 'error');
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function restoreFromLocalStorage() {
+    const stored = localStorage.getItem('bcV6');
+    if (!stored) {
+        showToast('❌ لا توجد بيانات محفوظة في المتصفح', 'error');
+        return;
+    }
+    
+    try {
+        const data = JSON.parse(stored);
+        const branchCount = (data.branches || []).length;
+        const postCount = (data.discoveredPosts || []).length + (data.manualPosts || []).length;
+        
+        if (branchCount === 0 && postCount === 0) {
+            showToast('⚠️ البيانات المحفوظة فاضية', 'warning');
+            return;
+        }
+        
+        if (!confirm(`📦 وُجدت بيانات محفوظة:
+• ${branchCount} فرع
+• ${postCount} منشور
+
+هل تريد استرجاعها؟`)) {
+            return;
+        }
+        
+        applyLoadedState(data);
+        saveData(); // إرسال للسيرفر
+        showToast(`✅ تم الاسترجاع! (${branchCount} فرع، ${postCount} منشور)`);
+    } catch (e) {
+        showToast('❌ فشل القراءة: ' + e.message, 'error');
+    }
+}
+
+// =================== Server Backups ===================
+async function loadServerBackups() {
+    const container = document.getElementById('serverBackupsList');
+    container.innerHTML = '<div class="helper-text" style="text-align:center;padding:14px;"><span class="spinner"></span> جاري التحميل...</div>';
+    
+    try {
+        const response = await fetch('/api/backups');
+        const data = await response.json();
+        
+        if (!data.backups || data.backups.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="empty-state-icon">📦</div><div>لا توجد نسخ احتياطية بعد</div></div>';
+            return;
+        }
+        
+        container.innerHTML = data.backups.map(b => {
+            const date = new Date(b.createdAt || b.mtime);
+            const dateStr = date.toLocaleString('ar-EG');
+            const sizeKB = (b.size / 1024).toFixed(1);
+            
+            // ترجمة سبب النسخة
+            const reasonMap = {
+                'auto': '🤖 تلقائي',
+                'hourly': '⏰ كل ساعة',
+                'startup': '🚀 بدء تشغيل',
+                'change': '✏️ تغيير كبير',
+                'manual': '👆 يدوي',
+                'pre-restore': '🛡️ قبل استرجاع'
+            };
+            const reasonText = reasonMap[b.reason] || b.reason || '';
+            
+            return `
+                <div style="display:flex;flex-direction:column;gap:8px;padding:12px;margin-bottom:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);border-radius:11px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                        <div>
+                            <div style="font-weight:700;color:var(--gold-light);font-size:13px;">${dateStr}</div>
+                            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">
+                                ${reasonText} · ${sizeKB} KB
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <span class="platform-badge ig">🏢 ${b.branchCount || 0} فرع</span>
+                        <span class="platform-badge tt">👤 ${b.memberCount || 0} موظف</span>
+                        <span class="platform-badge sn">📝 ${b.postCount || 0} منشور</span>
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn btn-primary" style="flex:1;padding:8px;font-size:11px;" onclick="restoreServerBackup('${b.filename}')">
+                            🔄 استرجاع
+                        </button>
+                        <button class="btn btn-secondary" style="padding:8px 11px;font-size:11px;" onclick="downloadServerBackup('${b.filename}')">
+                            📥
+                        </button>
+                        <button class="btn btn-danger" style="padding:8px 11px;font-size:11px;" onclick="deleteServerBackup('${b.filename}')">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        showToast(`✓ ${data.backups.length} نسخة احتياطية`);
+    } catch (e) {
+        container.innerHTML = '<div class="info-box warning">❌ فشل التحميل: ' + e.message + '</div>';
+    }
+}
+
+async function createServerBackup() {
+    try {
+        const response = await fetch('/api/backups/create', { method: 'POST' });
+        const data = await response.json();
+        if (data.ok) {
+            showToast('✅ تم إنشاء نسخة احتياطية: ' + data.filename);
+            loadServerBackups();
+        } else {
+            showToast('❌ فشل: ' + (data.error || 'unknown'), 'error');
+        }
+    } catch (e) {
+        showToast('❌ فشل: ' + e.message, 'error');
+    }
+}
+
+async function restoreServerBackup(filename) {
+    if (!confirm(`⚠️ سيتم استبدال البيانات الحالية بمحتوى نسخة:\n${filename}\n\nملاحظة: سيتم حفظ نسخة احتياطية للبيانات الحالية قبل الاسترجاع.\n\nهل أنت متأكد؟`)) return;
+    
+    try {
+        const response = await fetch('/api/backups/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename })
+        });
+        const data = await response.json();
+        if (data.ok) {
+            showToast('✅ تم الاسترجاع بنجاح');
+            // إعادة تحميل الحالة
+            await loadStateFromServer();
+            loadServerBackups();
+        } else {
+            showToast('❌ فشل: ' + (data.error || 'unknown'), 'error');
+        }
+    } catch (e) {
+        showToast('❌ فشل: ' + e.message, 'error');
+    }
+}
+
+function downloadServerBackup(filename) {
+    window.open('/api/backups/download/' + encodeURIComponent(filename), '_blank');
+}
+
+async function deleteServerBackup(filename) {
+    if (!confirm('حذف هذه النسخة الاحتياطية؟')) return;
+    try {
+        const response = await fetch('/api/backups/' + encodeURIComponent(filename), { method: 'DELETE' });
+        const data = await response.json();
+        if (data.ok) {
+            showToast('✅ تم الحذف');
+            loadServerBackups();
+        } else {
+            showToast('❌ فشل', 'error');
+        }
+    } catch (e) {
+        showToast('❌ فشل: ' + e.message, 'error');
+    }
+}
+
+// نسخة احتياطية تلقائية صامتة كل ساعة في localStorage
+function autoBackupToLocalStorage() {
+    try {
+        const data = {
+            version: '6.0',
+            autoBackupDate: new Date().toISOString(),
+            branches, discoveredPosts, manualPosts,
+            sourcePlatform, systemName, systemLogo
+        };
+        localStorage.setItem('bcV6_autoBackup', JSON.stringify(data));
+        console.log('[AutoBackup] saved at', new Date().toLocaleString());
+    } catch (e) { console.warn('Auto backup failed:', e); }
+}
+
+// =================== Init ===================
+function initDates() {
+    const today = new Date();
+    const monthAgo = new Date();
+    monthAgo.setDate(today.getDate() - 30);
+    const startInput = document.getElementById('globalStartDate');
+    const endInput = document.getElementById('globalEndDate');
+    if (!startInput.value) startInput.value = monthAgo.toISOString().split('T')[0];
+    if (!endInput.value) endInput.value = today.toISOString().split('T')[0];
+}
+
+function safeAddListener(id, event, handler) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(event, handler);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        updateHeaderDate();
+        initDates();
+        checkServerHealth();
+        loadStateFromServer();
+        setInterval(checkServerHealth, 15000);
+        setInterval(updateHeaderDate, 60000);
+        setInterval(autoBackupToLocalStorage, 60 * 60 * 1000); // كل ساعة
+        // نسخة احتياطية فورية بعد ثانيتين
+        setTimeout(autoBackupToLocalStorage, 2000);
+        
+        ['sourceUsername', 'maxPosts', 'globalStartDate', 'globalEndDate'].forEach(id => {
+            safeAddListener(id, 'change', saveData);
+        });
+        
+        safeAddListener('systemNameInput', 'input', (e) => {
+            systemName = e.target.value || 'مجوهرات نفائس الألماس';
+            setElText('headerSystemName', systemName);
+            document.title = '💎 ' + systemName;
+            saveData();
+        });
+        
+        safeAddListener('memberModal', 'click', (e) => {
+            if (e.target.id === 'memberModal') closeMemberModal();
+        });
+        safeAddListener('branchModal', 'click', (e) => {
+            if (e.target.id === 'branchModal') closeBranchModal();
+        });
+        safeAddListener('detailsModal', 'click', (e) => {
+            if (e.target.id === 'detailsModal') closeDetailsModal();
+        });
+        safeAddListener('videoModal', 'click', (e) => {
+            if (e.target.id === 'videoModal') closeVideoModal();
+        });
+    } catch (e) {
+        console.error('Init error:', e);
+    }
+});
+</script>
+
+</body>
+</html>
