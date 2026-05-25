@@ -1,4 +1,4 @@
-console.log('🚀 Starting Branch Competition Server v5...');
+console.log('🚀 Starting Branch Competition Server v6 - Luxury Edition');
 
 const express = require('express');
 const cors = require('cors');
@@ -11,14 +11,15 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// مجلد التخزين الدائم
+// مجلدات التخزين
 const DATA_DIR = path.join(__dirname, 'data');
+const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const STATE_FILE = path.join(DATA_DIR, 'state.json');
 const COOKIES_FILE = path.join(DATA_DIR, 'cookies.txt');
 
-// تخزين الحالة المشتركة (للتحديث التلقائي و /display)
 let sharedState = {
     branches: [],
     discoveredPosts: [],
@@ -29,8 +30,10 @@ let sharedState = {
     startDate: '',
     endDate: '',
     autoUpdateEnabled: false,
-    autoUpdateInterval: 6, // كل كم ساعة
-    lastUpdate: null
+    autoUpdateInterval: 6,
+    lastUpdate: null,
+    systemLogo: null,
+    systemName: 'مجوهرات نفائس الألماس'
 };
 
 function loadState() {
@@ -38,33 +41,50 @@ function loadState() {
         try {
             sharedState = { ...sharedState, ...JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8')) };
             console.log('✓ State loaded:', sharedState.branches.length, 'branches');
-        } catch (e) {
-            console.error('Failed to load state:', e.message);
-        }
+        } catch (e) { console.error('Failed to load state:', e.message); }
     }
 }
 
 function saveState() {
     try {
         fs.writeFileSync(STATE_FILE, JSON.stringify(sharedState, null, 2));
-    } catch (e) {
-        console.error('Failed to save state:', e.message);
-    }
+    } catch (e) { console.error('Failed to save state:', e.message); }
 }
 
 loadState();
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '15mb' }));
 app.use(express.static(__dirname));
+app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Multer for cookies upload
-const upload = multer({
+// Multer للـ cookies
+const cookiesUpload = multer({
     storage: multer.diskStorage({
         destination: DATA_DIR,
         filename: (req, file, cb) => cb(null, 'cookies.txt')
     }),
     limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+// Multer للصور
+const imageUpload = multer({
+    storage: multer.diskStorage({
+        destination: UPLOADS_DIR,
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname).toLowerCase() || '.png';
+            const safeExt = ['.png', '.jpg', '.jpeg', '.webp', '.gif'].includes(ext) ? ext : '.png';
+            const uniqueName = Date.now() + '_' + Math.random().toString(36).substr(2, 8) + safeExt;
+            cb(null, uniqueName);
+        }
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image files allowed'));
+        }
+        cb(null, true);
+    }
 });
 
 // =================== Helpers ===================
@@ -106,7 +126,7 @@ function getCookiesArg(platform) {
     return '';
 }
 
-// =================== yt-dlp Functions ===================
+// =================== yt-dlp ===================
 function fetchPostData(url) {
     return new Promise((resolve, reject) => {
         const platform = detectPlatform(url);
@@ -154,12 +174,12 @@ function discoverUserPosts(username, platform, maxPosts) {
         else return reject(new Error('Unsupported platform'));
         
         const cookiesArg = getCookiesArg(platform);
-        console.log(`[${platform}] Discovering @${cleanUser}...${cookiesArg ? ' (with cookies)' : ''}`);
+        console.log(`[${platform}] Discovering @${cleanUser}...`);
         const command = `yt-dlp --flat-playlist --dump-json --no-warnings --playlist-end ${maxPosts}${cookiesArg} "${url}"`;
         
         exec(command, { maxBuffer: 30 * 1024 * 1024, timeout: 120000 }, (error, stdout, stderr) => {
             if (error) {
-                console.error(`[${platform}] Discover error:`, stderr.substring(0, 300));
+                console.error(`[${platform}] Error:`, stderr.substring(0, 300));
                 reject(new Error(stderr.split('\n')[0] || error.message));
                 return;
             }
@@ -177,7 +197,7 @@ function discoverUserPosts(username, platform, maxPosts) {
     });
 }
 
-// =================== APIs ===================
+// =================== APIs: Posts ===================
 app.post('/api/fetch-user', async (req, res) => {
     const { username, platform, startDate, endDate, maxPosts } = req.body;
     if (!username || !platform) return res.status(400).json({ error: 'username and platform required' });
@@ -212,44 +232,62 @@ app.post('/api/fetch-post', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// API: حفظ الحالة (يرسلها الـ frontend بعد كل تعديل)
+// =================== APIs: State ===================
 app.post('/api/save-state', (req, res) => {
     sharedState = { ...sharedState, ...req.body };
     saveState();
     res.json({ ok: true });
 });
 
-// API: جلب الحالة (للـ frontend عند الفتح + لشاشة العرض)
 app.get('/api/state', (req, res) => {
     res.json(sharedState);
 });
 
-// API: رفع cookies
-app.post('/api/upload-cookies', upload.single('cookies'), (req, res) => {
+// =================== APIs: Cookies ===================
+app.post('/api/upload-cookies', cookiesUpload.single('cookies'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    res.json({ ok: true, message: 'Cookies uploaded successfully' });
+    res.json({ ok: true });
 });
 
-// API: حذف cookies
 app.delete('/api/cookies', (req, res) => {
     if (fs.existsSync(COOKIES_FILE)) fs.unlinkSync(COOKIES_FILE);
     res.json({ ok: true });
 });
 
-// API: حالة الـ cookies
 app.get('/api/cookies-status', (req, res) => {
     const exists = fs.existsSync(COOKIES_FILE);
     let mtime = null;
-    if (exists) {
-        const stat = fs.statSync(COOKIES_FILE);
-        mtime = stat.mtime;
-    }
+    if (exists) mtime = fs.statSync(COOKIES_FILE).mtime;
     res.json({ exists, mtime });
 });
 
-// API: تحديث يدوي للايكات (لجميع المنشورات المعتمدة)
+// =================== APIs: Images (NEW) ===================
+// رفع صورة عامة (تُستخدم للوجو، صور فروع، صور موظفين)
+app.post('/api/upload-image', imageUpload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+    // رابط الصورة النسبي
+    const imageUrl = '/uploads/' + req.file.filename;
+    res.json({ ok: true, url: imageUrl, filename: req.file.filename });
+});
+
+// حذف صورة
+app.delete('/api/image/:filename', (req, res) => {
+    const filename = req.params.filename;
+    // أمان: لا نسمح بمسارات نسبية
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+    const filepath = path.join(UPLOADS_DIR, filename);
+    if (fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath);
+        return res.json({ ok: true });
+    }
+    res.status(404).json({ error: 'Not found' });
+});
+
+// =================== APIs: Refresh & Auto-Update ===================
 app.post('/api/refresh-all', async (req, res) => {
-    console.log('[Refresh] Starting full refresh...');
+    console.log('[Refresh] Starting...');
     const allPosts = [...sharedState.discoveredPosts, ...sharedState.manualPosts];
     const assigned = allPosts.filter(p => p.assignedTo);
     
@@ -260,37 +298,27 @@ app.post('/api/refresh-all', async (req, res) => {
             post.likes = fresh.likes;
             post.views = fresh.views;
             updated++;
-        } catch (e) {
-            failed++;
-        }
+        } catch (e) { failed++; }
     }
     
     sharedState.lastUpdate = new Date().toISOString();
     saveState();
-    
-    console.log(`[Refresh] Done: ${updated} updated, ${failed} failed`);
+    console.log(`[Refresh] Done: ${updated}/${assigned.length}`);
     res.json({ updated, failed, total: assigned.length, lastUpdate: sharedState.lastUpdate });
 });
 
-// API: تشغيل/إيقاف التحديث التلقائي
 app.post('/api/auto-update', (req, res) => {
     const { enabled, interval } = req.body;
     sharedState.autoUpdateEnabled = !!enabled;
     if (interval) sharedState.autoUpdateInterval = parseInt(interval) || 6;
     saveState();
     
-    if (enabled) {
-        startAutoUpdate();
-        console.log(`[Cron] Auto-update enabled, interval: ${sharedState.autoUpdateInterval}h`);
-    } else {
-        stopAutoUpdate();
-        console.log('[Cron] Auto-update disabled');
-    }
+    if (enabled) startAutoUpdate();
+    else stopAutoUpdate();
     
     res.json({ ok: true, enabled: sharedState.autoUpdateEnabled, interval: sharedState.autoUpdateInterval });
 });
 
-// =================== Auto Update (Cron) ===================
 let cronJob = null;
 
 async function performAutoUpdate() {
@@ -298,46 +326,36 @@ async function performAutoUpdate() {
     const allPosts = [...sharedState.discoveredPosts, ...sharedState.manualPosts];
     const assigned = allPosts.filter(p => p.assignedTo);
     
-    let updated = 0, failed = 0;
+    let updated = 0;
     for (const post of assigned) {
         try {
             const fresh = await fetchPostData(post.url);
             post.likes = fresh.likes;
             post.views = fresh.views;
             updated++;
-            await new Promise(r => setTimeout(r, 1000)); // تأخير بين الطلبات
-        } catch (e) {
-            failed++;
-        }
+            await new Promise(r => setTimeout(r, 1000));
+        } catch (e) {}
     }
     
     sharedState.lastUpdate = new Date().toISOString();
     saveState();
-    console.log(`[Cron] Auto-update done: ${updated}/${assigned.length}`);
+    console.log(`[Cron] Done: ${updated}/${assigned.length}`);
 }
 
 function startAutoUpdate() {
     stopAutoUpdate();
     const interval = sharedState.autoUpdateInterval || 6;
-    // كل X ساعة
-    const cronExpr = `0 */${interval} * * *`;
-    cronJob = cron.schedule(cronExpr, performAutoUpdate);
-    console.log(`[Cron] Scheduled: ${cronExpr}`);
+    cronJob = cron.schedule(`0 */${interval} * * *`, performAutoUpdate);
+    console.log(`[Cron] Scheduled every ${interval}h`);
 }
 
 function stopAutoUpdate() {
-    if (cronJob) {
-        cronJob.stop();
-        cronJob = null;
-    }
+    if (cronJob) { cronJob.stop(); cronJob = null; }
 }
 
-// تشغيل التحديث التلقائي عند البدء إذا كان مفعّلاً
-if (sharedState.autoUpdateEnabled) {
-    startAutoUpdate();
-}
+if (sharedState.autoUpdateEnabled) startAutoUpdate();
 
-// =================== Health ===================
+// =================== Health & Routes ===================
 app.get('/api/health', (req, res) => {
     exec('yt-dlp --version', (error, stdout) => {
         res.json({
@@ -348,27 +366,25 @@ app.get('/api/health', (req, res) => {
             auto_update_enabled: sharedState.autoUpdateEnabled,
             auto_update_interval: sharedState.autoUpdateInterval,
             last_update: sharedState.lastUpdate,
-            version: '5.0'
+            version: '6.0'
         });
     });
 });
 
-// =================== Routes ===================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/display', (req, res) => res.sendFile(path.join(__dirname, 'display.html')));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log('========================================');
-    console.log(`✅ Server v5 running on port ${PORT}`);
-    console.log(`✅ Main UI: http://localhost:${PORT}/`);
-    console.log(`✅ Display: http://localhost:${PORT}/display`);
+    console.log(`✅ Server v6 Luxury running on port ${PORT}`);
+    console.log(`✅ Main: /`);
+    console.log(`✅ Display: /display`);
+    console.log(`✅ Uploads: /uploads/<filename>`);
     console.log('========================================');
     exec('yt-dlp --version', (error, stdout) => {
-        if (error) console.log('⚠️ yt-dlp NOT installed:', error.message);
-        else console.log(`✅ yt-dlp v${stdout.trim()} ready`);
+        if (error) console.log('⚠️ yt-dlp NOT installed');
+        else console.log(`✅ yt-dlp v${stdout.trim()}`);
     });
-    if (fs.existsSync(COOKIES_FILE)) console.log('✅ Instagram cookies present');
-    else console.log('⚠️ No Instagram cookies');
 });
 
 process.on('uncaughtException', (err) => console.error('❌ Uncaught:', err));
