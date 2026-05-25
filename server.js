@@ -1027,6 +1027,89 @@ app.post('/api/test-instagram', async (req, res) => {
 });
 
 // =================== APIs: Refresh & Auto-Update ===================
+
+// =================== Diagnostic & Fix Assignment ===================
+app.get('/api/diagnose', (req, res) => {
+    const allPosts = [...(sharedState.discoveredPosts || []), ...(sharedState.manualPosts || [])];
+    
+    // كل الـ memberIds الموجودين في الفروع
+    const allMemberIds = new Set();
+    const memberDetails = {};
+    (sharedState.branches || []).forEach(b => {
+        (b.members || []).forEach(m => {
+            allMemberIds.add(m.id);
+            memberDetails[m.id] = { name: m.name, branchName: b.name, branchId: b.id };
+        });
+    });
+    
+    // المنشورات و حالة الـ assignedTo
+    const assigned = [];
+    const unassigned = [];
+    const orphaned = []; // معيّن لكن لـ ID غير موجود
+    
+    allPosts.forEach(p => {
+        if (!p.assignedTo) {
+            unassigned.push({ url: p.url, title: p.title, likes: p.likes });
+        } else if (allMemberIds.has(p.assignedTo)) {
+            assigned.push({ 
+                url: p.url, 
+                title: p.title, 
+                likes: p.likes,
+                assignedTo: p.assignedTo,
+                memberName: memberDetails[p.assignedTo].name,
+                branchName: memberDetails[p.assignedTo].branchName
+            });
+        } else {
+            orphaned.push({ 
+                url: p.url, 
+                title: p.title, 
+                likes: p.likes,
+                assignedTo: p.assignedTo // الـ ID المعيّن (لكن غير موجود!)
+            });
+        }
+    });
+    
+    res.json({
+        summary: {
+            totalPosts: allPosts.length,
+            assigned: assigned.length,
+            unassigned: unassigned.length,
+            orphaned: orphaned.length,
+            totalMembers: allMemberIds.size,
+            totalBranches: (sharedState.branches || []).length
+        },
+        memberDetails,
+        assigned,
+        unassigned,
+        orphaned
+    });
+});
+
+// إصلاح ذكي: ربط المنشورات المعزولة بالموظف الصحيح حسب الاسم
+app.post('/api/fix-orphaned', (req, res) => {
+    const allPosts = [...(sharedState.discoveredPosts || []), ...(sharedState.manualPosts || [])];
+    
+    const allMemberIds = new Set();
+    (sharedState.branches || []).forEach(b => {
+        (b.members || []).forEach(m => allMemberIds.add(m.id));
+    });
+    
+    let removed = 0;
+    
+    // إزالة الـ assignedTo من المنشورات اللي يشير لـ ID غير موجود
+    allPosts.forEach(p => {
+        if (p.assignedTo && !allMemberIds.has(p.assignedTo)) {
+            p.assignedTo = null;
+            removed++;
+        }
+    });
+    
+    if (removed > 0) saveState();
+    
+    res.json({ ok: true, cleaned: removed, message: `تم إزالة ${removed} نسبة قديمة` });
+});
+
+
 app.post('/api/refresh-all', async (req, res) => {
     console.log('[Refresh] Starting...');
     const allPosts = [...sharedState.discoveredPosts, ...sharedState.manualPosts];
