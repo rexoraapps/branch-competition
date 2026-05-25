@@ -201,8 +201,14 @@ body::before {
     padding: 4px 12px;
     border-radius: 18px;
     font-size: 11px;
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid var(--border-gold);
+    color: var(--text-secondary);
+}
+
+.server-status.connected {
     background: rgba(74, 222, 128, 0.08);
-    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-color: rgba(74, 222, 128, 0.3);
     color: var(--success);
 }
 
@@ -214,10 +220,11 @@ body::before {
 
 .status-dot {
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--success);
+    background: var(--text-muted);
     animation: pulse 2s infinite;
 }
 
+.server-status.connected .status-dot { background: var(--success); }
 .server-status.disconnected .status-dot { background: var(--danger); }
 
 @keyframes pulse {
@@ -1694,15 +1701,22 @@ function updateHeaderDate() {
 }
 
 // =================== Storage & Sync ===================
+function getElValue(id, fallback = '') {
+    const el = document.getElementById(id);
+    return el ? el.value : fallback;
+}
+
 function saveData() {
     const data = {
         branches, discoveredPosts, manualPosts, sourcePlatform, systemName, systemLogo,
-        sourceUsername: document.getElementById('sourceUsername').value,
-        maxPosts: document.getElementById('maxPosts').value,
-        startDate: document.getElementById('globalStartDate').value,
-        endDate: document.getElementById('globalEndDate').value
+        sourceUsername: getElValue('sourceUsername'),
+        maxPosts: getElValue('maxPosts', '50'),
+        startDate: getElValue('globalStartDate'),
+        endDate: getElValue('globalEndDate')
     };
-    localStorage.setItem('bcV6', JSON.stringify(data));
+    try {
+        localStorage.setItem('bcV6', JSON.stringify(data));
+    } catch (e) { console.warn('localStorage failed:', e); }
     syncStateToServer(data);
 }
 
@@ -1734,6 +1748,16 @@ function loadFromLocalStorage() {
     }
 }
 
+function setElValue(id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) el.value = value;
+}
+
+function setElText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
 function applyLoadedState(data) {
     if (!data) return;
     branches = data.branches || [];
@@ -1742,34 +1766,48 @@ function applyLoadedState(data) {
     systemName = data.systemName || 'مجوهرات نفائس الألماس';
     systemLogo = data.systemLogo || null;
     
-    if (data.sourcePlatform) selectSourcePlatform(data.sourcePlatform);
-    if (data.sourceUsername) document.getElementById('sourceUsername').value = data.sourceUsername;
-    if (data.maxPosts) document.getElementById('maxPosts').value = data.maxPosts;
-    if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
-    if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
+    // ضبط المنصة بدون استدعاء saveData
+    if (data.sourcePlatform) {
+        sourcePlatform = data.sourcePlatform;
+        document.querySelectorAll('.platform-option[data-sp]').forEach(el => {
+            el.classList.toggle('selected', el.dataset.sp === sourcePlatform);
+        });
+    }
     
-    document.getElementById('systemNameInput').value = systemName;
-    document.getElementById('headerSystemName').textContent = systemName;
+    setElValue('sourceUsername', data.sourceUsername);
+    setElValue('maxPosts', data.maxPosts);
+    setElValue('globalStartDate', data.startDate);
+    setElValue('globalEndDate', data.endDate);
+    setElValue('systemNameInput', systemName);
+    setElText('headerSystemName', systemName);
     document.title = '💎 ' + systemName;
     
-    updateLogoDisplay();
-    renderBranches();
-    renderDiscovery();
-    renderManualPosts();
-    renderLeaderboard();
-    renderSetupSummary();
-    updateMemberSelects();
+    try {
+        updateLogoDisplay();
+        renderBranches();
+        renderDiscovery();
+        renderManualPosts();
+        renderLeaderboard();
+        renderSetupSummary();
+        updateMemberSelects();
+    } catch (e) {
+        console.error('Render error:', e);
+    }
 }
 
 // =================== Tabs ===================
 function switchTab(tab) {
-    document.querySelectorAll('.main-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
-    if (tab === 'leaderboard') renderLeaderboard();
-    if (tab === 'discovery') renderDiscovery();
-    if (tab === 'setup') renderSetupSummary();
-    if (tab === 'manual') { renderManualPosts(); updateMemberSelects(); }
-    if (tab === 'advanced') { checkCookiesStatus(); checkAutoUpdateStatus(); }
+    try {
+        document.querySelectorAll('.main-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+        if (tab === 'leaderboard') renderLeaderboard();
+        else if (tab === 'discovery') renderDiscovery();
+        else if (tab === 'setup') renderSetupSummary();
+        else if (tab === 'manual') { renderManualPosts(); updateMemberSelects(); }
+        else if (tab === 'advanced') { checkCookiesStatus(); checkAutoUpdateStatus(); }
+    } catch (e) {
+        console.error('switchTab error:', e);
+    }
 }
 
 function switchLeaderboard(view) {
@@ -1794,18 +1832,28 @@ function selectSourcePlatform(platform) {
 
 // =================== Server Health ===================
 async function checkServerHealth() {
+    const statusEl = document.getElementById('serverStatus');
+    const textEl = document.getElementById('serverStatusText');
     try {
-        const response = await fetch(`${API_BASE}/api/health`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const response = await fetch(`${API_BASE}/api/health`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         serverConnected = true;
-        const statusEl = document.getElementById('serverStatus');
+        statusEl.classList.add('connected');
         statusEl.classList.remove('disconnected');
-        document.getElementById('serverStatusText').textContent =
-            data.ytdlp_installed ? `متصل · yt-dlp ${data.ytdlp_version}` : 'متصل (yt-dlp غير مثبت)';
+        textEl.textContent = data.ytdlp_installed
+            ? `متصل · yt-dlp ${data.ytdlp_version}`
+            : 'متصل (yt-dlp غير مثبت)';
+        console.log('[Health] OK:', data);
     } catch (e) {
         serverConnected = false;
-        document.getElementById('serverStatus').classList.add('disconnected');
-        document.getElementById('serverStatusText').textContent = 'غير متصل';
+        statusEl.classList.remove('connected');
+        statusEl.classList.add('disconnected');
+        textEl.textContent = 'غير متصل · ' + (e.message || 'فشل');
+        console.error('[Health] FAIL:', e);
     }
 }
 
@@ -2825,32 +2873,4 @@ async function exportPDF() {
         const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
         const allPosts = [...discoveredPosts, ...manualPosts];
         const assignedPosts = allPosts.filter(p => p.assignedTo);
-        const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
-        
-        doc.setFontSize(13);
-        doc.text('Summary', 14, y);
-        y += 8;
-        doc.setFontSize(10);
-        doc.text(`Branches: ${branches.length}  Members: ${totalMembers}`, 14, y); y += 6;
-        doc.text(`Posts: ${assignedPosts.length}  Total Likes: ${totalLikes.toLocaleString('en-US')}`, 14, y); y += 12;
-        
-        doc.setFillColor(212, 175, 55);
-        doc.rect(10, y - 5, pageWidth - 20, 8, 'F');
-        doc.setTextColor(10, 10, 15);
-        doc.setFontSize(11);
-        doc.text('Branches Ranking', 14, y);
-        y += 10;
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(9);
-        
-        const sortedBranches = [...branches].map(b => ({
-            ...b, totalLikes: getBranchTotalLikes(b.id), postsCount: getBranchPostsCount(b.id)
-        })).sort((a, b) => b.totalLikes - a.totalLikes);
-        
-        sortedBranches.forEach((b, i) => {
-            if (i === 0) doc.setFillColor(251, 191, 36);
-            else if (i === 1) doc.setFillColor(203, 213, 225);
-            else if (i === 2) doc.setFillColor(217, 119, 6);
-            else doc.setFillColor(245, 245, 245);
-            doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
-            doc.tex
+ 
