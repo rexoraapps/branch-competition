@@ -624,8 +624,8 @@ body {
 /* ========== FLOATING ACTIONS ========== */
 .float-actions {
     position: fixed;
-    bottom: 16px;
-    right: 16px;
+    bottom: 14px;
+    right: 14px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -633,7 +633,7 @@ body {
 }
 
 .float-btn {
-    width: 48px; height: 48px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
     border: 2px solid var(--gold);
@@ -641,15 +641,95 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--bg-deep);
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
     box-shadow: 0 4px 16px var(--gold-glow);
     cursor: pointer;
     transition: all 0.2s;
+    font-family: inherit;
 }
 
 .float-btn:active { transform: scale(0.92); }
 .float-btn:hover { transform: scale(1.05); }
+
+/* زر التحديث المميز */
+.float-btn.refresh-btn {
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+    border-color: #4ade80;
+    color: white;
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.5);
+    width: 56px; height: 56px;
+    font-size: 22px;
+    position: relative;
+}
+
+.float-btn.refresh-btn::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+    opacity: 0.3;
+    z-index: -1;
+    animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.2); opacity: 0; }
+}
+
+.float-btn.refresh-btn.spinning {
+    animation: spin 1s linear infinite;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-color: var(--gold);
+    color: var(--bg-deep);
+}
+
+.float-btn.refresh-btn.spinning::after { display: none; }
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 13px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    pointer-events: none;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 90vw;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.toast.warning {
+    background: linear-gradient(135deg, #d97706, #fbbf24);
+    color: #0a0a0f;
+}
 
 /* ========== FOOTER CREDIT ========== */
 .app-footer {
@@ -1056,6 +1136,368 @@ body {
     .podium-place-1 .podium-rank-number { font-size: 56px; }
     .podium-rank-number { font-size: 44px; }
 }
+
+
+/* ============ MOBILE OPTIMIZATION (under 480px) ============ */
+@media (max-width: 480px) {
+    body { padding-bottom: 100px; }
+    
+    .app-header {
+        padding: 10px 12px 10px;
+    }
+    
+    .header-top {
+        margin-bottom: 8px;
+        gap: 10px;
+    }
+    
+    .system-logo {
+        width: 40px; height: 40px;
+        font-size: 20px;
+    }
+    
+    .system-title {
+        font-size: 14px;
+    }
+    
+    .system-subtitle {
+        font-size: 9px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }
+    
+    .live-badge {
+        padding: 2px 6px;
+        font-size: 8px;
+    }
+    
+    .view-tabs {
+        padding: 2px;
+        gap: 2px;
+    }
+    
+    .view-tab {
+        padding: 7px 4px;
+        font-size: 11px;
+    }
+    
+    .period-tab {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    
+    /* Stats Row - تحسين للجوال */
+    .stats-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 10px 12px;
+    }
+    
+    .stat-mini {
+        padding: 8px 4px;
+        border-radius: 10px;
+    }
+    
+    .stat-mini-icon {
+        font-size: 14px;
+        margin-bottom: 1px;
+    }
+    
+    .stat-mini-label {
+        font-size: 8px;
+        margin-bottom: 2px;
+    }
+    
+    .stat-mini-value {
+        font-size: 13px;
+    }
+    
+    /* Podium - تحسينات للجوال */
+    .podium-section {
+        padding: 6px 10px 12px;
+    }
+    
+    .podium {
+        gap: 4px;
+        max-width: 100%;
+    }
+    
+    .podium-title {
+        margin-bottom: 12px;
+    }
+    
+    .podium-title-text {
+        font-size: 11px;
+        padding: 0 10px;
+    }
+    
+    .podium-title::before, .podium-title::after {
+        width: 30px;
+    }
+    
+    .podium-place-1 .podium-avatar {
+        width: 72px; height: 72px;
+        font-size: 28px;
+        border-width: 3px;
+    }
+    
+    .podium-place-2 .podium-avatar, .podium-place-3 .podium-avatar {
+        width: 60px; height: 60px;
+        font-size: 22px;
+        border-width: 2px;
+    }
+    
+    .podium-medal {
+        width: 26px; height: 26px;
+        font-size: 14px;
+        top: -6px;
+        right: -6px;
+        border-width: 2px;
+    }
+    
+    .podium-crown {
+        font-size: 22px;
+        top: -24px;
+    }
+    
+    .podium-name {
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+    
+    .podium-place-1 .podium-name {
+        font-size: 12px;
+    }
+    
+    .podium-likes {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .podium-place-1 .podium-likes {
+        font-size: 16px;
+    }
+    
+    .podium-meta {
+        font-size: 9px;
+        margin-bottom: 6px;
+    }
+    
+    .podium-place-1 .podium-base {
+        height: 75px;
+    }
+    
+    .podium-place-2 .podium-base {
+        height: 58px;
+    }
+    
+    .podium-place-3 .podium-base {
+        height: 45px;
+    }
+    
+    .podium-rank-number {
+        font-size: 30px;
+    }
+    
+    .podium-place-1 .podium-rank-number {
+        font-size: 38px;
+    }
+    
+    /* Rank List */
+    .rank-list-section {
+        padding: 0 12px;
+    }
+    
+    .section-divider {
+        margin: 16px 0 10px;
+        font-size: 10px;
+    }
+    
+    .rank-list {
+        gap: 6px;
+    }
+    
+    .rank-item {
+        padding: 10px;
+        gap: 10px;
+        border-radius: 12px;
+    }
+    
+    .rank-item-number {
+        width: 28px; height: 28px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+    
+    .rank-item-avatar {
+        width: 40px; height: 40px;
+        font-size: 18px;
+        border-radius: 10px;
+    }
+    
+    .rank-item-name {
+        font-size: 13px;
+    }
+    
+    .rank-item-meta {
+        font-size: 9px;
+        gap: 3px;
+    }
+    
+    .rank-item-likes {
+        font-size: 14px;
+    }
+    
+    .rank-item-likes-label {
+        font-size: 8px;
+    }
+    
+    /* Float Buttons */
+    .float-actions {
+        bottom: 10px;
+        right: 10px;
+        gap: 6px;
+    }
+    
+    .float-btn {
+        width: 40px; height: 40px;
+        font-size: 16px;
+        border-width: 2px;
+    }
+    
+    .float-btn.refresh-btn {
+        width: 50px; height: 50px;
+        font-size: 20px;
+    }
+    
+    /* Footer */
+    .app-footer {
+        padding: 14px 12px 20px;
+    }
+    
+    .developer-credit {
+        font-size: 10px;
+        padding: 6px 12px;
+    }
+    
+    /* Modal */
+    .details-header {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .details-header-avatar {
+        width: 50px; height: 50px;
+        font-size: 22px;
+        border-radius: 12px;
+    }
+    
+    .details-header-name {
+        font-size: 15px;
+    }
+    
+    .details-header-sub {
+        font-size: 10px;
+    }
+    
+    .details-stat-value {
+        font-size: 12px;
+    }
+    
+    .details-stat-label {
+        font-size: 8px;
+    }
+    
+    .details-platform-tab {
+        font-size: 10px;
+        padding: 5px 10px;
+    }
+    
+    .detail-post-item {
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    .detail-post-thumb {
+        width: 60px; height: 60px;
+        border-radius: 8px;
+    }
+    
+    .detail-post-title {
+        font-size: 11px;
+    }
+    
+    .detail-post-meta {
+        font-size: 9px;
+    }
+    
+    .platform-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+    
+    .detail-stat-row {
+        font-size: 10px;
+    }
+    
+    .detail-stat-row.primary {
+        font-size: 12px;
+    }
+    
+    .detail-post-link {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+}
+
+/* ============ EXTRA SMALL DEVICES (under 360px) ============ */
+@media (max-width: 360px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .podium-place-1 .podium-avatar {
+        width: 64px; height: 64px;
+        font-size: 24px;
+    }
+    
+    .podium-place-2 .podium-avatar, .podium-place-3 .podium-avatar {
+        width: 52px; height: 52px;
+        font-size: 18px;
+    }
+    
+    .system-title {
+        font-size: 12px;
+    }
+    
+    .system-subtitle {
+        font-size: 8px;
+    }
+}
+
+/* ============ LANDSCAPE MOBILE ============ */
+@media (max-height: 500px) and (orientation: landscape) {
+    .app-header {
+        padding: 6px 12px;
+    }
+    
+    .header-top {
+        margin-bottom: 6px;
+    }
+    
+    .system-logo {
+        width: 36px; height: 36px;
+        font-size: 18px;
+    }
+    
+    .stats-row {
+        grid-template-columns: repeat(6, 1fr);
+        padding: 8px 12px;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -1072,6 +1514,8 @@ body {
                     LIVE
                 </span>
                 <span id="periodLabel" style="margin-right: 4px;">جاري التحميل...</span>
+                <span style="margin-right:6px;color:var(--gold);">·</span>
+                <span id="lastUpdateLabel" style="color:var(--success);font-size:9px;">آخر تحديث: --</span>
             </div>
         </div>
     </div>
@@ -1083,10 +1527,10 @@ body {
         </div>
         
         <div class="period-tabs">
-            <button class="period-tab active" data-period="current_week" onclick="setPeriod('current_week')">🗓️ الأسبوع الحالي</button>
+            <button class="period-tab active" data-period="all" onclick="setPeriod('all')">🌐 كل الفترات</button>
+            <button class="period-tab" data-period="current_week" onclick="setPeriod('current_week')">🗓️ الأسبوع الحالي</button>
             <button class="period-tab" data-period="last_week" onclick="setPeriod('last_week')">⏮️ الأسبوع الماضي</button>
             <button class="period-tab" data-period="current_month" onclick="setPeriod('current_month')">📅 هذا الشهر</button>
-            <button class="period-tab" data-period="all" onclick="setPeriod('all')">🌐 كل الفترات</button>
             <button class="period-tab" data-period="custom" onclick="toggleCustomDate()">📌 تخصيص</button>
         </div>
         
@@ -1163,8 +1607,15 @@ body {
     </div>
 </footer>
 
+<!-- TOAST -->
+<div class="toast" id="toastEl">
+    <span id="toastIcon">✓</span>
+    <span id="toastText">تم</span>
+</div>
+
 <!-- FLOATING ACTIONS -->
 <div class="float-actions">
+    <button class="float-btn refresh-btn" onclick="refreshLikesNow()" title="تحديث الآن" id="refreshBtn">🔄</button>
     <a href="/analytics" class="float-btn" title="التحليلات">📊</a>
     <a href="/" class="float-btn" title="الإدارة">⚙️</a>
     <button class="float-btn" onclick="toggleFullscreen()" title="ملء الشاشة">⛶</button>
@@ -1220,7 +1671,7 @@ let currentView = 'branches';
 let currentDetailsType = null;
 let currentDetailsId = null;
 let currentDetailsPlatform = 'all';
-let currentPeriod = 'current_week';
+let currentPeriod = 'all';
 let customStartDate = null;
 let customEndDate = null;
 let previousRanking = {};
@@ -1724,16 +2175,125 @@ function toggleFullscreen() {
     else document.exitFullscreen();
 }
 
+function showToast(message, type = 'success', duration = 3000) {
+    const toast = document.getElementById('toastEl');
+    const icon = document.getElementById('toastIcon');
+    const text = document.getElementById('toastText');
+    
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠️',
+        info: 'ℹ️',
+        loading: '⏳'
+    };
+    
+    icon.textContent = icons[type] || icons.success;
+    text.textContent = message;
+    
+    toast.className = 'toast show';
+    if (type !== 'success') toast.classList.add(type);
+    
+    clearTimeout(window._toastTimer);
+    if (duration > 0) {
+        window._toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+}
+
+let isRefreshing = false;
+
+async function refreshLikesNow() {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('spinning');
+    btn.disabled = true;
+    
+    showToast('جاري تحديث اللايكات...', 'loading', 0);
+    
+    try {
+        const startTime = Date.now();
+        
+        const response = await fetch('/api/refresh-all', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!response.ok) {
+            throw new Error('فشل الاتصال بالسيرفر');
+        }
+        
+        const data = await response.json();
+        const duration = Math.round((Date.now() - startTime) / 1000);
+        
+        if (data.error) {
+            showToast('❌ خطأ: ' + data.error, 'error');
+        } else {
+            const updated = data.updated || 0;
+            const failed = data.failed || 0;
+            const total = data.total || 0;
+            
+            if (updated > 0) {
+                showToast(`✅ تم تحديث ${updated} من ${total} منشور (${duration}ث)`, 'success', 4000);
+            } else if (failed > 0) {
+                showToast(`⚠️ فشل تحديث ${failed} منشور`, 'warning', 4000);
+            } else {
+                showToast('ℹ️ لا توجد منشورات للتحديث', 'info', 3000);
+            }
+            
+            // أعد تحميل البيانات بعد التحديث
+            await loadData();
+        }
+    } catch (e) {
+        console.error('Refresh error:', e);
+        showToast('❌ ' + e.message, 'error', 4000);
+    } finally {
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+        isRefreshing = false;
+    }
+}
+
 // ============== Auto Refresh ==============
+function updateLastUpdateLabel() {
+    const lbl = document.getElementById('lastUpdateLabel');
+    if (!lbl) return;
+    if (!state || !state.lastUpdate) {
+        lbl.textContent = 'لم يتم التحديث بعد';
+        return;
+    }
+    const updateDate = new Date(state.lastUpdate);
+    const now = new Date();
+    const diffMs = now - updateDate;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffHour = Math.floor(diffMin / 60);
+    
+    let text = '';
+    if (diffSec < 60) text = `قبل ${diffSec} ثانية`;
+    else if (diffMin < 60) text = `قبل ${diffMin} دقيقة`;
+    else if (diffHour < 24) text = `قبل ${diffHour} ساعة`;
+    else text = updateDate.toLocaleString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    lbl.textContent = `🔄 آخر تحديث: ${text}`;
+}
+
 async function loadData() {
     try {
         const response = await fetch('/api/state', { cache: 'no-cache' });
         state = await response.json();
         renderAll();
+        updateLastUpdateLabel();
     } catch (e) {
         console.error('Load error:', e);
     }
 }
+
+// تحديث وقت "قبل X دقيقة" كل 10 ثوان
+setInterval(updateLastUpdateLabel, 10000);
 
 // التحديث الأولي
 loadData();

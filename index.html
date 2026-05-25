@@ -3622,5 +3622,233 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <a href="/analytics" style="position:fixed;bottom:20px;left:20px;width:56px;height:56px;background:linear-gradient(135deg,#b8941e,#d4af37);color:#0a0a0f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;box-shadow:0 4px 16px rgba(212,175,55,0.4);z-index:1000;border:2px solid #e8c252;" title="📊 لوحة التحليلات">📊</a>
 
+
+<!-- ============ LOGIN OVERLAY ============ -->
+<div id="loginOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0a0a0f 0%, #14141c 100%);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+">
+    <div style="
+        max-width: 400px;
+        width: 100%;
+        background: linear-gradient(135deg, #14141c, #1c1c28);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 24px;
+        padding: 32px 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+    ">
+        <div style="
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        "></div>
+        
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="
+                width: 80px; height: 80px;
+                background: linear-gradient(135deg, #b8941e, #f0d670);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 40px;
+                margin: 0 auto 16px;
+                box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            ">🔒</div>
+            <h2 style="
+                font-size: 22px;
+                font-weight: 900;
+                background: linear-gradient(135deg, #f0d670, #d4af37);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 8px;
+            ">🔐 الإعدادات محمية</h2>
+            <p style="font-size: 12px; color: #8a8068;">
+                أدخل كلمة المرور للوصول إلى لوحة الإدارة
+            </p>
+        </div>
+        
+        <div style="margin-bottom: 14px;">
+            <label style="
+                display: block;
+                font-size: 11px;
+                color: #c4b896;
+                margin-bottom: 6px;
+                font-weight: 700;
+            ">كلمة المرور</label>
+            <input 
+                type="password" 
+                id="loginPassword" 
+                placeholder="••••••••"
+                style="
+                    width: 100%;
+                    padding: 14px 16px;
+                    background: rgba(0, 0, 0, 0.4);
+                    border: 1px solid rgba(212, 175, 55, 0.3);
+                    border-radius: 12px;
+                    color: white;
+                    font-family: 'Tajawal', sans-serif;
+                    font-size: 16px;
+                    text-align: center;
+                    letter-spacing: 4px;
+                "
+                onkeypress="if(event.key==='Enter')checkLoginPassword()"
+                autofocus
+            >
+        </div>
+        
+        <div id="loginError" style="
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        ">❌ كلمة المرور غير صحيحة</div>
+        
+        <button onclick="checkLoginPassword()" style="
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #b8941e, #d4af37);
+            color: #0a0a0f;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+            transition: all 0.2s;
+        " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+            🔓 دخول
+        </button>
+        
+        <div style="
+            margin-top: 16px;
+            text-align: center;
+            font-size: 10px;
+            color: #7a7068;
+        ">
+            <div style="margin-bottom: 8px;">يمكنك الوصول للصفحات الأخرى بدون تسجيل دخول:</div>
+            <div style="display: flex; gap: 6px; justify-content: center;">
+                <a href="/display" style="
+                    padding: 6px 12px;
+                    background: rgba(212, 175, 55, 0.1);
+                    border: 1px solid rgba(212, 175, 55, 0.3);
+                    border-radius: 8px;
+                    color: #d4af37;
+                    text-decoration: none;
+                    font-weight: 700;
+                ">📺 شاشة العرض</a>
+                <a href="/analytics" style="
+                    padding: 6px 12px;
+                    background: rgba(212, 175, 55, 0.1);
+                    border: 1px solid rgba(212, 175, 55, 0.3);
+                    border-radius: 8px;
+                    color: #d4af37;
+                    text-decoration: none;
+                    font-weight: 700;
+                ">📊 التحليلات</a>
+            </div>
+        </div>
+        
+        <div style="
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            text-align: center;
+            font-size: 10px;
+            color: #7a7068;
+        ">
+            💎 تطوير وبرمجة: <strong style="color: #d4af37;">م/محمد الرفاعي</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const CORRECT_PASSWORD = 'Mm7371mm';
+    const STORAGE_KEY = 'branchCompetitionAuth';
+    const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 ساعة
+    
+    function checkAuth() {
+        try {
+            const auth = localStorage.getItem(STORAGE_KEY);
+            if (!auth) return false;
+            const { token, expiry } = JSON.parse(auth);
+            if (Date.now() > expiry) {
+                localStorage.removeItem(STORAGE_KEY);
+                return false;
+            }
+            // simple obfuscation check
+            return token === btoa(CORRECT_PASSWORD + '_authorized');
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    function setAuth() {
+        const token = btoa(CORRECT_PASSWORD + '_authorized');
+        const expiry = Date.now() + SESSION_DURATION;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, expiry }));
+    }
+    
+    window.checkLoginPassword = function() {
+        const input = document.getElementById('loginPassword');
+        const errorEl = document.getElementById('loginError');
+        const password = input.value;
+        
+        if (password === CORRECT_PASSWORD) {
+            setAuth();
+            document.getElementById('loginOverlay').style.display = 'none';
+        } else {
+            errorEl.style.display = 'block';
+            input.value = '';
+            input.focus();
+            input.style.borderColor = '#ef4444';
+            input.style.animation = 'shake 0.4s';
+            setTimeout(() => {
+                input.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+                input.style.animation = '';
+            }, 500);
+        }
+    };
+    
+    window.logout = function() {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    };
+    
+    // فحص عند تحميل الصفحة
+    if (checkAuth()) {
+        document.getElementById('loginOverlay').style.display = 'none';
+    }
+})();
+</script>
+
+<style>
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+</style>
+
 </body>
-</html>
