@@ -3,855 +3,1261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام مسابقة الفروع v4</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
-
-    :root {
-        --bg-primary: #0a0e27;
-        --bg-secondary: #131836;
-        --bg-card: rgba(255, 255, 255, 0.05);
-        --border: rgba(255, 255, 255, 0.1);
-        --text-primary: #ffffff;
-        --text-secondary: #a8b2d1;
-        --text-muted: #6b7394;
-        --accent: #6366f1;
-        --accent-hover: #818cf8;
-        --success: #10b981;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --instagram: #e1306c;
-        --tiktok: #25f4ee;
-        --snapchat: #fffc00;
-    }
-
-    body {
-        min-height: 100vh;
-        background: var(--bg-primary);
-        background-image: 
-            radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-            radial-gradient(at 80% 70%, rgba(225, 48, 108, 0.12) 0px, transparent 50%);
-        color: var(--text-primary);
-        padding: 15px;
-    }
-
-    .container { max-width: 1400px; margin: 0 auto; }
-
-    .header {
-        text-align: center;
-        margin-bottom: 18px;
-        padding: 12px;
-    }
-
-    .header h1 {
-        font-size: clamp(20px, 4vw, 32px);
-        background: linear-gradient(135deg, #e1306c, #8b5cf6, #25f4ee);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 6px;
-        font-weight: 800;
-    }
-
-    .header p { color: var(--text-secondary); font-size: 12px; }
-
-    .server-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        margin-top: 8px;
-        padding: 4px 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        font-size: 10px;
-    }
-
-    .server-status.connected { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
-    .server-status.disconnected { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
-
-    .status-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; }
-    .server-status.connected .status-dot { background: var(--success); animation: pulse 2s infinite; }
-    .server-status.disconnected .status-dot { background: var(--danger); }
-
-    /* Main Tabs */
-    .main-tabs {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 5px;
-        margin-bottom: 18px;
-        padding: 5px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 13px;
-        backdrop-filter: blur(20px);
-    }
-
-    .main-tab {
-        padding: 10px 4px;
-        background: transparent;
-        border: none;
-        border-radius: 9px;
-        cursor: pointer;
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-family: inherit;
-        transition: all 0.3s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-    }
-
-    .main-tab .tab-icon { font-size: 16px; }
-    .main-tab:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
-    .main-tab.active {
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    .tab-content { display: none; animation: fadeIn 0.3s; }
-    .tab-content.active { display: block; }
-
-    .glass-card {
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 18px;
-        margin-bottom: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-
-    .card-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 14px;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-    }
-
-    .card-icon-box {
-        width: 30px;
-        height: 30px;
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        border-radius: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-    }
-
-    .form-group { margin-bottom: 12px; }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 6px;
-        color: var(--text-secondary);
-        font-size: 12px;
-        font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        width: 100%;
-        padding: 10px 12px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text-primary);
-        font-size: 13px;
-        font-family: inherit;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-        outline: none;
-        border-color: var(--accent);
-        background: rgba(99, 102, 241, 0.05);
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    @media (max-width: 600px) {
-        .form-row { grid-template-columns: 1fr; }
-    }
-
-    .platform-select {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-
-    .platform-option {
-        padding: 9px 5px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 2px solid var(--border);
-        border-radius: 9px;
-        text-align: center;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 600;
-    }
-
-    .platform-option:hover { background: rgba(255, 255, 255, 0.06); }
-    .platform-option.selected.ig { border-color: var(--instagram); background: rgba(225, 48, 108, 0.1); color: var(--instagram); }
-    .platform-option.selected.tt { border-color: var(--tiktok); background: rgba(37, 244, 238, 0.1); color: var(--tiktok); }
-    .platform-option.selected.sn { border-color: var(--snapchat); background: rgba(255, 252, 0, 0.1); color: var(--snapchat); }
-
-    .platform-icon { font-size: 17px; display: block; margin-bottom: 2px; }
-
-    .btn {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-        width: 100%;
-    }
-
-    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-danger {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        padding: 6px 9px;
-        font-size: 11px;
-    }
-
-    .btn-warning {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        padding: 6px 9px;
-        font-size: 11px;
-    }
-
-    .btn-secondary {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-    }
-
-    .btn-clear {
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        width: 100%;
-        margin-top: 8px;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 30px 15px;
-        color: var(--text-muted);
-        font-size: 13px;
-    }
-
-    .empty-state-icon {
-        font-size: 36px;
-        margin-bottom: 8px;
-        opacity: 0.5;
-    }
-
-    /* Branches */
-    .branch-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 13px;
-        margin-bottom: 11px;
-    }
-
-    .branch-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 9px;
-        padding-bottom: 9px;
-        border-bottom: 1px dashed var(--border);
-    }
-
-    .branch-name-display {
-        font-weight: 700;
-        font-size: 15px;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-    }
-
-    .members-list { display: flex; flex-direction: column; gap: 7px; }
-
-    .member-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 9px;
-        align-items: center;
-        padding: 9px 11px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-    }
-
-    .member-info { min-width: 0; }
-    .member-name { font-weight: 600; font-size: 13px; }
-    .member-stats { text-align: center; font-size: 11px; }
-    .member-likes { font-weight: 700; color: var(--danger); font-size: 14px; }
-
-    .add-member-btn {
-        width: 100%;
-        padding: 8px;
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--accent-hover);
-        border: 1px dashed rgba(99, 102, 241, 0.4);
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: inherit;
-        margin-top: 9px;
-    }
-
-    .add-member-btn:hover { background: rgba(99, 102, 241, 0.15); }
-
-    /* Posts Grid */
-    .posts-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 13px;
-        margin-top: 14px;
-    }
-
-    .post-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        animation: slideIn 0.3s;
-    }
-
-    .post-card.assigned {
-        background: rgba(16, 185, 129, 0.05);
-        border-color: rgba(16, 185, 129, 0.3);
-    }
-
-    .post-thumbnail {
-        width: 100%;
-        height: 200px;
-        background: rgba(0, 0, 0, 0.4);
-        background-size: cover;
-        background-position: center;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-    }
-
-    .post-thumbnail.no-image::before {
-        content: '🖼️';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 40px;
-        opacity: 0.3;
-    }
-
-    .play-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    .post-thumbnail:hover .play-overlay { opacity: 1; }
-
-    .play-btn-circle {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-        color: #1a1a1a;
-        padding-right: 4px;
-    }
-
-    .post-stats-overlay {
-        position: absolute;
-        bottom: 8px;
-        right: 8px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(10px);
-        padding: 4px 10px;
-        border-radius: 11px;
-        font-size: 12px;
-        font-weight: 700;
-        color: white;
-        z-index: 2;
-    }
-
-    .post-body { padding: 11px; }
-
-    .post-title {
-        font-size: 11px;
-        color: var(--text-secondary);
-        margin-bottom: 7px;
-        max-height: 36px;
-        overflow: hidden;
-        line-height: 1.4;
-    }
-
-    .post-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 10px;
-        color: var(--text-muted);
-        margin-bottom: 8px;
-    }
-
-    .post-assign-row {
-        display: flex;
-        gap: 5px;
-    }
-
-    .post-assign-select {
-        flex: 1;
-        padding: 7px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid var(--border);
-        border-radius: 7px;
-        color: var(--text-primary);
-        font-size: 11px;
-        font-family: inherit;
-    }
-
-    .post-assign-select option { background: var(--bg-secondary); }
-
-    .post-assign-btn {
-        padding: 7px 11px;
-        background: linear-gradient(135deg, var(--success), #059669);
-        color: white;
-        border: none;
-        border-radius: 7px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: inherit;
-    }
-
-    .assigned-info {
-        padding: 7px;
-        background: rgba(16, 185, 129, 0.1);
-        border-radius: 7px;
-        font-size: 11px;
-        color: var(--success);
-        text-align: center;
-        margin-top: 7px;
-    }
-
-    .reassign-link {
-        color: var(--accent-hover);
-        cursor: pointer;
-        text-decoration: underline;
-        margin-right: 5px;
-    }
-
-    .platform-badge {
-        padding: 1px 6px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 9px;
-    }
-
-    .platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
-    .platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
-    .platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
-
-    /* Leaderboard */
-    .lb-tabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 5px;
-        margin-bottom: 14px;
-        padding: 4px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-    }
-
-    .lb-tab {
-        padding: 9px;
-        background: transparent;
-        border: none;
-        border-radius: 7px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-family: inherit;
-    }
-
-    .lb-tab.active {
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-    }
-
-    .lb-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 7px;
-        margin-bottom: 14px;
-    }
-
-    @media (max-width: 600px) {
-        .lb-stats { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .lb-stat-card {
-        padding: 11px 7px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        text-align: center;
-    }
-
-    .lb-stat-label { font-size: 9px; color: var(--text-muted); margin-bottom: 3px; }
-    .lb-stat-value {
-        font-size: 17px;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--accent-hover), #ec4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .lb-list { display: flex; flex-direction: column; gap: 9px; }
-
-    .lb-item {
-        display: grid;
-        grid-template-columns: 44px 1fr auto;
-        gap: 11px;
-        align-items: center;
-        padding: 11px 13px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        animation: slideIn 0.4s;
-    }
-
-    .lb-item.rank-1 {
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
-        border-color: rgba(251, 191, 36, 0.4);
-    }
-    .lb-item.rank-2 {
-        background: linear-gradient(135deg, rgba(203, 213, 225, 0.1), rgba(203, 213, 225, 0.03));
-        border-color: rgba(203, 213, 225, 0.3);
-    }
-    .lb-item.rank-3 {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(217, 119, 6, 0.03));
-        border-color: rgba(217, 119, 6, 0.3);
-    }
-
-    .lb-rank {
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        font-weight: 800;
-        font-size: 16px;
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .rank-1 .lb-rank { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a1a1a; }
-    .rank-2 .lb-rank { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: #1a1a1a; }
-    .rank-3 .lb-rank { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
-
-    .lb-info-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
-    .lb-info-sub { font-size: 10px; color: var(--text-muted); display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
-
-    .lb-numbers { text-align: center; }
-    .lb-likes-val { font-weight: 700; font-size: 15px; color: var(--danger); }
-    .lb-likes-lbl { font-size: 9px; color: var(--text-muted); }
-
-    /* Winner */
-    .winner-banner {
-        margin-top: 16px;
-        padding: 16px;
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(236, 72, 153, 0.1));
-        border: 1px solid rgba(251, 191, 36, 0.3);
-        border-radius: 13px;
-        text-align: center;
-        display: none;
-    }
-
-    .winner-banner.active { display: block; }
-
-    .winner-crown { font-size: 32px; margin-bottom: 6px; animation: bounce 2s infinite; }
-    .winner-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-    .winner-name {
-        font-size: 18px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #fbbf24, #ec4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .spinner {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        border-top-color: var(--warning);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .discovery-log {
-        margin-top: 10px;
-        max-height: 130px;
-        overflow-y: auto;
-        padding: 9px;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 7px;
-        font-family: 'Courier New', monospace;
-        font-size: 10px;
-        line-height: 1.5;
-        display: none;
-    }
-
-    .discovery-log.active { display: block; }
-    .log-entry { padding: 1px 0; }
-    .log-info { color: var(--text-secondary); }
-    .log-success { color: var(--success); }
-    .log-warning { color: var(--warning); }
-    .log-error { color: var(--danger); }
-
-    .info-box {
-        padding: 10px;
-        background: rgba(99, 102, 241, 0.08);
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 8px;
-        margin-bottom: 11px;
-        font-size: 11px;
-        color: var(--accent-hover);
-        line-height: 1.5;
-    }
-
-    .info-box.warning {
-        background: rgba(245, 158, 11, 0.08);
-        border-color: rgba(245, 158, 11, 0.2);
-        color: var(--warning);
-    }
-
-    .filter-bar {
-        display: flex;
-        gap: 5px;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-    }
-
-    .filter-chip {
-        padding: 5px 11px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 13px;
-        color: var(--text-secondary);
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 600;
-        font-family: inherit;
-    }
-
-    .filter-chip.active {
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-        border-color: transparent;
-    }
-
-    /* Modal */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
-        padding: 15px;
-    }
-
-    .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-
-    .modal {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border);
-        border-radius: 15px;
-        padding: 20px;
-        max-width: 500px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-        animation: zoomIn 0.3s;
-    }
-
-    .modal-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 13px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .modal-actions {
-        display: flex;
-        gap: 7px;
-        margin-top: 14px;
-    }
-
-    .modal-actions .btn { flex: 1; padding: 9px; font-size: 13px; }
-
-    /* Video Modal */
-    .video-modal {
-        max-width: 700px;
-        width: 100%;
-        background: var(--bg-secondary);
-        border-radius: 15px;
-        overflow: hidden;
-    }
-
-    .video-modal-header {
-        padding: 12px 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.3);
-        border-bottom: 1px solid var(--border);
-    }
-
-    .video-modal-title { font-weight: 700; font-size: 13px; }
-
-    .video-modal-close {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
-        cursor: pointer;
-        font-size: 14px;
-        font-family: inherit;
-    }
-
-    .video-container {
-        position: relative;
-        width: 100%;
-        background: #000;
-        max-height: 70vh;
-    }
-
-    .video-container video {
-        width: 100%;
-        max-height: 70vh;
-        display: block;
-    }
-
-    .video-fallback {
-        padding: 30px;
-        text-align: center;
-        color: var(--text-secondary);
-    }
-
-    .video-fallback .btn {
-        margin-top: 12px;
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: white;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(15px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-    .toast {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 11px 20px;
-        background: rgba(16, 185, 129, 0.95);
-        color: white;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 12px;
-        z-index: 200;
-        opacity: 0;
-        transition: all 0.3s;
-        pointer-events: none;
-    }
-
-    .toast.show { opacity: 1; top: 30px; }
-    .toast.error { background: rgba(239, 68, 68, 0.95); }
-    .toast.warning { background: rgba(245, 158, 11, 0.95); }
-
-    .helper-text { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-</style>
-
+<title>💎 مجوهرات نفائس الألماس</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+    /* Luxury Color Palette */
+    --bg-deep: #0a0a0f;
+    --bg-card: #14141c;
+    --bg-glass: rgba(212, 175, 55, 0.04);
+    --gold: #d4af37;
+    --gold-light: #f4e5b0;
+    --gold-dark: #a58020;
+    --gold-glow: rgba(212, 175, 55, 0.3);
+    --champagne: #f7e7ce;
+    --pearl: #f0ead6;
+    --text-primary: #f7e7ce;
+    --text-secondary: #b8a888;
+    --text-muted: #7a6f56;
+    --border-gold: rgba(212, 175, 55, 0.15);
+    --border-gold-strong: rgba(212, 175, 55, 0.35);
+    --success: #4ade80;
+    --danger: #ef4444;
+    --warning: #fbbf24;
+    --instagram: #e1306c;
+    --tiktok: #25f4ee;
+    --snapchat: #fffc00;
+    --shadow-gold: 0 8px 32px rgba(212, 175, 55, 0.15);
+    --shadow-deep: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+    min-height: 100vh;
+    background: var(--bg-deep);
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08) 0px, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(180, 130, 40, 0.04) 0px, transparent 60%);
+    color: var(--text-primary);
+    padding: 12px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+        linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.02) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 8s infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: -200% 0; }
+    50% { background-position: 200% 0; }
+}
+
+.container { max-width: 1500px; margin: 0 auto; position: relative; z-index: 1; }
+
+/* ============== LUXURY HEADER ============== */
+.luxury-header {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.95) 0%, rgba(30, 25, 15, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 20px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-gold), var(--shadow-deep);
+}
+
+.luxury-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+}
+
+.header-logo-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid var(--gold);
+    box-shadow: 0 4px 20px var(--gold-glow);
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.header-logo-wrap:hover { transform: scale(1.05); box-shadow: 0 6px 28px var(--gold-glow); }
+
+.header-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-logo-placeholder {
+    font-size: 32px;
+    color: var(--bg-deep);
+}
+
+.header-title {
+    font-family: 'Playfair Display', 'Tajawal', serif;
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.header-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.header-refresh-btn {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 11px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 16px var(--gold-glow);
+    transition: all 0.3s;
+}
+
+.header-refresh-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px var(--gold-glow);
+}
+
+.header-refresh-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.header-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-gold);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.header-date {
+    font-size: 13px;
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.server-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    border-radius: 18px;
+    font-size: 11px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: var(--success);
+}
+
+.server-status.disconnected {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+}
+
+.status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s infinite;
+}
+
+.server-status.disconnected .status-dot { background: var(--danger); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ============== MAIN TABS ============== */
+.main-tabs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 18px;
+    padding: 5px;
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.8), rgba(30, 25, 15, 0.8));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    box-shadow: var(--shadow-deep);
+}
+
+.main-tab {
+    padding: 10px 4px;
+    background: transparent;
+    border: none;
+    border-radius: 11px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.main-tab .tab-icon { font-size: 17px; transition: transform 0.3s; }
+.main-tab:hover { background: rgba(212, 175, 55, 0.06); color: var(--gold-light); }
+.main-tab:hover .tab-icon { transform: translateY(-2px); }
+
+.main-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    box-shadow: 0 4px 16px var(--gold-glow);
+}
+
+.tab-content { display: none; animation: fadeInUp 0.4s ease-out; }
+.tab-content.active { display: block; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============== LUXURY CARDS ============== */
+.luxury-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.5));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-deep);
+    position: relative;
+    overflow: hidden;
+}
+
+.luxury-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold-light);
+}
+
+.card-icon-box {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--bg-deep);
+    box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+/* ============== INPUTS ============== */
+.form-group { margin-bottom: 13px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 11px 13px;
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.04);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+@media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+}
+
+/* ============== BUTTONS ============== */
+.btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    width: 100%;
+    box-shadow: 0 4px 14px var(--gold-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--gold-glow);
+}
+
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--gold-light);
+    border: 1px solid var(--border-gold-strong);
+}
+
+.btn-secondary:hover { background: rgba(212, 175, 55, 0.15); }
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 7px 11px;
+    font-size: 11px;
+}
+
+.btn-warning {
+    background: rgba(251, 191, 36, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 7px 11px;
+    font-size: 11px;
+}
+
+.btn-clear {
+    background: transparent;
+    border: 1px solid var(--border-gold);
+    color: var(--text-secondary);
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* ============== PLATFORM SELECTOR ============== */
+.platform-select {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 14px;
+}
+
+.platform-option {
+    padding: 11px 6px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 2px solid var(--border-gold);
+    border-radius: 11px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+}
+
+.platform-option:hover { background: rgba(212, 175, 55, 0.06); }
+.platform-option.selected.ig { border-color: var(--instagram); background: rgba(225, 48, 108, 0.1); color: var(--instagram); }
+.platform-option.selected.tt { border-color: var(--tiktok); background: rgba(37, 244, 238, 0.1); color: var(--tiktok); }
+.platform-option.selected.sn { border-color: var(--snapchat); background: rgba(255, 252, 0, 0.1); color: var(--snapchat); }
+
+.platform-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+
+/* ============== EMPTY STATES ============== */
+.empty-state {
+    text-align: center;
+    padding: 35px 15px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.empty-state-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+    color: var(--gold);
+}
+
+/* ============== BRANCH CARDS ============== */
+.branch-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.6), rgba(20, 20, 28, 0.4));
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 13px;
+    transition: all 0.3s;
+}
+
+.branch-card:hover {
+    border-color: var(--border-gold-strong);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.08);
+}
+
+.branch-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-gold);
+    gap: 10px;
+}
+
+.branch-header-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: 1;
+    min-width: 0;
+}
+
+.branch-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid var(--gold);
+    transition: transform 0.3s;
+}
+
+.branch-avatar:hover { transform: scale(1.05); }
+.branch-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.branch-name-display {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gold-light);
+    margin-bottom: 2px;
+}
+
+.branch-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.branch-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.branch-likes-pill {
+    text-align: center;
+    padding: 6px 11px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.members-list { display: flex; flex-direction: column; gap: 7px; }
+
+.member-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 9px 11px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.member-row:hover { background: rgba(212, 175, 55, 0.04); }
+
+.member-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid var(--border-gold-strong);
+}
+
+.member-avatar:hover { border-color: var(--gold); }
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.member-info { min-width: 0; }
+.member-name { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+.member-stats-mini { text-align: center; font-size: 11px; min-width: 70px; }
+.member-likes { font-weight: 700; color: var(--danger); font-size: 13px; }
+
+.add-member-btn {
+    width: 100%;
+    padding: 9px;
+    background: rgba(212, 175, 55, 0.05);
+    color: var(--gold);
+    border: 1px dashed var(--border-gold-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.add-member-btn:hover { background: rgba(212, 175, 55, 0.1); }
+
+/* ============== POSTS GRID ============== */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.post-card {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.5));
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: slideIn 0.4s;
+    transition: all 0.3s;
+}
+
+.post-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+.post-card.assigned {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.06), rgba(20, 20, 28, 0.5));
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.post-thumbnail {
+    width: 100%;
+    height: 210px;
+    background: rgba(0, 0, 0, 0.4);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.post-thumbnail.no-image::before {
+    content: '🖼️';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+.play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.post-thumbnail:hover .play-overlay { opacity: 1; }
+
+.play-btn-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    color: var(--bg-deep);
+    padding-right: 3px;
+}
+
+.post-stats-overlay {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 4px 11px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold-light);
+    border: 1px solid var(--border-gold);
+}
+
+.post-body { padding: 12px; }
+.post-title { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; max-height: 38px; overflow: hidden; line-height: 1.5; }
+.post-meta { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text-muted); margin-bottom: 8px; }
+
+.post-assign-row { display: flex; gap: 6px; }
+
+.post-assign-select {
+    flex: 1;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-gold);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 11px;
+    font-family: inherit;
+}
+
+.post-assign-select option { background: var(--bg-card); }
+
+.post-assign-btn {
+    padding: 8px 13px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.assigned-info {
+    padding: 8px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--success);
+    text-align: center;
+    margin-top: 7px;
+}
+
+.reassign-link { color: var(--gold); cursor: pointer; text-decoration: underline; margin-right: 5px; }
+
+.platform-badge { padding: 2px 7px; border-radius: 6px; font-weight: 700; font-size: 9px; }
+.platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
+.platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
+.platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
+
+/* ============== LUXURY LEADERBOARD ============== */
+.lb-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 14px;
+    padding: 4px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+}
+
+.lb-tab {
+    padding: 9px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.lb-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    box-shadow: 0 3px 10px var(--gold-glow);
+}
+
+.lb-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+    .lb-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.lb-stat-card {
+    padding: 11px 7px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(20, 20, 28, 0.5));
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    text-align: center;
+}
+
+.lb-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+.lb-stat-value {
+    font-size: 19px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.lb-list { display: flex; flex-direction: column; gap: 10px; }
+
+.lb-item {
+    display: grid;
+    grid-template-columns: 48px 56px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 15px;
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.4));
+    border: 1px solid var(--border-gold);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+
+.lb-item:hover {
+    transform: translateX(-4px);
+    border-color: var(--border-gold-strong);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.1);
+}
+
+.lb-item.rank-1 {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(20, 20, 28, 0.5));
+    border-color: var(--gold);
+    box-shadow: 0 6px 24px var(--gold-glow);
+}
+
+.lb-item.rank-1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+    pointer-events: none;
+}
+
+.lb-item.rank-2 {
+    background: linear-gradient(135deg, rgba(203, 213, 225, 0.08), rgba(20, 20, 28, 0.5));
+    border-color: rgba(203, 213, 225, 0.4);
+}
+
+.lb-item.rank-3 {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(20, 20, 28, 0.5));
+    border-color: rgba(217, 119, 6, 0.4);
+}
+
+.lb-rank {
+    width: 44px; height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    font-weight: 800;
+    font-size: 17px;
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    color: var(--gold-light);
+}
+
+.rank-1 .lb-rank {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    color: var(--bg-deep);
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+.rank-2 .lb-rank { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: var(--bg-deep); }
+.rank-3 .lb-rank { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
+
+.lb-avatar {
+    width: 48px; height: 48px;
+    border-radius: 11px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 800;
+    border: 2px solid var(--border-gold);
+    flex-shrink: 0;
+}
+
+.lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.lb-info-name { font-weight: 700; font-size: 14px; color: var(--gold-light); margin-bottom: 3px; }
+.lb-info-sub { font-size: 10px; color: var(--text-muted); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+.lb-numbers { text-align: center; }
+.lb-likes-val { font-weight: 800; font-size: 16px; color: var(--danger); }
+.lb-likes-lbl { font-size: 9px; color: var(--text-muted); }
+
+/* ============== WINNER BANNER ============== */
+.winner-banner {
+    margin-top: 18px;
+    padding: 22px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(20, 20, 28, 0.6));
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    text-align: center;
+    display: none;
+    box-shadow: 0 8px 32px var(--gold-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.winner-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    animation: rotateShine 6s linear infinite;
+}
+
+@keyframes rotateShine {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.winner-banner.active { display: block; }
+.winner-crown { font-size: 38px; margin-bottom: 8px; animation: bounce 2s infinite; position: relative; }
+.winner-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; letter-spacing: 1.5px; position: relative; }
+.winner-name {
+    font-size: 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+}
+
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+/* ============== SPINNER ============== */
+.spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============== INFO BOXES ============== */
+.info-box {
+    padding: 11px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(212, 175, 55, 0.02));
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 9px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--gold-light);
+    line-height: 1.6;
+}
+
+.info-box.warning {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02));
+    border-color: rgba(251, 191, 36, 0.3);
+    color: var(--warning);
+}
+
+/* ============== FILTERS ============== */
+.filter-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+
+.filter-chip {
+    padding: 6px 12px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.filter-chip.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border-color: transparent;
+}
+
+/* ============== MODALS ============== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 12px;
+}
+
+.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+.modal {
+    background: linear-gradient(135deg, var(--bg-card), rgba(30, 25, 15, 0.95));
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 16px;
+    padding: 22px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: zoomIn 0.3s;
+    box-shadow: var(--shadow-deep), 0 0 60px rgba(212, 175, 55, 0.15);
+    position: relative;
+}
+
+.modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--gold-light);
+}
+
+.modal-actions { display: flex; gap: 8px; margin-top: 14px; }
+.modal-actions .btn { flex: 1; padding: 10px; font-size: 13px; }
+
+/* ============== AVATAR UPLOADER ============== */
+.avatar-uploader {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 800;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 0 auto 14px;
+    border: 3px solid var(--gold);
+    box-shadow: 0 6px 20px var(--gold-glow);
+    transition: transform 0.3s;
+}
+
+.avatar-uploader:hover { transform: scale(1.05); }
+.avatar-uploader img { width: 100%; height: 100%; object-fit: cover; }
+
+.avatar-uploader::after {
+    content: '📷';
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 26px; height: 26px;
+    background: var(--bg-deep);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* ============== BRANCH DETAILS MODAL ============== */
+.details-modal {
+    max-width: 900px;
+}
+
+.details-platforms-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin: 14px 0;
+    padding: 4px;
+    background: rgba(20, 20, 28, 0.5);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+}
+
+.details-platform-tab {
+    padding: 9px 6px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.details-platform-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+}
+
+.details-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.detail-post-card {
+    background: rgba(20, 20, 28, 0.6);
+    border: 1px solid var(--border-gold);
+    border-radius: 11px;
+    overflow: hidden;
+}
+
+.detail-post-thumb {
+    width: 100%;
+    height: 110px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.detail-post-info { padding: 8px; font-size: 10px; }
+.detail-post-likes { color: var(--danger); font-weight: 700; }
+
+/* ============== TOAST ============== */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 22px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: var(--shadow-deep), 0 0 24px var(--gold-glow);
+}
+
+.toast.show { opacity: 1; top: 30px; }
+.toast.error { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4); }
+.toast.warning { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; }
+
+/* ============== ANIMATIONS ============== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* ============== DISCOVERY LOG ============== */
+.discovery-log {
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-gold);
+    border-radius: 9px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    display: none;
+}
+
+.discovery-log.active { display: block; }
+.log-info { color: var(--text-secondary); }
+.log-success { color: var(--success); }
+.log-warning { color: var(--warning); }
+.log-error { color: var(--danger); }
+
+.helper-text { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+/* ============== VIDEO MODAL ============== */
+.video-modal { max-width: 700px; padding: 0; }
+
+.video-modal-header {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid var(--border-gold);
+}
+
+.video-modal-close {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.video-container { background: #000; }
+.video-container video { width: 100%; max-height: 70vh; display: block; }
+
+.video-fallback { padding: 30px; text-align: center; color: var(--text-secondary); }
+
+/* ============== HIDDEN FILE INPUT ============== */
+.hidden-file-input { display: none; }
+</style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>🏆 نظام مسابقة الفروع v4</h1>
-        <p>جلب من الحساب • مصغرات • تشغيل فيديو • إسناد للموظفين</p>
-        <div class="server-status" id="serverStatus">
-            <span class="status-dot"></span>
-            <span id="serverStatusText">جاري الاتصال...</span>
-        </div>
-    </div>
 
-    <!-- Main Tabs -->
+    <!-- ============== LUXURY HEADER ============== -->
+    <header class="luxury-header">
+        <div class="header-content">
+            <!-- Logo -->
+            <div class="header-logo-wrap" onclick="document.getElementById('logoFileInput').click()" title="انقر لتغيير الشعار">
+                <div class="header-logo-placeholder" id="headerLogoPlaceholder">💎</div>
+                <img id="headerLogoImg" style="display:none;" alt="logo">
+            </div>
+            <input type="file" id="logoFileInput" class="hidden-file-input" accept="image/*" onchange="uploadSystemLogo(event)">
+
+            <!-- Title -->
+            <div>
+                <div class="header-title" id="headerSystemName">مجوهرات نفائس الألماس</div>
+                <div class="header-subtitle">نظام مسابقة الفروع · Premium Edition</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <button class="header-refresh-btn" id="headerRefreshBtn" onclick="refreshFromHeader()">
+                    <span id="headerRefreshIcon">🔄</span>
+                    <span>تحديث</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="header-info-row">
+            <div class="header-date">
+                📅 <span id="headerDate">--</span>
+            </div>
+            <div class="server-status" id="serverStatus">
+                <span class="status-dot"></span>
+                <span id="serverStatusText">جاري الاتصال...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============== MAIN TABS ============== -->
     <div class="main-tabs">
         <button class="main-tab active" data-tab="setup" onclick="switchTab('setup')">
             <span class="tab-icon">⚙️</span>
@@ -879,9 +1285,20 @@
         </button>
     </div>
 
-    <!-- TAB 1: Setup -->
+    <!-- ============== TAB 1: SETUP ============== -->
     <div class="tab-content active" id="tab-setup">
-        <div class="glass-card">
+        <div class="luxury-card">
+            <div class="card-title">
+                <div class="card-icon-box">💎</div>
+                اسم النظام
+            </div>
+            <div class="form-group">
+                <label>اسم النظام (يظهر في الـ Header وشاشة العرض)</label>
+                <input type="text" id="systemNameInput" placeholder="مجوهرات نفائس الألماس">
+            </div>
+        </div>
+
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">👤</div>
                 إعدادات الحساب المصدر
@@ -893,32 +1310,28 @@
             <label style="display:block;margin-bottom:6px;color:var(--text-secondary);font-size:12px;font-weight:500;">المنصة</label>
             <div class="platform-select">
                 <div class="platform-option ig selected" data-sp="instagram" onclick="selectSourcePlatform('instagram')">
-                    <span class="platform-icon">📷</span>
-                    Instagram
+                    <span class="platform-icon">📷</span>Instagram
                 </div>
                 <div class="platform-option tt" data-sp="tiktok" onclick="selectSourcePlatform('tiktok')">
-                    <span class="platform-icon">🎵</span>
-                    TikTok
+                    <span class="platform-icon">🎵</span>TikTok
                 </div>
                 <div class="platform-option sn" data-sp="snapchat" onclick="selectSourcePlatform('snapchat')">
-                    <span class="platform-icon">👻</span>
-                    Snapchat
+                    <span class="platform-icon">👻</span>Snapchat
                 </div>
             </div>
 
             <div class="form-group">
                 <label>يوزر الحساب</label>
-                <input type="text" id="sourceUsername" placeholder="مثال: @company_official">
-                <div class="helper-text">بدون @ أو معه، الاثنين يشتغلون</div>
+                <input type="text" id="sourceUsername" placeholder="@company_official">
             </div>
 
             <div class="form-group">
-                <label>الحد الأقصى للمنشورات (للسرعة)</label>
+                <label>الحد الأقصى للمنشورات</label>
                 <input type="number" id="maxPosts" value="50" min="10" max="200">
             </div>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">📅</div>
                 فترة المسابقة
@@ -935,20 +1348,17 @@
             </div>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">📊</div>
                 ملخص
             </div>
             <div id="setupSummary">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📊</div>
-                    <div>أضف فروع وموظفين</div>
-                </div>
+                <div class="empty-state"><div class="empty-state-icon">📊</div><div>أضف فروع وموظفين</div></div>
             </div>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🛠️</div>
                 أدوات
@@ -957,49 +1367,44 @@
         </div>
     </div>
 
-    <!-- TAB 2: Branches -->
+    <!-- ============== TAB 2: BRANCHES ============== -->
     <div class="tab-content" id="tab-branches">
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">➕</div>
                 إضافة فرع جديد
             </div>
             <div class="form-group">
                 <label>اسم الفرع</label>
-                <input type="text" id="newBranchName" placeholder="مثال: فرع الرياض">
+                <input type="text" id="newBranchName" placeholder="فرع الرياض">
             </div>
             <button class="btn btn-primary" onclick="addBranch()">إضافة الفرع</button>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🏢</div>
                 الفروع والموظفين
             </div>
             <div id="branchesList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🏢</div>
-                    <div>أضف فرعًا واحدًا على الأقل</div>
-                </div>
+                <div class="empty-state"><div class="empty-state-icon">🏢</div><div>أضف فرعًا واحدًا على الأقل</div></div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 3: Discovery -->
+    <!-- ============== TAB 3: DISCOVERY ============== -->
     <div class="tab-content" id="tab-discovery">
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🔍</div>
                 جلب منشورات الحساب
             </div>
             <div class="info-box">
-                🤖 اضغط الزر لجلب كل منشورات الحساب خلال الفترة المحددة. ثم أسند كل منشور لموظف من القائمة.
+                🤖 اضغط الزر لجلب كل منشورات الحساب خلال الفترة المحددة
             </div>
-            
             <button class="btn btn-primary" onclick="discoverUserPosts()" id="discoverBtn">
                 🔄 جلب جميع منشورات الحساب
             </button>
-
             <div class="discovery-log" id="discoveryLog"></div>
         </div>
 
@@ -1012,80 +1417,55 @@
         <div id="postsGrid" class="posts-grid"></div>
     </div>
 
-    <!-- TAB 4: Manual URLs -->
+    <!-- ============== TAB 4: MANUAL ============== -->
     <div class="tab-content" id="tab-manual">
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🔗</div>
                 إضافة رابط يدوي
             </div>
             <div class="info-box">
-                📎 لإضافة منشور من حساب آخر أو منشور خاص لم يظهر في اكتشاف الحساب
+                📎 لإضافة منشور من حساب آخر أو منشور لم يظهر في الاكتشاف
             </div>
-            
             <div class="form-group">
                 <label>رابط المنشور</label>
                 <input type="text" id="manualUrl" placeholder="https://...">
             </div>
-            
             <div class="form-group">
                 <label>إسناد لموظف</label>
-                <select id="manualAssignSelect">
-                    <option value="">-- اختر موظف --</option>
-                </select>
+                <select id="manualAssignSelect"><option value="">-- اختر موظف --</option></select>
             </div>
-            
-            <button class="btn btn-primary" onclick="addManualLink()" id="addManualBtn">
-                ➕ إضافة الرابط
-            </button>
+            <button class="btn btn-primary" onclick="addManualLink()" id="addManualBtn">➕ إضافة الرابط</button>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">📋</div>
                 الروابط اليدوية
             </div>
             <div id="manualPostsList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🔗</div>
-                    <div>لم تضف روابط يدوية بعد</div>
-                </div>
+                <div class="empty-state"><div class="empty-state-icon">🔗</div><div>لم تضف روابط بعد</div></div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 5: Leaderboard -->
+    <!-- ============== TAB 5: LEADERBOARD ============== -->
     <div class="tab-content" id="tab-leaderboard">
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="lb-tabs">
                 <button class="lb-tab active" data-lb="branches" onclick="switchLeaderboard('branches')">🏢 الفروع</button>
                 <button class="lb-tab" data-lb="members" onclick="switchLeaderboard('members')">👤 الموظفين</button>
             </div>
 
             <div class="lb-stats">
-                <div class="lb-stat-card">
-                    <div class="lb-stat-label">فروع</div>
-                    <div class="lb-stat-value" id="lbTotalBranches">0</div>
-                </div>
-                <div class="lb-stat-card">
-                    <div class="lb-stat-label">موظفين</div>
-                    <div class="lb-stat-value" id="lbTotalMembers">0</div>
-                </div>
-                <div class="lb-stat-card">
-                    <div class="lb-stat-label">منشورات</div>
-                    <div class="lb-stat-value" id="lbTotalPosts">0</div>
-                </div>
-                <div class="lb-stat-card">
-                    <div class="lb-stat-label">لايكات</div>
-                    <div class="lb-stat-value" id="lbTotalLikes">0</div>
-                </div>
+                <div class="lb-stat-card"><div class="lb-stat-label">فروع</div><div class="lb-stat-value" id="lbTotalBranches">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">موظفين</div><div class="lb-stat-value" id="lbTotalMembers">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">منشورات</div><div class="lb-stat-value" id="lbTotalPosts">0</div></div>
+                <div class="lb-stat-card"><div class="lb-stat-label">لايكات</div><div class="lb-stat-value" id="lbTotalLikes">0</div></div>
             </div>
 
             <div class="lb-list" id="leaderboardList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🎯</div>
-                    <div>أضف فروع واعتمد منشورات</div>
-                </div>
+                <div class="empty-state"><div class="empty-state-icon">🎯</div><div>أضف فروع واعتمد منشورات</div></div>
             </div>
 
             <div class="winner-banner" id="winnerBanner">
@@ -1095,48 +1475,37 @@
             </div>
         </div>
     </div>
-</div>
 
-
-    <!-- TAB 6: Advanced -->
+    <!-- ============== TAB 6: ADVANCED ============== -->
     <div class="tab-content" id="tab-advanced">
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🍪</div>
                 Cookies (لـ Instagram)
             </div>
             <div class="info-box warning">
-                ⚠️ Instagram يحظر السيرفرات بسرعة. ارفع ملف cookies من متصفحك ليعمل بدون مشاكل.
-                <br><br>
-                <strong>الخطوات:</strong>
-                <br>1. ثبّت إضافة <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" style="color:var(--accent-hover);text-decoration:underline;">Get cookies.txt LOCALLY</a>
-                <br>2. سجّل دخول لـ Instagram من نفس المتصفح
-                <br>3. افتح instagram.com → اضغط الإضافة → Export
-                <br>4. ارفع الملف هنا
+                ⚠️ Instagram يحظر السيرفرات. ارفع cookies من متصفحك ليعمل
             </div>
-            
-            <div id="cookiesStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:12px;text-align:center;">
+            <div id="cookiesStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);font-size:12px;text-align:center;">
                 جاري التحقق...
             </div>
-            
-            <input type="file" id="cookiesFile" accept=".txt" style="display:none;" onchange="uploadCookies()">
+            <input type="file" id="cookiesFile" class="hidden-file-input" accept=".txt" onchange="uploadCookies()">
             <button class="btn btn-primary" onclick="document.getElementById('cookiesFile').click()" style="margin-bottom:8px;">
                 📤 رفع ملف cookies.txt
             </button>
             <button class="btn btn-danger" onclick="deleteCookies()" style="width:100%;padding:10px;">
-                🗑️ حذف Cookies الحالية
+                🗑️ حذف Cookies
             </button>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">🔄</div>
                 التحديث التلقائي
             </div>
             <div class="info-box">
-                🤖 السيرفر يحدّث لايكات المنشورات تلقائيًا كل X ساعة، حتى لو متصفحك مغلق
+                🤖 السيرفر يحدّث لايكات المنشورات تلقائيًا، حتى لو متصفحك مغلق
             </div>
-            
             <div class="form-group">
                 <label>الفترة الزمنية</label>
                 <select id="autoUpdateInterval">
@@ -1147,65 +1516,59 @@
                     <option value="24">كل 24 ساعة</option>
                 </select>
             </div>
-            
-            <div id="autoUpdateStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:12px;text-align:center;">
+            <div id="autoUpdateStatus" style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(20,20,28,0.5);border:1px solid var(--border-gold);font-size:12px;text-align:center;">
                 الحالة: متوقف
             </div>
-            
-            <button class="btn btn-primary" id="autoUpdateBtn" onclick="toggleAutoUpdate()">
-                ▶️ تفعيل التحديث التلقائي
-            </button>
-            
-            <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);">
-                <button class="btn btn-primary" onclick="refreshAllNow()" id="refreshNowBtn" style="background:linear-gradient(135deg,var(--success),#059669);">
+            <button class="btn btn-primary" id="autoUpdateBtn" onclick="toggleAutoUpdate()">▶️ تفعيل التحديث التلقائي</button>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-gold);">
+                <button class="btn btn-primary" onclick="refreshAllNow()" id="refreshNowBtn" style="background:linear-gradient(135deg,#10b981,#059669);">
                     🔄 تحديث الآن (يدوي)
                 </button>
-                <div class="helper-text" style="margin-top:6px;text-align:center;">يجلب لايكات جديدة لكل المنشورات المعتمدة</div>
             </div>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">📺</div>
                 شاشة العرض المباشر
             </div>
-            <div class="info-box">
-                💡 رابط مخصص لعرض المسابقة على شاشة مكتب/تلفزيون. يتحدّث تلقائيًا.
-            </div>
-            <button class="btn btn-primary" onclick="openDisplay()">
-                📺 فتح شاشة العرض
-            </button>
-            <button class="btn btn-secondary" onclick="copyDisplayLink()" style="margin-top:8px;width:100%;padding:10px;">
-                📋 نسخ رابط الشاشة
-            </button>
+            <button class="btn btn-primary" onclick="openDisplay()">📺 فتح شاشة العرض</button>
+            <button class="btn btn-secondary" onclick="copyDisplayLink()" style="margin-top:8px;width:100%;padding:10px;">📋 نسخ رابط الشاشة</button>
         </div>
 
-        <div class="glass-card">
+        <div class="luxury-card">
             <div class="card-title">
                 <div class="card-icon-box">📥</div>
                 تصدير النتائج
             </div>
-            <button class="btn btn-primary" onclick="exportPDF()" style="margin-bottom:8px;">
-                📄 تصدير تقرير PDF كامل
-            </button>
+            <button class="btn btn-primary" onclick="exportPDF()" style="margin-bottom:8px;">📄 تصدير تقرير PDF</button>
             <button class="btn btn-primary" onclick="exportWinnerImage()" style="background:linear-gradient(135deg,#fbbf24,#ec4899);">
-                🏆 تصدير صورة الفائز (واتساب)
+                🏆 تصدير صورة الفائز
             </button>
-            <div class="helper-text" style="margin-top:6px;text-align:center;">صورة جاهزة للنشر في الواتساب مع تفاصيل الفائز</div>
         </div>
     </div>
+</div>
 
-    <!-- Member Modal -->
+<!-- ============== MEMBER MODAL ============== -->
 <div class="modal-overlay" id="memberModal">
     <div class="modal">
         <div class="modal-title">
             <div class="card-icon-box">👤</div>
             <span id="memberModalTitle">إضافة موظف</span>
         </div>
+
+        <!-- Member Avatar Uploader -->
+        <div class="avatar-uploader" id="memberAvatarUploader" onclick="document.getElementById('memberAvatarInput').click()">
+            <span id="memberAvatarPlaceholder">👤</span>
+            <img id="memberAvatarImg" style="display:none;" alt="avatar">
+        </div>
+        <input type="file" id="memberAvatarInput" class="hidden-file-input" accept="image/*" onchange="uploadMemberAvatar(event)">
+
         <div class="form-group">
             <label>اسم الموظف</label>
-            <input type="text" id="memberName" placeholder="مثال: أحمد محمد">
+            <input type="text" id="memberName" placeholder="أحمد محمد">
         </div>
+
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeMemberModal()">إلغاء</button>
             <button class="btn btn-primary" onclick="saveMember()">حفظ</button>
@@ -1213,11 +1576,59 @@
     </div>
 </div>
 
-<!-- Video Modal -->
+<!-- ============== BRANCH MODAL ============== -->
+<div class="modal-overlay" id="branchModal">
+    <div class="modal">
+        <div class="modal-title">
+            <div class="card-icon-box">🏢</div>
+            <span id="branchModalTitle">تعديل الفرع</span>
+        </div>
+
+        <div class="avatar-uploader" id="branchAvatarUploader" onclick="document.getElementById('branchAvatarInput').click()">
+            <span id="branchAvatarPlaceholder">🏢</span>
+            <img id="branchAvatarImg" style="display:none;" alt="avatar">
+        </div>
+        <input type="file" id="branchAvatarInput" class="hidden-file-input" accept="image/*" onchange="uploadBranchAvatar(event)">
+
+        <div class="form-group">
+            <label>اسم الفرع</label>
+            <input type="text" id="branchNameEdit" placeholder="فرع الرياض">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeBranchModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveBranchEdit()">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============== BRANCH DETAILS MODAL ============== -->
+<div class="modal-overlay" id="detailsModal">
+    <div class="modal details-modal">
+        <div class="modal-title">
+            <div class="card-icon-box" id="detailsAvatar">🏢</div>
+            <span id="detailsTitle">تفاصيل الفرع</span>
+            <button class="video-modal-close" style="margin-right:auto;" onclick="closeDetailsModal()">✕</button>
+        </div>
+
+        <div id="detailsStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;"></div>
+
+        <div class="details-platforms-tabs">
+            <button class="details-platform-tab active" data-dp="all" onclick="setDetailsPlatform('all')">الكل</button>
+            <button class="details-platform-tab" data-dp="instagram" onclick="setDetailsPlatform('instagram')">📷 Instagram</button>
+            <button class="details-platform-tab" data-dp="tiktok" onclick="setDetailsPlatform('tiktok')">🎵 TikTok</button>
+            <button class="details-platform-tab" data-dp="snapchat" onclick="setDetailsPlatform('snapchat')">👻 Snap</button>
+        </div>
+
+        <div class="details-posts" id="detailsPosts"></div>
+    </div>
+</div>
+
+<!-- ============== VIDEO MODAL ============== -->
 <div class="modal-overlay" id="videoModal">
-    <div class="video-modal">
+    <div class="modal video-modal">
         <div class="video-modal-header">
-            <div class="video-modal-title" id="videoModalTitle">عرض المنشور</div>
+            <div style="font-weight:700;font-size:13px;color:var(--gold-light);" id="videoModalTitle">عرض المنشور</div>
             <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
         </div>
         <div class="video-container" id="videoContainer"></div>
@@ -1229,54 +1640,29 @@
 <script>
 const API_BASE = window.location.origin;
 
-let branches = []; // [{id, name, members: [{id, name}]}]
-let discoveredPosts = []; // منشورات مجلوبة من الحساب
-let manualPosts = []; // منشورات مضافة يدويًا
+// =================== State ===================
+let branches = [];
+let discoveredPosts = [];
+let manualPosts = [];
 let serverConnected = false;
 let currentLeaderboardView = 'branches';
 let currentDiscoveryFilter = 'all';
+let currentDetailsBranchId = null;
+let currentDetailsPlatform = 'all';
 let editingMember = null;
+let editingBranch = null;
+let editingMemberImage = null;
+let editingBranchImage = null;
 let sourcePlatform = 'instagram';
+let systemName = 'مجوهرات نفائس الألماس';
+let systemLogo = null;
+let autoUpdateEnabled = false;
 
 const PLATFORMS = {
     instagram: { name: 'Instagram', icon: '📷', class: 'ig' },
     tiktok: { name: 'TikTok', icon: '🎵', class: 'tt' },
     snapchat: { name: 'Snapchat', icon: '👻', class: 'sn' }
 };
-
-// =================== Storage ===================
-function saveData() {
-    localStorage.setItem('bcV4', JSON.stringify({
-        branches, discoveredPosts, manualPosts, sourcePlatform,
-        sourceUsername: document.getElementById('sourceUsername').value,
-        maxPosts: document.getElementById('maxPosts').value,
-        startDate: document.getElementById('globalStartDate').value,
-        endDate: document.getElementById('globalEndDate').value
-    }));
-}
-
-function loadData() {
-    const stored = localStorage.getItem('bcV4');
-    if (stored) {
-        try {
-            const data = JSON.parse(stored);
-            branches = data.branches || [];
-            discoveredPosts = data.discoveredPosts || [];
-            manualPosts = data.manualPosts || [];
-            if (data.sourcePlatform) selectSourcePlatform(data.sourcePlatform);
-            if (data.sourceUsername) document.getElementById('sourceUsername').value = data.sourceUsername;
-            if (data.maxPosts) document.getElementById('maxPosts').value = data.maxPosts;
-            if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
-            if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
-            renderBranches();
-            renderDiscovery();
-            renderManualPosts();
-            renderLeaderboard();
-            renderSetupSummary();
-            updateMemberSelects();
-        } catch (e) { console.error(e); }
-    }
-}
 
 // =================== Helpers ===================
 function showToast(message, type = 'success') {
@@ -1293,10 +1679,89 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-function formatNumber(n) {
-    return (n || 0).toLocaleString('ar-EG');
+function formatNumber(n) { return (n || 0).toLocaleString('ar-EG'); }
+
+function formatDate(dateStr) {
+    if (!dateStr || dateStr.length !== 8) return 'غير معروف';
+    return `${dateStr.substring(0, 4)}/${dateStr.substring(4, 6)}/${dateStr.substring(6, 8)}`;
 }
 
+function updateHeaderDate() {
+    const today = new Date();
+    document.getElementById('headerDate').textContent = today.toLocaleDateString('ar-EG', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+}
+
+// =================== Storage & Sync ===================
+function saveData() {
+    const data = {
+        branches, discoveredPosts, manualPosts, sourcePlatform, systemName, systemLogo,
+        sourceUsername: document.getElementById('sourceUsername').value,
+        maxPosts: document.getElementById('maxPosts').value,
+        startDate: document.getElementById('globalStartDate').value,
+        endDate: document.getElementById('globalEndDate').value
+    };
+    localStorage.setItem('bcV6', JSON.stringify(data));
+    syncStateToServer(data);
+}
+
+async function syncStateToServer(data) {
+    try {
+        await fetch('/api/save-state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+    } catch (e) { console.error('Sync error:', e); }
+}
+
+async function loadStateFromServer() {
+    try {
+        const response = await fetch('/api/state');
+        const data = await response.json();
+        applyLoadedState(data);
+    } catch (e) {
+        console.error('Load server state error:', e);
+        loadFromLocalStorage();
+    }
+}
+
+function loadFromLocalStorage() {
+    const stored = localStorage.getItem('bcV6');
+    if (stored) {
+        try { applyLoadedState(JSON.parse(stored)); } catch (e) { console.error(e); }
+    }
+}
+
+function applyLoadedState(data) {
+    if (!data) return;
+    branches = data.branches || [];
+    discoveredPosts = data.discoveredPosts || [];
+    manualPosts = data.manualPosts || [];
+    systemName = data.systemName || 'مجوهرات نفائس الألماس';
+    systemLogo = data.systemLogo || null;
+    
+    if (data.sourcePlatform) selectSourcePlatform(data.sourcePlatform);
+    if (data.sourceUsername) document.getElementById('sourceUsername').value = data.sourceUsername;
+    if (data.maxPosts) document.getElementById('maxPosts').value = data.maxPosts;
+    if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
+    if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
+    
+    document.getElementById('systemNameInput').value = systemName;
+    document.getElementById('headerSystemName').textContent = systemName;
+    document.title = '💎 ' + systemName;
+    
+    updateLogoDisplay();
+    renderBranches();
+    renderDiscovery();
+    renderManualPosts();
+    renderLeaderboard();
+    renderSetupSummary();
+    updateMemberSelects();
+}
+
+// =================== Tabs ===================
 function switchTab(tab) {
     document.querySelectorAll('.main-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
@@ -1304,6 +1769,7 @@ function switchTab(tab) {
     if (tab === 'discovery') renderDiscovery();
     if (tab === 'setup') renderSetupSummary();
     if (tab === 'manual') { renderManualPosts(); updateMemberSelects(); }
+    if (tab === 'advanced') { checkCookiesStatus(); checkAutoUpdateStatus(); }
 }
 
 function switchLeaderboard(view) {
@@ -1326,16 +1792,6 @@ function selectSourcePlatform(platform) {
     saveData();
 }
 
-function logDiscovery(message, type = 'info') {
-    const log = document.getElementById('discoveryLog');
-    log.classList.add('active');
-    const entry = document.createElement('div');
-    entry.className = 'log-entry log-' + type;
-    entry.textContent = message;
-    log.appendChild(entry);
-    log.scrollTop = log.scrollHeight;
-}
-
 // =================== Server Health ===================
 async function checkServerHealth() {
     try {
@@ -1343,24 +1799,109 @@ async function checkServerHealth() {
         const data = await response.json();
         serverConnected = true;
         const statusEl = document.getElementById('serverStatus');
-        statusEl.classList.add('connected');
         statusEl.classList.remove('disconnected');
-        document.getElementById('serverStatusText').textContent = 
-            data.ytdlp_installed ? `متصل ✓ yt-dlp ${data.ytdlp_version}` : 'متصل لكن yt-dlp غير مثبت';
+        document.getElementById('serverStatusText').textContent =
+            data.ytdlp_installed ? `متصل · yt-dlp ${data.ytdlp_version}` : 'متصل (yt-dlp غير مثبت)';
     } catch (e) {
         serverConnected = false;
-        const statusEl = document.getElementById('serverStatus');
-        statusEl.classList.remove('connected');
-        statusEl.classList.add('disconnected');
+        document.getElementById('serverStatus').classList.add('disconnected');
         document.getElementById('serverStatusText').textContent = 'غير متصل';
     }
 }
 
-// =================== Branches & Members ===================
+// =================== Header Refresh ===================
+async function refreshFromHeader() {
+    const btn = document.getElementById('headerRefreshBtn');
+    const icon = document.getElementById('headerRefreshIcon');
+    btn.disabled = true;
+    icon.innerHTML = '<span class="spinner"></span>';
+    
+    try {
+        const response = await fetch('/api/refresh-all', { method: 'POST' });
+        const data = await response.json();
+        await loadStateFromServer();
+        showToast(`✓ تم تحديث ${data.updated} منشور`);
+    } catch (e) {
+        showToast('فشل التحديث: ' + e.message, 'error');
+    }
+    
+    btn.disabled = false;
+    icon.textContent = '🔄';
+}
+
+// =================== Image Uploads ===================
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await fetch('/api/upload-image', { method: 'POST', body: formData });
+    const data = await response.json();
+    if (!response.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+}
+
+async function uploadSystemLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        systemLogo = url;
+        updateLogoDisplay();
+        saveData();
+        showToast('✓ تم رفع الشعار');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+function updateLogoDisplay() {
+    const img = document.getElementById('headerLogoImg');
+    const placeholder = document.getElementById('headerLogoPlaceholder');
+    if (systemLogo) {
+        img.src = systemLogo;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+}
+
+async function uploadMemberAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        editingMemberImage = url;
+        const img = document.getElementById('memberAvatarImg');
+        const placeholder = document.getElementById('memberAvatarPlaceholder');
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        showToast('✓ تم رفع الصورة');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+async function uploadBranchAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+        const url = await uploadImage(file);
+        editingBranchImage = url;
+        const img = document.getElementById('branchAvatarImg');
+        const placeholder = document.getElementById('branchAvatarPlaceholder');
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        showToast('✓ تم رفع الصورة');
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
+    event.target.value = '';
+}
+
+// =================== Branches ===================
 function addBranch() {
     const name = document.getElementById('newBranchName').value.trim();
     if (!name) { showToast('أدخل اسم الفرع', 'error'); return; }
-    branches.push({ id: 'b_' + Date.now(), name: name, members: [] });
+    branches.push({ id: 'b_' + Date.now(), name: name, image: null, members: [] });
     document.getElementById('newBranchName').value = '';
     saveData();
     renderBranches();
@@ -1373,14 +1914,9 @@ function removeBranch(branchId) {
     const branch = branches.find(b => b.id === branchId);
     if (!branch) return;
     if (!confirm(`حذف فرع "${branch.name}" وكل موظفيه؟`)) return;
-    
-    // إزالة الإسنادات
     [...discoveredPosts, ...manualPosts].forEach(p => {
-        if (p.assignedTo && p.assignedTo.branchId === branchId) {
-            p.assignedTo = null;
-        }
+        if (p.assignedTo && p.assignedTo.branchId === branchId) p.assignedTo = null;
     });
-    
     branches = branches.filter(b => b.id !== branchId);
     saveData();
     renderBranches();
@@ -1392,10 +1928,57 @@ function removeBranch(branchId) {
     showToast('تم الحذف');
 }
 
+function openEditBranch(branchId) {
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
+    editingBranch = branchId;
+    editingBranchImage = branch.image || null;
+    document.getElementById('branchNameEdit').value = branch.name;
+    
+    const img = document.getElementById('branchAvatarImg');
+    const placeholder = document.getElementById('branchAvatarPlaceholder');
+    if (branch.image) {
+        img.src = branch.image;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+    
+    document.getElementById('branchModal').classList.add('active');
+}
+
+function closeBranchModal() {
+    document.getElementById('branchModal').classList.remove('active');
+    editingBranch = null;
+    editingBranchImage = null;
+}
+
+function saveBranchEdit() {
+    if (!editingBranch) return;
+    const branch = branches.find(b => b.id === editingBranch);
+    if (!branch) return;
+    const name = document.getElementById('branchNameEdit').value.trim();
+    if (!name) { showToast('أدخل الاسم', 'error'); return; }
+    branch.name = name;
+    branch.image = editingBranchImage;
+    saveData();
+    renderBranches();
+    renderLeaderboard();
+    updateMemberSelects();
+    closeBranchModal();
+    showToast('تم التعديل ✓');
+}
+
+// =================== Members ===================
 function openAddMember(branchId) {
     editingMember = { branchId };
+    editingMemberImage = null;
     document.getElementById('memberModalTitle').textContent = 'إضافة موظف';
     document.getElementById('memberName').value = '';
+    document.getElementById('memberAvatarImg').style.display = 'none';
+    document.getElementById('memberAvatarPlaceholder').style.display = 'block';
     document.getElementById('memberModal').classList.add('active');
     setTimeout(() => document.getElementById('memberName').focus(), 100);
 }
@@ -1405,14 +1988,28 @@ function editMember(branchId, memberId) {
     const member = branch?.members.find(m => m.id === memberId);
     if (!member) return;
     editingMember = { branchId, memberId };
+    editingMemberImage = member.image || null;
     document.getElementById('memberModalTitle').textContent = 'تعديل موظف';
     document.getElementById('memberName').value = member.name;
+    
+    const img = document.getElementById('memberAvatarImg');
+    const placeholder = document.getElementById('memberAvatarPlaceholder');
+    if (member.image) {
+        img.src = member.image;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+    
     document.getElementById('memberModal').classList.add('active');
 }
 
 function closeMemberModal() {
     document.getElementById('memberModal').classList.remove('active');
     editingMember = null;
+    editingMemberImage = null;
 }
 
 function saveMember() {
@@ -1425,9 +2022,16 @@ function saveMember() {
     
     if (editingMember.memberId) {
         const member = branch.members.find(m => m.id === editingMember.memberId);
-        if (member) member.name = name;
+        if (member) {
+            member.name = name;
+            member.image = editingMemberImage;
+        }
     } else {
-        branch.members.push({ id: 'm_' + Date.now(), name: name });
+        branch.members.push({
+            id: 'm_' + Date.now(),
+            name: name,
+            image: editingMemberImage
+        });
     }
     
     saveData();
@@ -1446,13 +2050,9 @@ function removeMember(branchId, memberId) {
     const member = branch.members.find(m => m.id === memberId);
     if (!member) return;
     if (!confirm(`حذف "${member.name}"؟`)) return;
-    
     [...discoveredPosts, ...manualPosts].forEach(p => {
-        if (p.assignedTo && p.assignedTo.memberId === memberId) {
-            p.assignedTo = null;
-        }
+        if (p.assignedTo && p.assignedTo.memberId === memberId) p.assignedTo = null;
     });
-    
     branch.members = branch.members.filter(m => m.id !== memberId);
     saveData();
     renderBranches();
@@ -1464,6 +2064,7 @@ function removeMember(branchId, memberId) {
     showToast('تم الحذف');
 }
 
+// =================== Render Branches ===================
 function renderBranches() {
     const list = document.getElementById('branchesList');
     if (branches.length === 0) {
@@ -1473,20 +2074,29 @@ function renderBranches() {
     
     list.innerHTML = branches.map(branch => {
         const branchLikes = branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
-        const membersHtml = branch.members.length === 0 ?
-            `<div class="empty-state" style="padding:14px;">لا موظفين بعد</div>` :
-            branch.members.map(m => {
+        const branchAvatar = branch.image
+            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
+            : (branch.name[0] || '🏢');
+        
+        const membersHtml = branch.members.length === 0
+            ? `<div class="empty-state" style="padding:14px;">لا موظفين بعد</div>`
+            : branch.members.map(m => {
                 const likes = getMemberTotalLikes(m.id);
                 const posts = getMemberPostsCount(m.id);
+                const avatar = m.image
+                    ? `<img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}">`
+                    : (m.name[0] || '👤');
                 return `
                     <div class="member-row">
+                        <div class="member-avatar" onclick="editMember('${branch.id}','${m.id}')">${avatar}</div>
                         <div class="member-info">
-                            <div class="member-name">👤 ${escapeHtml(m.name)}</div>
+                            <div class="member-name">${escapeHtml(m.name)}</div>
+                            <div style="font-size:10px;color:var(--text-muted);">${posts} منشور</div>
                         </div>
                         <div style="display:flex;gap:5px;align-items:center;">
-                            <div class="member-stats">
+                            <div class="member-stats-mini">
                                 <div class="member-likes">${formatNumber(likes)}</div>
-                                <div style="font-size:9px;color:var(--text-muted);">${posts} منشور</div>
+                                <div style="font-size:9px;color:var(--text-muted);">❤️</div>
                             </div>
                             <button class="btn btn-warning" onclick="editMember('${branch.id}','${m.id}')">✏️</button>
                             <button class="btn btn-danger" onclick="removeMember('${branch.id}','${m.id}')">✕</button>
@@ -1498,14 +2108,16 @@ function renderBranches() {
         return `
             <div class="branch-card">
                 <div class="branch-card-header">
-                    <div class="branch-name-display">
-                        🏢 ${escapeHtml(branch.name)}
-                        <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(${branch.members.length})</span>
-                    </div>
-                    <div style="display:flex;gap:5px;align-items:center;">
-                        <div style="text-align:center;">
-                            <div style="font-weight:700;color:var(--danger);font-size:13px;">${formatNumber(branchLikes)} ❤️</div>
+                    <div class="branch-header-info">
+                        <div class="branch-avatar" onclick="openEditBranch('${branch.id}')">${branchAvatar}</div>
+                        <div>
+                            <div class="branch-name-display">${escapeHtml(branch.name)}</div>
+                            <div class="branch-meta">${branch.members.length} موظف</div>
                         </div>
+                    </div>
+                    <div class="branch-actions">
+                        <div class="branch-likes-pill">${formatNumber(branchLikes)} ❤️</div>
+                        <button class="btn btn-warning" onclick="openEditBranch('${branch.id}')">✏️</button>
                         <button class="btn btn-danger" onclick="removeBranch('${branch.id}')">حذف</button>
                     </div>
                 </div>
@@ -1522,38 +2134,20 @@ function renderSetupSummary() {
         summary.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><div>أضف فروع</div></div>`;
         return;
     }
-    
     const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
     const allPosts = [...discoveredPosts, ...manualPosts];
     const assignedPosts = allPosts.filter(p => p.assignedTo).length;
-    
     summary.innerHTML = `
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
-            <div class="lb-stat-card">
-                <div class="lb-stat-label">الفروع</div>
-                <div class="lb-stat-value">${branches.length}</div>
-            </div>
-            <div class="lb-stat-card">
-                <div class="lb-stat-label">الموظفين</div>
-                <div class="lb-stat-value">${totalMembers}</div>
-            </div>
-            <div class="lb-stat-card">
-                <div class="lb-stat-label">منشورات مجلوبة</div>
-                <div class="lb-stat-value">${discoveredPosts.length}</div>
-            </div>
-            <div class="lb-stat-card">
-                <div class="lb-stat-label">روابط يدوية</div>
-                <div class="lb-stat-value">${manualPosts.length}</div>
-            </div>
-            <div class="lb-stat-card" style="grid-column:span 2;">
-                <div class="lb-stat-label">منشورات معتمدة</div>
-                <div class="lb-stat-value">${assignedPosts}</div>
-            </div>
+            <div class="lb-stat-card"><div class="lb-stat-label">الفروع</div><div class="lb-stat-value">${branches.length}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">الموظفين</div><div class="lb-stat-value">${totalMembers}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">منشورات مجلوبة</div><div class="lb-stat-value">${discoveredPosts.length}</div></div>
+            <div class="lb-stat-card"><div class="lb-stat-label">روابط يدوية</div><div class="lb-stat-value">${manualPosts.length}</div></div>
+            <div class="lb-stat-card" style="grid-column:span 2;"><div class="lb-stat-label">منشورات معتمدة</div><div class="lb-stat-value">${assignedPosts}</div></div>
         </div>
     `;
 }
 
-// =================== Member Selects ===================
 function getMemberOptionsHtml(currentAssignment) {
     let html = '<option value="">-- اختر موظف --</option>';
     branches.forEach(b => {
@@ -1570,18 +2164,23 @@ function updateMemberSelects() {
     if (select) select.innerHTML = getMemberOptionsHtml();
 }
 
+// =================== Logging ===================
+function logDiscovery(message, type = 'info') {
+    const log = document.getElementById('discoveryLog');
+    log.classList.add('active');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry log-' + type;
+    entry.textContent = message;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
 // =================== Discovery ===================
 async function discoverUserPosts() {
     if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-    
     const username = document.getElementById('sourceUsername').value.trim();
     if (!username) { showToast('أدخل يوزر الحساب', 'error'); return; }
-    
-    if (sourcePlatform === 'snapchat') {
-        showToast('Snapchat لا يدعم جلب الحساب', 'error');
-        return;
-    }
-    
+    if (sourcePlatform === 'snapchat') { showToast('Snapchat لا يدعم جلب الحساب', 'error'); return; }
     if (branches.length === 0 || branches.every(b => b.members.length === 0)) {
         showToast('أضف موظفين أولاً', 'error');
         return;
@@ -1593,16 +2192,13 @@ async function discoverUserPosts() {
     
     const btn = document.getElementById('discoverBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> جاري الجلب... (قد يأخذ دقائق)';
+    btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
     
     const log = document.getElementById('discoveryLog');
     log.innerHTML = '';
     log.classList.add('active');
     
     logDiscovery(`🔍 جلب منشورات: @${username.replace('@', '')}`, 'info');
-    logDiscovery(`📱 المنصة: ${PLATFORMS[sourcePlatform].name}`, 'info');
-    logDiscovery(`📅 الفترة: ${startDate || 'الكل'} → ${endDate || 'الكل'}`, 'info');
-    logDiscovery(`📊 الحد الأقصى: ${maxPosts} منشور`, 'info');
     logDiscovery(`⏳ جاري الاتصال...`, 'warning');
     
     try {
@@ -1625,41 +2221,27 @@ async function discoverUserPosts() {
             return;
         }
         
-        logDiscovery(`✓ اكتُشف: ${data.discoveredCount} منشور`, 'success');
+        logDiscovery(`✓ اكتُشف: ${data.discoveredCount}`, 'success');
         logDiscovery(`✓ ضمن النطاق: ${data.posts.length}`, 'success');
-        if (data.filteredOutCount > 0) logDiscovery(`⊘ خارج النطاق: ${data.filteredOutCount}`, 'warning');
-        if (data.failedCount > 0) logDiscovery(`✗ فشل: ${data.failedCount}`, 'error');
         
-        // إضافة المنشورات الجديدة فقط (تجنب التكرار)
         let newCount = 0;
         for (const post of data.posts) {
-            // تحقق من التكرار في discoveredPosts و manualPosts
-            const existsInDiscovered = discoveredPosts.find(p => p.url === post.url);
-            const existsInManual = manualPosts.find(p => p.url === post.url);
-            if (existsInDiscovered || existsInManual) continue;
-            
+            const exists = [...discoveredPosts, ...manualPosts].find(p => p.url === post.url);
+            if (exists) continue;
             discoveredPosts.push({
                 id: 'd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                url: post.url,
-                likes: post.likes,
-                views: post.views,
-                title: post.title,
-                thumbnail: post.thumbnail,
-                video_url: post.video_url,
-                upload_date: post.upload_date,
-                uploader: post.uploader,
-                platform: sourcePlatform,
-                assignedTo: null
+                url: post.url, likes: post.likes, views: post.views,
+                title: post.title, thumbnail: post.thumbnail, video_url: post.video_url,
+                upload_date: post.upload_date, uploader: post.uploader,
+                platform: sourcePlatform, assignedTo: null
             });
             newCount++;
         }
         
-        logDiscovery(`✅ تمت إضافة ${newCount} منشور جديد`, 'success');
-        
+        logDiscovery(`✅ أضيف ${newCount} منشور جديد`, 'success');
         saveData();
         renderDiscovery();
         renderSetupSummary();
-        
         showToast(`✓ تم جلب ${newCount} منشور`);
     } catch (e) {
         logDiscovery(`✗ فشل: ${e.message}`, 'error');
@@ -1675,13 +2257,12 @@ function renderDiscovery() {
     const filters = document.getElementById('discoveryFilters');
     
     if (discoveredPosts.length === 0) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><div>اضغط زر "جلب" لبدء الاكتشاف</div></div>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><div>اضغط زر "جلب"</div></div>`;
         filters.style.display = 'none';
         return;
     }
     
     filters.style.display = 'flex';
-    
     let filtered = discoveredPosts;
     if (currentDiscoveryFilter === 'unassigned') filtered = discoveredPosts.filter(p => !p.assignedTo);
     else if (currentDiscoveryFilter === 'assigned') filtered = discoveredPosts.filter(p => p.assignedTo);
@@ -1695,7 +2276,7 @@ function renderDiscovery() {
 }
 
 function renderPostCard(post, source) {
-    const p = PLATFORMS[post.platform];
+    const p = PLATFORMS[post.platform] || PLATFORMS.instagram;
     const thumb = post.thumbnail ? `background-image:url('${escapeHtml(post.thumbnail)}');` : '';
     const noImageClass = post.thumbnail ? '' : 'no-image';
     const optionsHtml = getMemberOptionsHtml(post.assignedTo);
@@ -1708,25 +2289,26 @@ function renderPostCard(post, source) {
         assignSection = `
             <div class="assigned-info">
                 ✓ مُعتمد لـ <strong>${escapeHtml(displayName)}</strong>
-                <br>
-                <span class="reassign-link" onclick="unassignPost('${post.id}','${source}')">إلغاء</span>
+                <br><span class="reassign-link" onclick="unassignPost('${post.id}','${source}')">إلغاء</span>
             </div>
         `;
     } else {
         assignSection = `
             <div class="post-assign-row">
                 <select class="post-assign-select" id="select_${post.id}">${optionsHtml}</select>
-                <button class="post-assign-btn" onclick="assignPost('${post.id}','${source}')">✓ تأكيد</button>
+                <button class="post-assign-btn" onclick="assignPost('${post.id}','${source}')">✓</button>
             </div>
         `;
     }
     
+    const removeBtn = source === 'manual'
+        ? `<button class="btn btn-danger" style="width:100%;margin-bottom:7px;" onclick="removeManualPost('${post.id}')">🗑️ حذف الرابط</button>`
+        : '';
+    
     return `
         <div class="post-card ${post.assignedTo ? 'assigned' : ''}">
             <div class="post-thumbnail ${noImageClass}" style="${thumb}" onclick="playVideo('${post.id}','${source}')">
-                <div class="play-overlay">
-                    <div class="play-btn-circle">▶</div>
-                </div>
+                <div class="play-overlay"><div class="play-btn-circle">▶</div></div>
                 <div class="post-stats-overlay">❤️ ${formatNumber(post.likes)}</div>
             </div>
             <div class="post-body">
@@ -1737,34 +2319,25 @@ function renderPostCard(post, source) {
                 </div>
                 <div class="post-meta" style="margin-bottom:9px;">
                     <span style="font-size:10px;">📅 ${formatDate(post.upload_date)}</span>
-                    <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--accent-hover);font-size:10px;">فتح ↗</a>
+                    <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--gold);font-size:10px;">فتح ↗</a>
                 </div>
+                ${removeBtn}
                 ${assignSection}
             </div>
         </div>
     `;
 }
 
-function formatDate(dateStr) {
-    if (!dateStr || dateStr.length !== 8) return 'غير معروف';
-    return `${dateStr.substring(0, 4)}/${dateStr.substring(4, 6)}/${dateStr.substring(6, 8)}`;
-}
-
 function assignPost(postId, source) {
     const list = source === 'manual' ? manualPosts : discoveredPosts;
     const post = list.find(p => p.id === postId);
     if (!post) return;
-    
     const select = document.getElementById('select_' + postId);
-    const value = select.value;
-    if (!value) { showToast('اختر موظف', 'error'); return; }
-    
-    const [branchId, memberId] = value.split('|');
+    if (!select.value) { showToast('اختر موظف', 'error'); return; }
+    const [branchId, memberId] = select.value.split('|');
     post.assignedTo = { branchId, memberId };
-    
     saveData();
-    if (source === 'manual') renderManualPosts();
-    else renderDiscovery();
+    if (source === 'manual') renderManualPosts(); else renderDiscovery();
     renderLeaderboard();
     renderBranches();
     renderSetupSummary();
@@ -1774,20 +2347,17 @@ function assignPost(postId, source) {
 function unassignPost(postId, source) {
     const list = source === 'manual' ? manualPosts : discoveredPosts;
     const post = list.find(p => p.id === postId);
-    if (!post) return;
-    if (!confirm('إلغاء الاعتماد؟')) return;
-    
+    if (!post || !confirm('إلغاء الاعتماد؟')) return;
     post.assignedTo = null;
     saveData();
-    if (source === 'manual') renderManualPosts();
-    else renderDiscovery();
+    if (source === 'manual') renderManualPosts(); else renderDiscovery();
     renderLeaderboard();
     renderBranches();
     renderSetupSummary();
     showToast('تم الإلغاء');
 }
 
-// =================== Video Modal ===================
+// =================== Video ===================
 function playVideo(postId, source) {
     const list = source === 'manual' ? manualPosts : discoveredPosts;
     const post = list.find(p => p.id === postId);
@@ -1797,20 +2367,13 @@ function playVideo(postId, source) {
     document.getElementById('videoModalTitle').textContent = post.title || 'عرض المنشور';
     
     if (post.video_url) {
-        container.innerHTML = `
-            <video controls autoplay style="width:100%;max-height:70vh;">
-                <source src="${escapeHtml(post.video_url)}" type="video/mp4">
-                متصفحك لا يدعم تشغيل الفيديو
-            </video>
-        `;
+        container.innerHTML = `<video controls autoplay><source src="${escapeHtml(post.video_url)}" type="video/mp4"></video>`;
     } else {
         container.innerHTML = `
             <div class="video-fallback">
                 <div style="font-size:36px;margin-bottom:10px;">📹</div>
-                <div>الفيديو غير قابل للتشغيل المباشر بسبب قيود المنصة</div>
-                <button class="btn" onclick="window.open('${escapeHtml(post.url)}','_blank')">
-                    فتح في المنصة ↗
-                </button>
+                <div>الفيديو غير قابل للتشغيل المباشر</div>
+                <button class="btn btn-primary" style="margin-top:14px;" onclick="window.open('${escapeHtml(post.url)}','_blank')">فتح في المنصة ↗</button>
             </div>
         `;
     }
@@ -1826,31 +2389,24 @@ function closeVideoModal() {
 // =================== Manual URLs ===================
 async function addManualLink() {
     if (!serverConnected) { showToast('السيرفر غير متصل', 'error'); return; }
-    
     const url = document.getElementById('manualUrl').value.trim();
     if (!url) { showToast('أدخل الرابط', 'error'); return; }
-    
     const assignValue = document.getElementById('manualAssignSelect').value;
     if (!assignValue) { showToast('اختر موظف', 'error'); return; }
     
-    // تحقق من التكرار
     const exists = [...discoveredPosts, ...manualPosts].find(p => p.url === url);
-    if (exists) {
-        showToast('هذا الرابط موجود بالفعل', 'error');
-        return;
-    }
+    if (exists) { showToast('هذا الرابط موجود', 'error'); return; }
     
     const btn = document.getElementById('addManualBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> جاري الجلب...';
     
     try {
-        const response = await fetch(`${API_BASE}/api/fetch-post`, {
+        const response = await fetch('/api/fetch-post', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
         });
-        
         const data = await response.json();
         if (!response.ok || data.error) {
             showToast('فشل: ' + (data.error || 'unknown'), 'error');
@@ -1860,33 +2416,23 @@ async function addManualLink() {
         }
         
         const [branchId, memberId] = assignValue.split('|');
-        
         manualPosts.push({
             id: 'mn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-            url: url,
-            likes: data.likes,
-            views: data.views,
-            title: data.title,
-            thumbnail: data.thumbnail,
-            video_url: data.video_url,
-            upload_date: data.upload_date,
-            uploader: data.uploader,
-            platform: data.platform,
-            assignedTo: { branchId, memberId }
+            url, likes: data.likes, views: data.views, title: data.title,
+            thumbnail: data.thumbnail, video_url: data.video_url,
+            upload_date: data.upload_date, uploader: data.uploader,
+            platform: data.platform, assignedTo: { branchId, memberId }
         });
         
         document.getElementById('manualUrl').value = '';
         document.getElementById('manualAssignSelect').value = '';
-        
         saveData();
         renderManualPosts();
         renderLeaderboard();
         renderBranches();
         renderSetupSummary();
-        showToast(`✓ تم إضافة منشور (${formatNumber(data.likes)} لايك)`);
-    } catch (e) {
-        showToast('فشل: ' + e.message, 'error');
-    }
+        showToast(`✓ تم إضافة (${formatNumber(data.likes)} لايك)`);
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
     
     btn.disabled = false;
     btn.innerHTML = '➕ إضافة الرابط';
@@ -1905,51 +2451,39 @@ function removeManualPost(postId) {
 
 function renderManualPosts() {
     const list = document.getElementById('manualPostsList');
-    
     if (manualPosts.length === 0) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔗</div><div>لم تضف روابط يدوية بعد</div></div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔗</div><div>لم تضف روابط بعد</div></div>`;
         return;
     }
-    
-    list.innerHTML = `
-        <div class="posts-grid">
-            ${manualPosts.map(post => {
-                const cardHtml = renderPostCard(post, 'manual');
-                // إضافة زر حذف
-                return cardHtml.replace(
-                    '<div class="post-body">',
-                    `<div class="post-body">
-                        <button class="btn btn-danger" style="position:absolute;width:auto;float:left;margin-bottom:6px;" onclick="removeManualPost('${post.id}')">حذف الرابط</button>
-                    `
-                );
-            }).join('')}
-        </div>
-    `;
+    list.innerHTML = `<div class="posts-grid">${manualPosts.map(post => renderPostCard(post, 'manual')).join('')}</div>`;
 }
 
 // =================== Calculations ===================
 function getMemberTotalLikes(memberId) {
-    const allPosts = [...discoveredPosts, ...manualPosts];
-    return allPosts
+    return [...discoveredPosts, ...manualPosts]
         .filter(p => p.assignedTo && p.assignedTo.memberId === memberId)
         .reduce((s, p) => s + (p.likes || 0), 0);
 }
 
 function getMemberPostsCount(memberId) {
-    const allPosts = [...discoveredPosts, ...manualPosts];
-    return allPosts.filter(p => p.assignedTo && p.assignedTo.memberId === memberId).length;
+    return [...discoveredPosts, ...manualPosts].filter(p => p.assignedTo && p.assignedTo.memberId === memberId).length;
 }
 
 function getBranchTotalLikes(branchId) {
-    const branch = branches.find(b => b.id === branchId);
-    if (!branch) return 0;
-    return branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
+    const b = branches.find(x => x.id === branchId);
+    return b ? b.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0) : 0;
 }
 
 function getBranchPostsCount(branchId) {
-    const branch = branches.find(b => b.id === branchId);
-    if (!branch) return 0;
-    return branch.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0);
+    const b = branches.find(x => x.id === branchId);
+    return b ? b.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0) : 0;
+}
+
+function getBranchPosts(branchId) {
+    const b = branches.find(x => x.id === branchId);
+    if (!b) return [];
+    const memberIds = b.members.map(m => m.id);
+    return [...discoveredPosts, ...manualPosts].filter(p => p.assignedTo && memberIds.includes(p.assignedTo.memberId));
 }
 
 // =================== Leaderboard ===================
@@ -1962,12 +2496,12 @@ function renderLeaderboard() {
     const totalBranches = branches.length;
     const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
     const allPosts = [...discoveredPosts, ...manualPosts];
-    const totalPosts = allPosts.filter(p => p.assignedTo).length;
-    const totalLikes = allPosts.filter(p => p.assignedTo).reduce((s, p) => s + (p.likes || 0), 0);
+    const assignedPosts = allPosts.filter(p => p.assignedTo);
+    const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
     
     document.getElementById('lbTotalBranches').textContent = totalBranches;
     document.getElementById('lbTotalMembers').textContent = totalMembers;
-    document.getElementById('lbTotalPosts').textContent = formatNumber(totalPosts);
+    document.getElementById('lbTotalPosts').textContent = formatNumber(assignedPosts.length);
     document.getElementById('lbTotalLikes').textContent = formatNumber(totalLikes);
     
     if (currentLeaderboardView === 'branches') {
@@ -1994,15 +2528,19 @@ function renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel) 
         const rank = idx + 1;
         const rankClass = rank <= 3 ? `rank-${rank}` : '';
         const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const avatar = branch.image
+            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
+            : (branch.name[0] || '🏢');
         return `
-            <div class="lb-item ${rankClass}">
+            <div class="lb-item ${rankClass}" onclick="openBranchDetails('${branch.id}')">
                 <div class="lb-rank">${medal}</div>
+                <div class="lb-avatar">${avatar}</div>
                 <div>
-                    <div class="lb-info-name">🏢 ${escapeHtml(branch.name)}</div>
+                    <div class="lb-info-name">${escapeHtml(branch.name)}</div>
                     <div class="lb-info-sub">
                         <span>${branch.members.length} موظف</span>
                         <span>•</span>
-                        <span>${branch.postsCount} منشور</span>
+                        <span>${formatNumber(branch.postsCount)} منشور</span>
                     </div>
                 </div>
                 <div class="lb-numbers">
@@ -2014,7 +2552,7 @@ function renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel) 
     }).join('');
     
     if (sorted.length > 0 && sorted[0].totalLikes > 0) {
-        winnerLabel.textContent = '🏢 الفرع الفائز';
+        winnerLabel.textContent = '🏢 الفرع المتصدر';
         winnerName.textContent = sorted[0].name;
         winnerBanner.classList.add('active');
     } else {
@@ -2023,10 +2561,11 @@ function renderBranchesLeaderboard(list, winnerBanner, winnerName, winnerLabel) 
 }
 
 function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
-    const allMembers = branches.flatMap(b => 
+    const allMembers = branches.flatMap(b =>
         b.members.map(m => ({
             ...m,
             branchName: b.name,
+            branchId: b.id,
             totalLikes: getMemberTotalLikes(m.id),
             postsCount: getMemberPostsCount(m.id)
         }))
@@ -2044,15 +2583,19 @@ function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
         const rank = idx + 1;
         const rankClass = rank <= 3 ? `rank-${rank}` : '';
         const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const avatar = member.image
+            ? `<img src="${escapeHtml(member.image)}" alt="${escapeHtml(member.name)}">`
+            : (member.name[0] || '👤');
         return `
             <div class="lb-item ${rankClass}">
                 <div class="lb-rank">${medal}</div>
+                <div class="lb-avatar">${avatar}</div>
                 <div>
-                    <div class="lb-info-name">👤 ${escapeHtml(member.name)}</div>
+                    <div class="lb-info-name">${escapeHtml(member.name)}</div>
                     <div class="lb-info-sub">
                         <span>🏢 ${escapeHtml(member.branchName)}</span>
                         <span>•</span>
-                        <span>${member.postsCount} منشور</span>
+                        <span>${formatNumber(member.postsCount)} منشور</span>
                     </div>
                 </div>
                 <div class="lb-numbers">
@@ -2064,7 +2607,7 @@ function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
     }).join('');
     
     if (sorted.length > 0 && sorted[0].totalLikes > 0) {
-        winnerLabel.textContent = '👤 الموظف الفائز';
+        winnerLabel.textContent = '👤 الموظف المتصدر';
         winnerName.textContent = `${sorted[0].name} (${sorted[0].branchName})`;
         winnerBanner.classList.add('active');
     } else {
@@ -2072,102 +2615,80 @@ function renderMembersLeaderboard(list, winnerBanner, winnerName, winnerLabel) {
     }
 }
 
-// =================== Clear ===================
-function clearAll() {
-    if (!confirm('مسح جميع البيانات؟')) return;
-    branches = [];
-    discoveredPosts = [];
-    manualPosts = [];
-    localStorage.removeItem('bcV4');
-    renderBranches();
-    renderDiscovery();
-    renderManualPosts();
-    renderLeaderboard();
-    renderSetupSummary();
-    updateMemberSelects();
-    showToast('تم المسح');
-}
-
-// =================== Init ===================
-function initDates() {
-    const today = new Date();
-    const monthAgo = new Date();
-    monthAgo.setDate(today.getDate() - 30);
-    const startInput = document.getElementById('globalStartDate');
-    const endInput = document.getElementById('globalEndDate');
-    if (!startInput.value) startInput.value = monthAgo.toISOString().split('T')[0];
-    if (!endInput.value) endInput.value = today.toISOString().split('T')[0];
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    initDates();
-    checkServerHealth();
-    setInterval(checkServerHealth, 15000);
+// =================== Branch Details Modal ===================
+function openBranchDetails(branchId) {
+    currentDetailsBranchId = branchId;
+    currentDetailsPlatform = 'all';
+    const branch = branches.find(b => b.id === branchId);
+    if (!branch) return;
     
-    ['sourceUsername', 'maxPosts', 'globalStartDate', 'globalEndDate'].forEach(id => {
-        document.getElementById(id).addEventListener('change', saveData);
-    });
+    const avatarEl = document.getElementById('detailsAvatar');
+    avatarEl.innerHTML = branch.image
+        ? `<img src="${escapeHtml(branch.image)}" style="width:100%;height:100%;border-radius:10px;object-fit:cover;">`
+        : (branch.name[0] || '🏢');
     
-    document.getElementById('memberModal').addEventListener('click', (e) => {
-        if (e.target.id === 'memberModal') closeMemberModal();
-    });
-    document.getElementById('videoModal').addEventListener('click', (e) => {
-        if (e.target.id === 'videoModal') closeVideoModal();
-    });
-});
-
-
-// ==================== Server Sync ====================
-async function syncStateToServer() {
-    try {
-        await fetch('/api/save-state', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                branches, discoveredPosts, manualPosts,
-                sourcePlatform,
-                sourceUsername: document.getElementById('sourceUsername').value,
-                maxPosts: document.getElementById('maxPosts').value,
-                startDate: document.getElementById('globalStartDate').value,
-                endDate: document.getElementById('globalEndDate').value
-            })
-        });
-    } catch (e) { console.error('Sync error:', e); }
+    document.getElementById('detailsTitle').textContent = branch.name;
+    
+    // Stats
+    const branchPosts = getBranchPosts(branchId);
+    const totalLikes = branchPosts.reduce((s, p) => s + (p.likes || 0), 0);
+    document.getElementById('detailsStats').innerHTML = `
+        <div class="lb-stat-card"><div class="lb-stat-label">المنشورات</div><div class="lb-stat-value">${branchPosts.length}</div></div>
+        <div class="lb-stat-card"><div class="lb-stat-label">اللايكات</div><div class="lb-stat-value">${formatNumber(totalLikes)}</div></div>
+        <div class="lb-stat-card"><div class="lb-stat-label">الموظفين</div><div class="lb-stat-value">${branch.members.length}</div></div>
+    `;
+    
+    // Reset platform tabs
+    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === 'all'));
+    
+    renderDetailsPosts();
+    document.getElementById('detailsModal').classList.add('active');
 }
 
-async function loadStateFromServer() {
-    try {
-        const response = await fetch('/api/state');
-        const data = await response.json();
-        if (data.branches && data.branches.length > 0) {
-            branches = data.branches;
-            discoveredPosts = data.discoveredPosts || [];
-            manualPosts = data.manualPosts || [];
-            if (data.sourcePlatform) selectSourcePlatform(data.sourcePlatform);
-            if (data.sourceUsername) document.getElementById('sourceUsername').value = data.sourceUsername;
-            if (data.maxPosts) document.getElementById('maxPosts').value = data.maxPosts;
-            if (data.startDate) document.getElementById('globalStartDate').value = data.startDate;
-            if (data.endDate) document.getElementById('globalEndDate').value = data.endDate;
-            saveData();
-            renderBranches();
-            renderDiscovery();
-            renderManualPosts();
-            renderLeaderboard();
-            renderSetupSummary();
-            updateMemberSelects();
-        }
-    } catch (e) { console.error('Load server state error:', e); }
+function setDetailsPlatform(platform) {
+    currentDetailsPlatform = platform;
+    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === platform));
+    renderDetailsPosts();
 }
 
-// Override saveData to also sync
-const originalSaveData = saveData;
-saveData = function() {
-    originalSaveData();
-    syncStateToServer();
-};
+function renderDetailsPosts() {
+    if (!currentDetailsBranchId) return;
+    let posts = getBranchPosts(currentDetailsBranchId);
+    if (currentDetailsPlatform !== 'all') {
+        posts = posts.filter(p => p.platform === currentDetailsPlatform);
+    }
+    
+    const container = document.getElementById('detailsPosts');
+    if (posts.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">📭</div><div>لا منشورات</div></div>`;
+        return;
+    }
+    
+    const sorted = [...posts].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    container.innerHTML = sorted.map(post => {
+        const p = PLATFORMS[post.platform] || PLATFORMS.instagram;
+        const thumb = post.thumbnail ? `background-image:url('${escapeHtml(post.thumbnail)}');` : '';
+        return `
+            <div class="detail-post-card">
+                <div class="detail-post-thumb" style="${thumb}"></div>
+                <div class="detail-post-info">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <span class="platform-badge ${p.class}">${p.icon}</span>
+                        <span class="detail-post-likes">❤️ ${formatNumber(post.likes)}</span>
+                    </div>
+                    <a href="${escapeHtml(post.url)}" target="_blank" style="color:var(--gold);font-size:10px;">فتح ↗</a>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
-// ==================== Cookies ====================
+function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.remove('active');
+    currentDetailsBranchId = null;
+}
+
+// =================== Cookies ===================
 async function checkCookiesStatus() {
     try {
         const response = await fetch('/api/cookies-status');
@@ -2177,10 +2698,10 @@ async function checkCookiesStatus() {
         if (data.exists) {
             const d = new Date(data.mtime);
             el.style.color = 'var(--success)';
-            el.innerHTML = '✓ Cookies مرفوعة <br><span style="font-size:10px;opacity:0.7;">آخر تحديث: ' + d.toLocaleString('ar-EG') + '</span>';
+            el.innerHTML = '✓ Cookies مرفوعة<br><span style="font-size:10px;opacity:0.7;">آخر تحديث: ' + d.toLocaleString('ar-EG') + '</span>';
         } else {
             el.style.color = 'var(--warning)';
-            el.innerHTML = '⚠️ لا توجد cookies (Instagram قد يفشل)';
+            el.innerHTML = '⚠️ لا توجد cookies';
         }
     } catch (e) {}
 }
@@ -2189,40 +2710,29 @@ async function uploadCookies() {
     const fileInput = document.getElementById('cookiesFile');
     const file = fileInput.files[0];
     if (!file) return;
-    
     const formData = new FormData();
     formData.append('cookies', file);
-    
     try {
-        const response = await fetch('/api/upload-cookies', {
-            method: 'POST',
-            body: formData
-        });
+        const response = await fetch('/api/upload-cookies', { method: 'POST', body: formData });
         const data = await response.json();
         if (data.ok) {
             showToast('✓ تم رفع cookies');
             checkCookiesStatus();
-        } else {
-            showToast('فشل: ' + (data.error || 'unknown'), 'error');
-        }
-    } catch (e) {
-        showToast('فشل: ' + e.message, 'error');
-    }
+        } else { showToast('فشل', 'error'); }
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
     fileInput.value = '';
 }
 
 async function deleteCookies() {
-    if (!confirm('حذف ملف cookies؟')) return;
+    if (!confirm('حذف cookies؟')) return;
     try {
         await fetch('/api/cookies', { method: 'DELETE' });
         showToast('تم الحذف');
         checkCookiesStatus();
-    } catch (e) { showToast('فشل', 'error'); }
+    } catch (e) {}
 }
 
-// ==================== Auto Update ====================
-let autoUpdateEnabled = false;
-
+// =================== Auto Update ===================
 async function checkAutoUpdateStatus() {
     try {
         const response = await fetch('/api/health');
@@ -2232,24 +2742,21 @@ async function checkAutoUpdateStatus() {
         const el = document.getElementById('autoUpdateStatus');
         const btn = document.getElementById('autoUpdateBtn');
         const intervalSelect = document.getElementById('autoUpdateInterval');
-        
         if (!el || !btn) return;
         
         if (data.auto_update_enabled) {
             el.style.color = 'var(--success)';
-            let html = '✅ مفعّل - كل ' + data.auto_update_interval + ' ساعة';
+            let html = '✅ مفعّل · كل ' + data.auto_update_interval + ' ساعة';
             if (data.last_update) {
                 const d = new Date(data.last_update);
                 html += '<br><span style="font-size:10px;opacity:0.7;">آخر تحديث: ' + d.toLocaleString('ar-EG') + '</span>';
             }
             el.innerHTML = html;
             btn.innerHTML = '⏸️ إيقاف التحديث التلقائي';
-            btn.style.background = 'rgba(239, 68, 68, 0.2)';
         } else {
             el.style.color = 'var(--text-muted)';
             el.innerHTML = '⏸️ متوقف';
             btn.innerHTML = '▶️ تفعيل التحديث التلقائي';
-            btn.style.background = '';
         }
         
         if (intervalSelect && data.auto_update_interval) {
@@ -2271,368 +2778,79 @@ async function toggleAutoUpdate() {
             showToast(data.enabled ? '✓ تم التفعيل' : '✓ تم الإيقاف');
             checkAutoUpdateStatus();
         }
-    } catch (e) { showToast('فشل', 'error'); }
+    } catch (e) {}
 }
 
 async function refreshAllNow() {
     const btn = document.getElementById('refreshNowBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> جاري التحديث...';
-    
     try {
         const response = await fetch('/api/refresh-all', { method: 'POST' });
         const data = await response.json();
         showToast('✓ تم تحديث ' + data.updated + ' منشور');
-        // إعادة جلب الحالة المحدّثة
         await loadStateFromServer();
         checkAutoUpdateStatus();
-    } catch (e) {
-        showToast('فشل: ' + e.message, 'error');
-    }
-    
+    } catch (e) { showToast('فشل: ' + e.message, 'error'); }
     btn.disabled = false;
     btn.innerHTML = '🔄 تحديث الآن (يدوي)';
 }
 
-// ==================== Display Page ====================
-function openDisplay() {
-    window.open('/display', '_blank');
-}
-
+// =================== Display Page ===================
+function openDisplay() { window.open('/display', '_blank'); }
 function copyDisplayLink() {
     const url = window.location.origin + '/display';
-    navigator.clipboard.writeText(url).then(() => {
-        showToast('✓ تم نسخ الرابط');
-    }).catch(() => {
-        prompt('انسخ الرابط:', url);
-    });
+    navigator.clipboard.writeText(url).then(() => showToast('✓ تم نسخ الرابط')).catch(() => prompt('انسخ:', url));
 }
 
-// ==================== Export PDF ====================
+// =================== Export PDF ===================
 async function exportPDF() {
-    if (branches.length === 0) {
-        showToast('لا توجد بيانات للتصدير', 'error');
-        return;
-    }
-    
+    if (branches.length === 0) { showToast('لا توجد بيانات', 'error'); return; }
     try {
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        
-        // Use Arabic-friendly approach: numbers and English fallback
+        const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
         let y = 20;
         
-        // Header
-        doc.setFillColor(99, 102, 241);
+        doc.setFillColor(212, 175, 55);
         doc.rect(0, 0, pageWidth, 30, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(20);
-        doc.text('Branch Competition Report', pageWidth / 2, 15, { align: 'center' });
-        doc.setFontSize(10);
+        doc.setTextColor(10, 10, 15);
+        doc.setFontSize(18);
+        doc.text(systemName + ' - Competition Report', pageWidth / 2, 15, { align: 'center' });
+        doc.setFontSize(9);
         doc.text(new Date().toLocaleString('en-US'), pageWidth / 2, 23, { align: 'center' });
         
         y = 40;
         doc.setTextColor(0, 0, 0);
-        
-        // Stats
         const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
         const allPosts = [...discoveredPosts, ...manualPosts];
         const assignedPosts = allPosts.filter(p => p.assignedTo);
         const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
         
-        doc.setFontSize(14);
-        doc.text('Summary / الملخص', 14, y);
+        doc.setFontSize(13);
+        doc.text('Summary', 14, y);
         y += 8;
         doc.setFontSize(10);
-        doc.text('Branches: ' + branches.length, 14, y); y += 6;
-        doc.text('Members: ' + totalMembers, 14, y); y += 6;
-        doc.text('Posts: ' + assignedPosts.length, 14, y); y += 6;
-        doc.text('Total Likes: ' + totalLikes.toLocaleString('en-US'), 14, y); y += 12;
+        doc.text(`Branches: ${branches.length}  Members: ${totalMembers}`, 14, y); y += 6;
+        doc.text(`Posts: ${assignedPosts.length}  Total Likes: ${totalLikes.toLocaleString('en-US')}`, 14, y); y += 12;
         
-        // Branches Leaderboard
-        doc.setFillColor(99, 102, 241);
+        doc.setFillColor(212, 175, 55);
         doc.rect(10, y - 5, pageWidth - 20, 8, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(12);
-        doc.text('Branches Ranking / ترتيب الفروع', 14, y);
+        doc.setTextColor(10, 10, 15);
+        doc.setFontSize(11);
+        doc.text('Branches Ranking', 14, y);
         y += 10;
         doc.setTextColor(0, 0, 0);
-        
-        const sortedBranches = [...branches]
-            .map(b => ({
-                ...b,
-                totalLikes: getBranchTotalLikes(b.id),
-                postsCount: getBranchPostsCount(b.id)
-            }))
-            .sort((a, b) => b.totalLikes - a.totalLikes);
-        
         doc.setFontSize(9);
-        // Headers
-        doc.setFillColor(240, 240, 240);
-        doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
-        doc.text('Rank', 14, y);
-        doc.text('Branch Name', 35, y);
-        doc.text('Members', 110, y);
-        doc.text('Posts', 140, y);
-        doc.text('Likes', 170, y);
-        y += 7;
+        
+        const sortedBranches = [...branches].map(b => ({
+            ...b, totalLikes: getBranchTotalLikes(b.id), postsCount: getBranchPostsCount(b.id)
+        })).sort((a, b) => b.totalLikes - a.totalLikes);
         
         sortedBranches.forEach((b, i) => {
-            const rank = i + 1;
-            if (rank === 1) doc.setFillColor(251, 191, 36);
-            else if (rank === 2) doc.setFillColor(203, 213, 225);
-            else if (rank === 3) doc.setFillColor(217, 119, 6);
-            else doc.setFillColor(255, 255, 255);
+            if (i === 0) doc.setFillColor(251, 191, 36);
+            else if (i === 1) doc.setFillColor(203, 213, 225);
+            else if (i === 2) doc.setFillColor(217, 119, 6);
+            else doc.setFillColor(245, 245, 245);
             doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
-            
-            doc.text('#' + rank, 14, y);
-            doc.text(b.name.substring(0, 40), 35, y);
-            doc.text(String(b.members.length), 110, y);
-            doc.text(String(b.postsCount), 140, y);
-            doc.text(b.totalLikes.toLocaleString('en-US'), 170, y);
-            y += 7;
-            
-            if (y > 270) { doc.addPage(); y = 20; }
-        });
-        
-        // Members Leaderboard
-        y += 10;
-        if (y > 240) { doc.addPage(); y = 20; }
-        
-        doc.setFillColor(99, 102, 241);
-        doc.rect(10, y - 5, pageWidth - 20, 8, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(12);
-        doc.text('Members Ranking / ترتيب الموظفين', 14, y);
-        y += 10;
-        doc.setTextColor(0, 0, 0);
-        
-        const allMembers = branches.flatMap(b => 
-            b.members.map(m => ({
-                ...m,
-                branchName: b.name,
-                totalLikes: getMemberTotalLikes(m.id),
-                postsCount: getMemberPostsCount(m.id)
-            }))
-        ).sort((a, b) => b.totalLikes - a.totalLikes);
-        
-        doc.setFontSize(9);
-        doc.setFillColor(240, 240, 240);
-        doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
-        doc.text('Rank', 14, y);
-        doc.text('Name', 35, y);
-        doc.text('Branch', 90, y);
-        doc.text('Posts', 140, y);
-        doc.text('Likes', 170, y);
-        y += 7;
-        
-        allMembers.forEach((m, i) => {
-            const rank = i + 1;
-            if (rank === 1) doc.setFillColor(251, 191, 36);
-            else if (rank === 2) doc.setFillColor(203, 213, 225);
-            else if (rank === 3) doc.setFillColor(217, 119, 6);
-            else doc.setFillColor(255, 255, 255);
-            doc.rect(10, y - 4, pageWidth - 20, 7, 'F');
-            
-            doc.text('#' + rank, 14, y);
-            doc.text(m.name.substring(0, 25), 35, y);
-            doc.text(m.branchName.substring(0, 25), 90, y);
-            doc.text(String(m.postsCount), 140, y);
-            doc.text(m.totalLikes.toLocaleString('en-US'), 170, y);
-            y += 7;
-            
-            if (y > 270) { doc.addPage(); y = 20; }
-        });
-        
-        // Save
-        doc.save('branch-competition-' + new Date().toISOString().split('T')[0] + '.pdf');
-        showToast('✓ تم تصدير PDF');
-    } catch (e) {
-        console.error(e);
-        showToast('فشل التصدير: ' + e.message, 'error');
-    }
-}
-
-// ==================== Winner Image ====================
-const WINNER_QUOTES = [
-    'إبداع لا يضاهى! 🌟',
-    'أنت الأول وستبقى الأفضل! 👑',
-    'نجاحك إلهام لنا جميعًا 🚀',
-    'بصمتك واضحة في كل عمل 💎',
-    'الإصرار ثمرته الفوز 🏆',
-    'أنت تصنع الفرق! 🔥',
-    'تستحق كل التقدير 🌹',
-    'القمة لمن يستحقها 🏔️',
-    'أبدعت فتألقت! ✨',
-    'فخر لكل من حولك 🎖️'
-];
-
-function getRandomQuote() {
-    return WINNER_QUOTES[Math.floor(Math.random() * WINNER_QUOTES.length)];
-}
-
-async function exportWinnerImage() {
-    if (branches.length === 0) {
-        showToast('لا توجد بيانات', 'error');
-        return;
-    }
-    
-    // إنشاء عنصر مؤقت للصورة
-    const canvas = document.createElement('div');
-    canvas.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1080px;padding:60px;font-family:Tahoma,Arial,sans-serif;direction:rtl;background:linear-gradient(135deg,#0a0e27 0%,#1e1b4b 50%,#831843 100%);color:white;';
-    
-    // الفائز
-    const allMembers = branches.flatMap(b => 
-        b.members.map(m => ({
-            ...m,
-            branchName: b.name,
-            totalLikes: getMemberTotalLikes(m.id),
-            postsCount: getMemberPostsCount(m.id)
-        }))
-    ).sort((a, b) => b.totalLikes - a.totalLikes);
-    
-    const sortedBranches = [...branches]
-        .map(b => ({
-            ...b,
-            totalLikes: getBranchTotalLikes(b.id),
-            postsCount: getBranchPostsCount(b.id)
-        }))
-        .sort((a, b) => b.totalLikes - a.totalLikes);
-    
-    if (allMembers.length === 0 || allMembers[0].totalLikes === 0) {
-        showToast('لا يوجد فائز بعد', 'error');
-        return;
-    }
-    
-    const winner = allMembers[0];
-    const winnerBranch = sortedBranches[0];
-    const quote = getRandomQuote();
-    
-    canvas.innerHTML = `
-        <div style="text-align:center;">
-            <div style="font-size:64px;margin-bottom:20px;">🏆</div>
-            <div style="font-size:38px;font-weight:900;background:linear-gradient(135deg,#fbbf24,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">مسابقة الفروع</div>
-            <div style="font-size:20px;opacity:0.7;margin-bottom:40px;">نتائج المنافسة</div>
-            
-            <div style="background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(236,72,153,0.15));border:3px solid rgba(251,191,36,0.5);border-radius:30px;padding:40px;margin-bottom:35px;">
-                <div style="font-size:80px;margin-bottom:15px;">👑</div>
-                <div style="font-size:24px;opacity:0.8;margin-bottom:10px;">المركز الأول - الموظف الفائز</div>
-                <div style="font-size:54px;font-weight:900;background:linear-gradient(135deg,#fbbf24,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;">${escapeHtml(winner.name)}</div>
-                <div style="font-size:24px;opacity:0.85;margin-bottom:20px;">🏢 ${escapeHtml(winner.branchName)}</div>
-                <div style="display:inline-flex;gap:30px;padding:18px 35px;background:rgba(255,255,255,0.1);border-radius:18px;">
-                    <div>
-                        <div style="font-size:36px;font-weight:900;color:#ef4444;">${formatNumber(winner.totalLikes)}</div>
-                        <div style="font-size:14px;opacity:0.7;">❤️ لايك</div>
-                    </div>
-                    <div>
-                        <div style="font-size:36px;font-weight:900;color:#818cf8;">${winner.postsCount}</div>
-                        <div style="font-size:14px;opacity:0.7;">📝 منشور</div>
-                    </div>
-                </div>
-                <div style="margin-top:25px;font-size:22px;font-style:italic;opacity:0.9;">"${quote}"</div>
-            </div>
-            
-            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:30px;margin-bottom:30px;">
-                <div style="font-size:24px;font-weight:700;margin-bottom:18px;">🏢 ترتيب الفروع</div>
-                ${sortedBranches.slice(0, 5).map((b, i) => {
-                    const rank = i + 1;
-                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
-                    let bg = 'rgba(255,255,255,0.04)';
-                    if (rank === 1) bg = 'linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,191,36,0.05))';
-                    else if (rank === 2) bg = 'linear-gradient(135deg,rgba(203,213,225,0.1),rgba(203,213,225,0.03))';
-                    else if (rank === 3) bg = 'linear-gradient(135deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03))';
-                    return `
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:8px;background:${bg};border-radius:14px;">
-                            <div style="display:flex;align-items:center;gap:14px;">
-                                <div style="font-size:28px;font-weight:900;min-width:60px;">${medal}</div>
-                                <div>
-                                    <div style="font-size:22px;font-weight:700;">${escapeHtml(b.name)}</div>
-                                    <div style="font-size:13px;opacity:0.6;">${b.members.length} موظف · ${b.postsCount} منشور</div>
-                                </div>
-                            </div>
-                            <div style="font-size:26px;font-weight:900;color:#ef4444;">${formatNumber(b.totalLikes)} ❤️</div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-            
-            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:30px;margin-bottom:30px;">
-                <div style="font-size:24px;font-weight:700;margin-bottom:18px;">👤 أفضل 5 موظفين</div>
-                ${allMembers.slice(0, 5).map((m, i) => {
-                    const rank = i + 1;
-                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
-                    let bg = 'rgba(255,255,255,0.04)';
-                    if (rank === 1) bg = 'linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,191,36,0.05))';
-                    else if (rank === 2) bg = 'linear-gradient(135deg,rgba(203,213,225,0.1),rgba(203,213,225,0.03))';
-                    else if (rank === 3) bg = 'linear-gradient(135deg,rgba(217,119,6,0.1),rgba(217,119,6,0.03))';
-                    return `
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:8px;background:${bg};border-radius:14px;">
-                            <div style="display:flex;align-items:center;gap:14px;">
-                                <div style="font-size:28px;font-weight:900;min-width:60px;">${medal}</div>
-                                <div>
-                                    <div style="font-size:22px;font-weight:700;">${escapeHtml(m.name)}</div>
-                                    <div style="font-size:13px;opacity:0.6;">🏢 ${escapeHtml(m.branchName)} · ${m.postsCount} منشور</div>
-                                </div>
-                            </div>
-                            <div style="font-size:26px;font-weight:900;color:#ef4444;">${formatNumber(m.totalLikes)} ❤️</div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-            
-            <div style="margin-top:30px;opacity:0.5;font-size:14px;">
-                📅 ${new Date().toLocaleDateString('ar-EG')} · نظام مسابقة الفروع
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(canvas);
-    
-    try {
-        showToast('جاري إنشاء الصورة...');
-        const result = await html2canvas(canvas, {
-            backgroundColor: '#0a0e27',
-            scale: 2,
-            useCORS: true
-        });
-        
-        // Download
-        const link = document.createElement('a');
-        link.download = 'winner-' + new Date().toISOString().split('T')[0] + '.png';
-        link.href = result.toDataURL('image/png');
-        link.click();
-        
-        showToast('✓ تم تصدير الصورة');
-    } catch (e) {
-        console.error(e);
-        showToast('فشل: ' + e.message, 'error');
-    }
-    
-    document.body.removeChild(canvas);
-}
-
-// ==================== Init for new features ====================
-const originalSwitchTab = switchTab;
-switchTab = function(tab) {
-    originalSwitchTab(tab);
-    if (tab === 'advanced') {
-        checkCookiesStatus();
-        checkAutoUpdateStatus();
-    }
-};
-
-// Initial check
-setTimeout(() => {
-    loadStateFromServer();
-    checkCookiesStatus();
-    checkAutoUpdateStatus();
-}, 1000);
-
-// Refresh status periodically
-setInterval(checkAutoUpdateStatus, 30000);
-
-</script>
-
-</body>
-</html>
+            doc.tex
