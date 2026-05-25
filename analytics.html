@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 لوحة التحليلات - نظام المسابقات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+    --bg-deep: #0a0a0f;
+    --bg-card: #14141c;
+    --bg-card-hover: #1a1a26;
+    --gold: #d4af37;
+    --gold-light: #e8c252;
+    --gold-dark: #b8941e;
+    --gold-dim: #8a6e16;
+    --text-primary: #ffffff;
+    --text-secondary: #c4b896;
+    --text-muted: #8a8068;
+    --danger: #ef4444;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --info: #60a5fa;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --border-gold: rgba(212, 175, 55, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 16px;
+    background-image: 
+        radial-gradient(circle at 20% 10%, rgba(212, 175, 55, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(167, 139, 250, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(244, 114, 182, 0.03) 0%, transparent 50%);
+}
+
+/* ====== Header ====== */
+.dashboard-header {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.95), rgba(26, 26, 38, 0.95));
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+}
+
+.header-title {
+    flex: 1;
+}
+
+.header-title h1 {
+    font-size: 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+}
+
+.header-title p {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.header-btn {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--border-gold);
+    color: var(--gold-light);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.header-btn:hover { 
+    background: rgba(212, 175, 55, 0.2); 
+    transform: translateY(-1px); 
+}
+
+.header-btn.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border-color: var(--gold);
+}
+
+/* ====== Stats Grid ====== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: var(--gradient);
+    border-radius: 50%;
+    filter: blur(20px);
+    opacity: 0.2;
+}
+
+.stat-card.gold { --gradient: linear-gradient(135deg, var(--gold), var(--gold-light)); }
+.stat-card.danger { --gradient: linear-gradient(135deg, var(--danger), #f87171); }
+.stat-card.info { --gradient: linear-gradient(135deg, var(--info), #93c5fd); }
+.stat-card.success { --gradient: linear-gradient(135deg, var(--success), #86efac); }
+.stat-card.purple { --gradient: linear-gradient(135deg, var(--purple), #c4b5fd); }
+.stat-card.pink { --gradient: linear-gradient(135deg, var(--pink), #fbcfe8); }
+
+.stat-card-icon {
+    width: 36px; height: 36px;
+    background: var(--gradient);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.stat-card-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stat-card-value {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+.stat-card-value.gold { color: var(--gold); }
+.stat-card-value.danger { color: var(--danger); }
+
+.stat-card-trend {
+    font-size: 10px;
+    color: var(--success);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-card-trend.down { color: var(--danger); }
+
+/* ====== Section ====== */
+.section {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold-light);
+}
+
+.section-title-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* ====== Chart Container ====== */
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.chart-wrapper.tall {
+    height: 320px;
+}
+
+/* ====== Top Performers ====== */
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.top-item:hover {
+    border-color: var(--border-gold);
+    transform: translateX(-4px);
+}
+
+.top-rank {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.top-rank.r1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #5a3e00; }
+.top-rank.r2 { background: linear-gradient(135deg, #d0d0d0, #b0b0b0); color: #444; }
+.top-rank.r3 { background: linear-gradient(135deg, #cd7f32, #a05a1f); color: #fff; }
+.top-rank.r-other { background: rgba(212, 175, 55, 0.15); color: var(--gold-light); }
+
+.top-info { flex: 1; min-width: 0; }
+.top-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.top-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.top-value {
+    text-align: left;
+    flex-shrink: 0;
+}
+.top-value-main {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--danger);
+}
+.top-value-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+/* ====== Platform Distribution ====== */
+.platforms-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.platform-stat {
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.platform-stat.ig { border-color: rgba(225, 48, 108, 0.3); }
+.platform-stat.tt { border-color: rgba(255, 255, 255, 0.15); }
+.platform-stat.sn { border-color: rgba(255, 252, 0, 0.3); }
+
+.platform-stat-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.platform-stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.platform-stat-value {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-primary);
+}
+
+/* ====== Branch Comparison ====== */
+.comparison-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+.comparison-row:last-child { border-bottom: none; }
+
+.comparison-name {
+    width: 80px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.comparison-bar-container {
+    flex: 1;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.comparison-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+    border-radius: 6px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.comparison-value {
+    width: 60px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--danger);
+}
+
+/* ====== Loading ====== */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+.loading-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+/* ====== Floating Buttons ====== */
+.float-buttons {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+}
+
+.float-btn {
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border: 2px solid var(--gold-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-deep);
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.float-btn:hover { transform: scale(1.1); }
+
+/* ====== Responsive ====== */
+@media (min-width: 768px) {
+    body { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .header-title h1 { font-size: 28px; }
+    .chart-wrapper { height: 320px; }
+}
+
+/* Hide scrollbars but allow scrolling */
+.scroll-x {
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.scroll-x::-webkit-scrollbar { display: none; }
+
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="dashboard-header">
+    <div class="header-top">
+        <div class="header-icon">📊</div>
+        <div class="header-title">
+            <h1>لوحة التحليلات الذكية</h1>
+            <p id="dashboardSubtitle">جاري التحميل...</p>
+        </div>
+    </div>
+    <div class="header-actions scroll-x">
+        <button class="header-btn active" data-period="all" onclick="setPeriod('all')">📅 الكل</button>
+        <button class="header-btn" data-period="week" onclick="setPeriod('week')">🗓️ هذا الأسبوع</button>
+        <button class="header-btn" data-period="month" onclick="setPeriod('month')">📆 هذا الشهر</button>
+        <button class="header-btn" onclick="window.location.href='/display'">📺 شاشة العرض</button>
+        <button class="header-btn" onclick="window.location.href='/'">⚙️ الإدارة</button>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card gold">
+        <div class="stat-card-icon">🏢</div>
+        <div class="stat-card-label">عدد الفروع</div>
+        <div class="stat-card-value gold" id="totalBranches">0</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-card-icon">👥</div>
+        <div class="stat-card-label">عدد الموظفين</div>
+        <div class="stat-card-value" id="totalMembers">0</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-card-icon">📹</div>
+        <div class="stat-card-label">إجمالي المنشورات</div>
+        <div class="stat-card-value" id="totalPosts">0</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-card-icon">❤️</div>
+        <div class="stat-card-label">إجمالي اللايكات</div>
+        <div class="stat-card-value danger" id="totalLikes">0</div>
+    </div>
+    <div class="stat-card purple">
+        <div class="stat-card-icon">👁️</div>
+        <div class="stat-card-label">إجمالي المشاهدات</div>
+        <div class="stat-card-value" id="totalViews">0</div>
+    </div>
+    <div class="stat-card pink">
+        <div class="stat-card-icon">💬</div>
+        <div class="stat-card-label">إجمالي التعليقات</div>
+        <div class="stat-card-value" id="totalComments">0</div>
+    </div>
+    <div class="stat-card gold">
+        <div class="stat-card-icon">📈</div>
+        <div class="stat-card-label">متوسط اللايكات/منشور</div>
+        <div class="stat-card-value gold" id="avgLikes">0</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-card-icon">🎯</div>
+        <div class="stat-card-label">معدل التفاعل</div>
+        <div class="stat-card-value" id="engagementRate">0%</div>
+    </div>
+</div>
+
+<!-- Branch Comparison Bar Chart -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">🏆</div>
+        <span>مقارنة أداء الفروع (لايكات)</span>
+    </div>
+    <div id="branchComparisonContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div>جاري التحميل...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Platform Distribution -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">📱</div>
+        <span>توزيع المنشورات حسب المنصة</span>
+    </div>
+    <div class="platforms-row">
+        <div class="platform-stat ig">
+            <div class="platform-stat-icon">📷</div>
+            <div class="platform-stat-label">Instagram</div>
+            <div class="platform-stat-value" id="igCount">0</div>
+        </div>
+        <div class="platform-stat tt">
+            <div class="platform-stat-icon">🎵</div>
+            <div class="platform-stat-label">TikTok</div>
+            <div class="platform-stat-value" id="ttCount">0</div>
+        </div>
+        <div class="platform-stat sn">
+            <div class="platform-stat-icon">👻</div>
+            <div class="platform-stat-label">Snapchat</div>
+            <div class="platform-stat-value" id="snCount">0</div>
+        </div>
+    </div>
+    <div class="chart-wrapper" style="height:220px;">
+        <canvas id="platformPieChart"></canvas>
+    </div>
+</div>
+
+<!-- Likes by Platform Bar Chart -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">📊</div>
+        <span>إجمالي اللايكات حسب المنصة</span>
+    </div>
+    <div class="chart-wrapper">
+        <canvas id="platformLikesChart"></canvas>
+    </div>
+</div>
+
+<!-- Daily Trend -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">📈</div>
+        <span>تطور اللايكات يومياً (آخر 14 يوم)</span>
+    </div>
+    <div class="chart-wrapper tall">
+        <canvas id="dailyTrendChart"></canvas>
+    </div>
+</div>
+
+<!-- Top 5 Posts -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">🏆</div>
+        <span>أفضل 5 منشورات</span>
+    </div>
+    <div class="top-list" id="topPostsList">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Top 5 Members -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">👑</div>
+        <span>أفضل 5 موظفين</span>
+    </div>
+    <div class="top-list" id="topMembersList">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Branch Detailed Stats -->
+<div class="section">
+    <div class="section-title">
+        <div class="section-title-icon">🏢</div>
+        <span>إحصائيات تفصيلية للفروع</span>
+    </div>
+    <div id="branchStatsList"></div>
+</div>
+
+<!-- Floating Buttons -->
+<div class="float-buttons">
+    <a href="/display" class="float-btn" title="شاشة العرض">📺</a>
+    <a href="/" class="float-btn" title="الإدارة">⚙️</a>
+</div>
+
+<script>
+let state = null;
+let currentPeriod = 'all';
+let charts = {};
+
+// ====== Utility Functions ======
+function formatNumber(num) {
+    if (!num) return '0';
+    return new Intl.NumberFormat('ar-EG').format(num);
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text).replace(/[&<>"']/g, m => 
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function parseUploadDate(str) {
+    if (!str) return null;
+    if (/^\d{8}$/.test(str)) {
+        const y = parseInt(str.substring(0,4));
+        const m = parseInt(str.substring(4,6))-1;
+        const d = parseInt(str.substring(6,8));
+        return new Date(y, m, d);
+    }
+    const d = new Date(str);
+    return isNaN(d) ? null : d;
+}
+
+function getSaudiWeekStart() {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun
+    // الأسبوع السعودي: السبت إلى الجمعة (6→5)
+    let daysSinceSat = (day + 1) % 7;
+    const sat = new Date(now);
+    sat.setDate(now.getDate() - daysSinceSat);
+    sat.setHours(0,0,0,0);
+    return sat;
+}
+
+function getMonthStart() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+// ====== Period Filter ======
+function setPeriod(period) {
+    currentPeriod = period;
+    document.querySelectorAll('[data-period]').forEach(b => {
+        b.classList.toggle('active', b.dataset.period === period);
+    });
+    renderAll();
+}
+
+function getFilteredPosts() {
+    if (!state) return [];
+    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])]
+        .filter(p => p.assignedTo);
+    
+    if (currentPeriod === 'all') return allPosts;
+    
+    const startDate = currentPeriod === 'week' ? getSaudiWeekStart() : getMonthStart();
+    return allPosts.filter(p => {
+        const d = parseUploadDate(p.upload_date);
+        if (!d) return true; // إذا ما له تاريخ، نخليه
+        return d >= startDate;
+    });
+}
+
+// ====== Main Stats ======
+function renderMainStats() {
+    const posts = getFilteredPosts();
+    const branches = state.branches || [];
+    
+    const totalBranches = branches.length;
+    const totalMembers = branches.reduce((s,b) => s + (b.members||[]).length, 0);
+    const totalPosts = posts.length;
+    const totalLikes = posts.reduce((s,p) => s + (p.likes||0), 0);
+    const totalViews = posts.reduce((s,p) => s + (p.views||0), 0);
+    const totalComments = posts.reduce((s,p) => s + (p.comments||0), 0);
+    const avgLikes = totalPosts > 0 ? Math.round(totalLikes / totalPosts) : 0;
+    const engagementRate = totalViews > 0 ? ((totalLikes + totalComments) / totalViews * 100).toFixed(1) : 0;
+    
+    document.getElementById('totalBranches').textContent = formatNumber(totalBranches);
+    document.getElementById('totalMembers').textContent = formatNumber(totalMembers);
+    document.getElementById('totalPosts').textContent = formatNumber(totalPosts);
+    document.getElementById('totalLikes').textContent = formatNumber(totalLikes);
+    document.getElementById('totalViews').textContent = formatNumber(totalViews);
+    document.getElementById('totalComments').textContent = formatNumber(totalComments);
+    document.getElementById('avgLikes').textContent = formatNumber(avgLikes);
+    document.getElementById('engagementRate').textContent = engagementRate + '%';
+    
+    const periodLabel = currentPeriod === 'week' ? 'هذا الأسبوع' :
+                       currentPeriod === 'month' ? 'هذا الشهر' : 'كل الفترات';
+    document.getElementById('dashboardSubtitle').textContent = 
+        `${state.systemName || 'نظام المسابقات'} • ${periodLabel}`;
+}
+
+// ====== Branch Comparison ======
+function renderBranchComparison() {
+    const posts = getFilteredPosts();
+    const branches = state.branches || [];
+    
+    // حساب لايكات كل فرع
+    const branchData = branches.map(branch => {
+        const memberIds = (branch.members || []).map(m => m.id);
+        const branchPosts = posts.filter(p => memberIds.includes(p.assignedTo));
+        const likes = branchPosts.reduce((s,p) => s + (p.likes||0), 0);
+        return { name: branch.name, likes, posts: branchPosts.length };
+    });
+    
+    // ترتيب
+    branchData.sort((a,b) => b.likes - a.likes);
+    const maxLikes = Math.max(...branchData.map(b => b.likes), 1);
+    
+    const container = document.getElementById('branchComparisonContainer');
+    if (branchData.length === 0 || branchData.every(b => b.likes === 0)) {
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div>لا توجد بيانات</div></div>';
+        return;
+    }
+    
+    container.innerHTML = branchData.map(b => `
+        <div class="comparison-row">
+            <div class="comparison-name">${escapeHtml(b.name)}</div>
+            <div class="comparison-bar-container">
+                <div class="comparison-bar" style="width:${(b.likes/maxLikes*100)}%"></div>
+            </div>
+            <div class="comparison-value">${formatNumber(b.likes)}</div>
+        </div>
+    `).join('');
+}
+
+// ====== Platform Distribution ======
+function renderPlatformDistribution() {
+    const posts = getFilteredPosts();
+    const platforms = { instagram: 0, tiktok: 0, snapchat: 0 };
+    const platformLikes = { instagram: 0, tiktok: 0, snapchat: 0 };
+    
+    posts.forEach(p => {
+        const plat = p.platform || 'instagram';
+        if (platforms[plat] !== undefined) {
+            platforms[plat]++;
+            platformLikes[plat] += (p.likes || 0);
+        }
+    });
+    
+    document.getElementById('igCount').textContent = formatNumber(platforms.instagram);
+    document.getElementById('ttCount').textContent = formatNumber(platforms.tiktok);
+    document.getElementById('snCount').textContent = formatNumber(platforms.snapchat);
+    
+    // Pie Chart
+    if (charts.platformPie) charts.platformPie.destroy();
+    const ctx1 = document.getElementById('platformPieChart').getContext('2d');
+    charts.platformPie = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: ['📷 Instagram', '🎵 TikTok', '👻 Snapchat'],
+            datasets: [{
+                data: [platforms.instagram, platforms.tiktok, platforms.snapchat],
+                backgroundColor: [
+                    'rgba(225, 48, 108, 0.85)',
+                    'rgba(255, 255, 255, 0.85)',
+                    'rgba(255, 252, 0, 0.85)'
+                ],
+                borderColor: ['#e1306c', '#ffffff', '#fffc00'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { 
+                        color: '#c4b896', 
+                        font: { family: 'Tajawal', size: 12 },
+                        padding: 10
+                    }
+                }
+            }
+        }
+    });
+    
+    // Bar Chart - Likes by Platform
+    if (charts.platformLikes) charts.platformLikes.destroy();
+    const ctx2 = document.getElementById('platformLikesChart').getContext('2d');
+    charts.platformLikes = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['📷 Instagram', '🎵 TikTok', '👻 Snapchat'],
+            datasets: [{
+                label: 'اللايكات',
+                data: [platformLikes.instagram, platformLikes.tiktok, platformLikes.snapchat],
+                backgroundColor: [
+                    'rgba(225, 48, 108, 0.7)',
+                    'rgba(212, 175, 55, 0.7)',
+                    'rgba(255, 252, 0, 0.5)'
+                ],
+                borderColor: ['#e1306c', '#d4af37', '#fffc00'],
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    ticks: { color: '#8a8068', font: { family: 'Tajawal' } },
+                    grid: { color: 'rgba(212, 175, 55, 0.08)' }
+                },
+                x: { 
+                    ticks: { color: '#c4b896', font: { family: 'Tajawal', size: 12 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// ====== Daily Trend ======
+function renderDailyTrend() {
+    const posts = getFilteredPosts();
+    
+    // آخر 14 يوم
+    const days = [];
+    const labels = [];
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    
+    for (let i = 13; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        days.push(d);
+        labels.push(d.toLocaleDateString('ar-SA', { day:'numeric', month:'short' }));
+    }
+    
+    const dailyLikes = days.map(day => {
+        const nextDay = new Date(day);
+        nextDay.setDate(day.getDate() + 1);
+        return posts
+            .filter(p => {
+                const d = parseUploadDate(p.upload_date);
+                return d && d >= day && d < nextDay;
+            })
+            .reduce((s,p) => s + (p.likes||0), 0);
+    });
+    
+    if (charts.dailyTrend) charts.dailyTrend.destroy();
+    const ctx = document.getElementById('dailyTrendChart').getContext('2d');
+    charts.dailyTrend = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'اللايكات اليومية',
+                data: dailyLikes,
+                borderColor: '#d4af37',
+                backgroundColor: 'rgba(212, 175, 55, 0.15)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#e8c252',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#8a8068', font: { family: 'Tajawal' } },
+                    grid: { color: 'rgba(212, 175, 55, 0.08)' }
+                },
+                x: {
+                    ticks: { color: '#c4b896', font: { family: 'Tajawal', size: 10 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// ====== Top Posts ======
+function renderTopPosts() {
+    const posts = getFilteredPosts();
+    const top = [...posts].sort((a,b) => (b.likes||0) - (a.likes||0)).slice(0, 5);
+    const container = document.getElementById('topPostsList');
+    
+    if (top.length === 0) {
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div>لا توجد منشورات</div></div>';
+        return;
+    }
+    
+    const PLATFORM_ICONS = { instagram: '📷', tiktok: '🎵', snapchat: '👻' };
+    const PLATFORM_NAMES = { instagram: 'Instagram', tiktok: 'TikTok', snapchat: 'Snapchat' };
+    
+    container.innerHTML = top.map((post, i) => {
+        const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'r-other';
+        const platIcon = PLATFORM_ICONS[post.platform] || '📷';
+        const platName = PLATFORM_NAMES[post.platform] || 'Instagram';
+        // ابحث عن اسم الموظف
+        let memberName = '';
+        for (const branch of state.branches || []) {
+            const m = (branch.members || []).find(m => m.id === post.assignedTo);
+            if (m) { memberName = m.name; break; }
+        }
+        const title = post.title || 'منشور بدون عنوان';
+        const shortTitle = title.length > 40 ? title.substring(0, 40) + '...' : title;
+        
+        return `
+            <div class="top-item" onclick="window.open('${escapeHtml(post.url)}','_blank')">
+                <div class="top-rank ${rankClass}">${i + 1}</div>
+                <div class="top-info">
+                    <div class="top-name">${escapeHtml(shortTitle)}</div>
+                    <div class="top-meta">${platIcon} ${platName} • ${escapeHtml(memberName || 'غير محدد')}</div>
+                </div>
+                <div class="top-value">
+                    <div class="top-value-main">${formatNumber(post.likes)} ❤️</div>
+                    ${post.views ? `<div class="top-value-sub">${formatNumber(post.views)} 👁️</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ====== Top Members ======
+function renderTopMembers() {
+    const posts = getFilteredPosts();
+    const memberStats = {};
+    
+    posts.forEach(p => {
+        if (!p.assignedTo) return;
+        if (!memberStats[p.assignedTo]) {
+            memberStats[p.assignedTo] = { likes: 0, posts: 0, views: 0, name: '', branchName: '' };
+        }
+        memberStats[p.assignedTo].likes += (p.likes || 0);
+        memberStats[p.assignedTo].views += (p.views || 0);
+        memberStats[p.assignedTo].posts++;
+    });
+    
+    // أضف الأسماء
+    (state.branches || []).forEach(branch => {
+        (branch.members || []).forEach(m => {
+            if (memberStats[m.id]) {
+                memberStats[m.id].name = m.name;
+                memberStats[m.id].branchName = branch.name;
+            }
+        });
+    });
+    
+    const sorted = Object.values(memberStats)
+        .filter(m => m.name)
+        .sort((a,b) => b.likes - a.likes)
+        .slice(0, 5);
+    
+    const container = document.getElementById('topMembersList');
+    if (sorted.length === 0) {
+        container.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div>لا يوجد موظفين بمنشورات</div></div>';
+        return;
+    }
+    
+    container.innerHTML = sorted.map((m, i) => {
+        const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'r-other';
+        return `
+            <div class="top-item">
+                <div class="top-rank ${rankClass}">${i + 1}</div>
+                <div class="top-info">
+                    <div class="top-name">${escapeHtml(m.name)}</div>
+                    <div class="top-meta">🏢 ${escapeHtml(m.branchName)} • 📹 ${m.posts} منشور</div>
+                </div>
+                <div class="top-value">
+                    <div class="top-value-main">${formatNumber(m.likes)} ❤️</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ====== Branch Stats Detail ======
+function renderBranchStats() {
+    const posts = getFilteredPosts();
+    const branches = state.branches || [];
+    const container = document.getElementById('branchStatsList');
+    
+    if (branches.length === 0) {
+        container.innerHTML = '<div class="empty"><div class="empty-icon">🏢</div><div>لا توجد فروع</div></div>';
+        return;
+    }
+    
+    container.innerHTML = branches.map(branch => {
+        const memberIds = (branch.members || []).map(m => m.id);
+        const branchPosts = posts.filter(p => memberIds.includes(p.assignedTo));
+        const likes = branchPosts.reduce((s,p) => s + (p.likes||0), 0);
+        const views = branchPosts.reduce((s,p) => s + (p.views||0), 0);
+        const comments = branchPosts.reduce((s,p) => s + (p.comments||0), 0);
+        const avgLikesPerPost = branchPosts.length > 0 ? Math.round(likes / branchPosts.length) : 0;
+        
+        return `
+            <div style="background:rgba(10,10,15,0.4);border:1px solid var(--border-gold);border-radius:14px;padding:12px;margin-bottom:10px;">
+                <div style="font-weight:800;font-size:14px;color:var(--gold-light);margin-bottom:8px;">
+                    🏢 ${escapeHtml(branch.name)}
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">👥 موظفين</div>
+                        <div style="font-size:16px;font-weight:800;">${(branch.members||[]).length}</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">📹 منشورات</div>
+                        <div style="font-size:16px;font-weight:800;">${branchPosts.length}</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">❤️ لايكات</div>
+                        <div style="font-size:16px;font-weight:800;color:var(--danger);">${formatNumber(likes)}</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">👁️ مشاهدات</div>
+                        <div style="font-size:16px;font-weight:800;color:var(--info);">${formatNumber(views)}</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">💬 تعليقات</div>
+                        <div style="font-size:16px;font-weight:800;">${formatNumber(comments)}</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;">
+                        <div style="font-size:10px;color:var(--text-muted);">📊 متوسط/منشور</div>
+                        <div style="font-size:16px;font-weight:800;color:var(--gold);">${formatNumber(avgLikesPerPost)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ====== Render All ======
+function renderAll() {
+    if (!state) return;
+    renderMainStats();
+    renderBranchComparison();
+    renderPlatformDistribution();
+    renderDailyTrend();
+    renderTopPosts();
+    renderTopMembers();
+    renderBranchStats();
+}
+
+// ====== Load Data ======
+async function loadData() {
+    try {
+        const response = await fetch('/api/state');
+        state = await response.json();
+        renderAll();
+    } catch (e) {
+        console.error('Failed to load data:', e);
+        document.getElementById('dashboardSubtitle').textContent = '❌ فشل تحميل البيانات';
+    }
+}
+
+// تحديث تلقائي كل 30 ثانية
+loadData();
+setInterval(loadData, 30000);
+
+</script>
+
+</body>
+</html>

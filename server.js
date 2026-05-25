@@ -15,9 +15,11 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
+const THUMBS_DIR = path.join(DATA_DIR, 'thumbnails');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (!fs.existsSync(BACKUPS_DIR)) fs.mkdirSync(BACKUPS_DIR, { recursive: true });
+if (!fs.existsSync(THUMBS_DIR)) fs.mkdirSync(THUMBS_DIR, { recursive: true });
 
 const STATE_FILE = path.join(DATA_DIR, 'state.json');
 const COOKIES_FILE = path.join(DATA_DIR, 'cookies.txt');
@@ -180,6 +182,7 @@ app.use(cors());
 app.use(express.json({ limit: '15mb' }));
 app.use(express.static(__dirname));
 app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/thumbnails', express.static(THUMBS_DIR));
 
 // Multer للـ cookies
 const cookiesUpload = multer({
@@ -209,6 +212,58 @@ const imageUpload = multer({
         cb(null, true);
     }
 });
+
+// =================== Thumbnail Cache ===================
+const httpModule = require('http');
+const httpsModule = require('https');
+
+function downloadThumbnail(url, filename) {
+    return new Promise((resolve) => {
+        if (!url || !url.startsWith('http')) { resolve(null); return; }
+        const protocol = url.startsWith('https') ? httpsModule : httpModule;
+        const filepath = path.join(THUMBS_DIR, filename);
+        const file = fs.createWriteStream(filepath);
+        
+        const req = protocol.get(url, { timeout: 15000 }, (res) => {
+            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                file.close();
+                try { fs.unlinkSync(filepath); } catch(e) {}
+                downloadThumbnail(res.headers.location, filename).then(resolve);
+                return;
+            }
+            if (res.statusCode !== 200) {
+                file.close();
+                try { fs.unlinkSync(filepath); } catch(e) {}
+                resolve(null);
+                return;
+            }
+            res.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                resolve('/thumbnails/' + filename);
+            });
+        });
+        req.on('timeout', () => { req.destroy(); file.close(); try { fs.unlinkSync(filepath); } catch(e) {} resolve(null); });
+        req.on('error', () => { file.close(); try { fs.unlinkSync(filepath); } catch(e) {} resolve(null); });
+    });
+}
+
+async function cacheThumbnail(originalUrl, postUrl) {
+    if (!originalUrl) return null;
+    try {
+        const hash = require('crypto').createHash('md5').update(postUrl).digest('hex').substring(0, 12);
+        const filename = `thumb_${hash}.jpg`;
+        const filepath = path.join(THUMBS_DIR, filename);
+        if (fs.existsSync(filepath)) {
+            const stat = fs.statSync(filepath);
+            if (stat.size > 1024) return '/thumbnails/' + filename;
+            try { fs.unlinkSync(filepath); } catch(e) {}
+        }
+        return await downloadThumbnail(originalUrl, filename);
+    } catch (e) {
+        return null;
+    }
+}
 
 // =================== Instagram Multi-Source Fetcher ===================
 // طرق متعددة لاستخراج لايكات Instagram، يجرب واحدة بعد أخرى
@@ -272,7 +327,7 @@ function extractInstagramShortcode(url) {
 }
 
 // ============== الطريقة 1: Embed Endpoint ==============
-// Instagram يوفر صفحة embed بدون login: /p/SHORTCODE/embed/captioned/
+// Instagram يوفر صفحة embed بدون login تعرض اللايكات في الـ HTML المرئي
 async function fetchFromEmbed(url) {
     const shortcode = extractInstagramShortcode(url);
     if (!shortcode) throw new Error('Invalid Instagram URL');
@@ -280,7 +335,8 @@ async function fetchFromEmbed(url) {
     const embedUrl = `https://www.instagram.com/p/${shortcode}/embed/captioned/`;
     
     const response = await httpGet(embedUrl, {
-        'Referer': 'https://www.instagram.com/'
+        'Referer': 'https://www.instagram.com/',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
     });
     
     if (response.statusCode !== 200) {
@@ -288,69 +344,102 @@ async function fetchFromEmbed(url) {
     }
     
     const html = response.body;
+    let likes = 0;
+    let comments = 0;
     
-    // البحث عن عدد اللايكات في الـ embed
-    // أنماط متعددة لأن Instagram يغيّر شكل الـ HTML
-    const patterns = [
-        // النمط 1: "like_count":12345
-        /"like_count":(\d+)/,
-        // النمط 2: <span>12,345 likes</span>
-        /([\d,]+)\s+likes?/i,
-        // النمط 3: in Arabic إعجاب
-        /([\d,]+)\s+إعجاب/,
-        // النمط 4: data-likes="12345"
-        /data-likes?=["'](\d+)["']/,
-        // النمط 5: edge_media_preview_like":{"count":12345}
-        /edge_media_preview_like["']?:\s*{\s*["']count["']?\s*:\s*(\d+)/,
-        // النمط 6: edge_liked_by":{"count":12345}
-        /edge_liked_by["']?:\s*{\s*["']count["']?\s*:\s*(\d+)/
+    // طريقة 1: البحث في الـ HTML المرئي عن "X,XXX likes" أو "X likes"
+    // مثال HTML: <div class="SocialProof">1,234 likes</div>
+    const visiblePatterns = [
+        // مع كلمة likes
+        /([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\s*likes?/gi,
+        // مع كلمة إعجاب (عربي)
+        /([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\s*(?:إعجاب|اعجاب)/gi,
+        // K notation: 1.2K likes
+        /([0-9.]+)K\s*likes?/gi,
+        // M notation: 1.2M likes
+        /([0-9.]+)M\s*likes?/gi
     ];
     
-    let likes = 0;
-    for (const pattern of patterns) {
-        const match = html.match(pattern);
-        if (match) {
-            const num = parseInt(match[1].replace(/,/g, ''));
-            if (num > likes) likes = num;
+    const allMatches = [];
+    for (const pattern of visiblePatterns) {
+        let m;
+        const re = new RegExp(pattern.source, pattern.flags);
+        while ((m = re.exec(html)) !== null) {
+            let num = m[1].replace(/,/g, '');
+            // معالجة K و M
+            if (pattern.source.includes('K')) num = parseFloat(num) * 1000;
+            else if (pattern.source.includes('M')) num = parseFloat(num) * 1000000;
+            else num = parseInt(num);
+            
+            if (num > 0) allMatches.push(num);
         }
     }
     
-    // استخراج المعلومات الإضافية
-    let title = '';
-    let uploader = '';
-    let thumbnail = '';
-    let comments = 0;
+    // طريقة 2: البحث في JSON المُضمَّن
+    const jsonPatterns = [
+        /"like_count":\s*(\d+)/g,
+        /"edge_media_preview_like":\s*{\s*"count":\s*(\d+)/g,
+        /"edge_liked_by":\s*{\s*"count":\s*(\d+)/g,
+        /"likes":\s*(\d+)/g
+    ];
     
-    // العنوان
-    const titleMatch = html.match(/<title>(.*?)<\/title>/i);
-    if (titleMatch) {
-        title = titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'");
+    for (const pattern of jsonPatterns) {
+        let m;
+        while ((m = pattern.exec(html)) !== null) {
+            const num = parseInt(m[1]);
+            if (num > 0) allMatches.push(num);
+        }
     }
     
-    // اسم المستخدم
-    const userMatch = html.match(/@([a-zA-Z0-9_.]+)/);
-    if (userMatch) uploader = userMatch[1];
-    
-    // الصورة المصغرة
-    const thumbMatch = html.match(/"display_url":"([^"]+)"/) || html.match(/<meta property="og:image" content="([^"]+)"/);
-    if (thumbMatch) {
-        thumbnail = thumbMatch[1].replace(/\u0026/g, '&').replace(/\\//g, '/');
+    // ناخذ أعلى رقم (الأكثر دقة)
+    if (allMatches.length > 0) {
+        likes = Math.max(...allMatches);
     }
     
     // التعليقات
-    const commentsMatch = html.match(/edge_media_to_comment["']?:\s*{\s*["']count["']?\s*:\s*(\d+)/) ||
-                        html.match(/edge_media_preview_comment["']?:\s*{\s*["']count["']?\s*:\s*(\d+)/);
-    if (commentsMatch) comments = parseInt(commentsMatch[1]);
+    const commentPatterns = [
+        /([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\s*comments?/i,
+        /"edge_media_to_comment":\s*{\s*"count":\s*(\d+)/,
+        /"edge_media_preview_comment":\s*{\s*"count":\s*(\d+)/,
+        /"comment_count":\s*(\d+)/
+    ];
+    
+    for (const pattern of commentPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+            const num = parseInt(match[1].replace(/,/g, ''));
+            if (num > comments) comments = num;
+        }
+    }
+    
+    // المعلومات الإضافية
+    let title = '';
+    let uploader = '';
+    let thumbnail = '';
+    
+    const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+    if (titleMatch) {
+        title = titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").substring(0, 200);
+    }
+    
+    const userMatch = html.match(/instagram\.com\/([a-zA-Z0-9_.]+)\//) ||
+                     html.match(/@([a-zA-Z0-9_.]+)/);
+    if (userMatch) uploader = userMatch[1];
+    
+    const thumbMatch = html.match(/"display_url":"([^"]+)"/) ||
+                      html.match(/<meta property="og:image" content="([^"]+)"/);
+    if (thumbMatch) {
+        thumbnail = thumbMatch[1].replace(/\\u0026/g, '&').replace(/\\\//g, '/');
+    }
     
     if (likes === 0 && !title) {
-        throw new Error('No data found in embed');
+        throw new Error('Embed returned no usable data');
     }
     
     return { likes, comments, title, uploader, thumbnail, source: 'embed' };
 }
 
 // ============== الطريقة 2: Public Page Scraper ==============
-// نجلب صفحة Instagram العامة ونحلل الـ HTML
 async function fetchFromPublicPage(url) {
     const shortcode = extractInstagramShortcode(url);
     if (!shortcode) throw new Error('Invalid Instagram URL');
@@ -360,7 +449,9 @@ async function fetchFromPublicPage(url) {
     const response = await httpGet(publicUrl, {
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none'
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1'
     });
     
     if (response.statusCode !== 200) {
@@ -368,54 +459,66 @@ async function fetchFromPublicPage(url) {
     }
     
     const html = response.body;
-    let likes = 0;
+    const allMatches = [];
+    
+    // JSON patterns - نستخدم global flag للبحث في كل النص
+    const jsonPatterns = [
+        /"edge_media_preview_like":\s*{\s*"count":\s*(\d+)/g,
+        /"edge_liked_by":\s*{\s*"count":\s*(\d+)/g,
+        /"like_count":\s*(\d+)/g
+    ];
+    
+    for (const pattern of jsonPatterns) {
+        let m;
+        while ((m = pattern.exec(html)) !== null) {
+            const num = parseInt(m[1]);
+            if (num > 0) allMatches.push(num);
+        }
+    }
+    
+    // البحث في الـ meta tags
+    const metaPatterns = [
+        /<meta[^>]+content="([0-9,]+)\s+(?:Likes?|إعجاب)/i,
+        /<meta property="instapp:hashtags"[^>]+content="[^"]*?([0-9,]+)\s+likes?/i
+    ];
+    
+    for (const pattern of metaPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+            const num = parseInt(match[1].replace(/,/g, ''));
+            if (num > 0) allMatches.push(num);
+        }
+    }
+    
+    const likes = allMatches.length > 0 ? Math.max(...allMatches) : 0;
+    
     let comments = 0;
+    const commentsMatch = html.match(/"edge_media_to_(?:parent_)?comment":\s*{\s*"count":\s*(\d+)/) ||
+                         html.match(/"comment_count":\s*(\d+)/);
+    if (commentsMatch) comments = parseInt(commentsMatch[1]);
+    
     let title = '';
     let uploader = '';
     let thumbnail = '';
     
-    // البحث عن JSON المُضمَّن في الصفحة
-    // Instagram يضع JSON في sharedData أو __additionalDataLoaded
-    const jsonPatterns = [
-        /"edge_media_preview_like":\s*{\s*"count":\s*(\d+)/,
-        /"edge_liked_by":\s*{\s*"count":\s*(\d+)/,
-        /"like_count":\s*(\d+)/,
-        /"like_and_view_counts_disabled":\s*false[^}]+"like_count":\s*(\d+)/
-    ];
-    
-    for (const pattern of jsonPatterns) {
-        const match = html.match(pattern);
-        if (match) {
-            const num = parseInt(match[1]);
-            if (num > likes) likes = num;
-        }
-    }
-    
-    // التعليقات
-    const commentsMatch = html.match(/"edge_media_to_(?:parent_)?comment":\s*{\s*"count":\s*(\d+)/);
-    if (commentsMatch) comments = parseInt(commentsMatch[1]);
-    
-    // العنوان
     const titleMatch = html.match(/<title>([^<]+)<\/title>/) ||
                        html.match(/<meta property="og:title" content="([^"]+)"/);
     if (titleMatch) {
-        title = titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'");
+        title = titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").substring(0, 200);
     }
     
-    // المستخدم
     const userMatch = html.match(/"username":"([^"]+)"/) ||
                      html.match(/<meta property="og:title" content="([^"]+) on Instagram/);
     if (userMatch) uploader = userMatch[1];
     
-    // الصورة المصغرة
     const thumbMatch = html.match(/<meta property="og:image" content="([^"]+)"/) ||
                        html.match(/"display_url":"([^"]+)"/);
     if (thumbMatch) {
-        thumbnail = thumbMatch[1].replace(/\u0026/g, '&').replace(/\\//g, '/');
+        thumbnail = thumbMatch[1].replace(/\\u0026/g, '&').replace(/\\\//g, '/');
     }
     
     if (likes === 0) {
-        throw new Error('No likes found in public page');
+        throw new Error('No likes found in public page (Instagram may have blocked)');
     }
     
     return { likes, comments, title, uploader, thumbnail, source: 'public' };
@@ -462,13 +565,120 @@ function fetchFromYtdlp(url) {
     });
 }
 
+// ============== الطريقة 4: GraphQL Internal API ==============
+// Instagram يستخدم GraphQL داخلياً، نقدر نطلب بدون login
+async function fetchFromGraphQL(url) {
+    const shortcode = extractInstagramShortcode(url);
+    if (!shortcode) throw new Error('Invalid Instagram URL');
+    
+    // GraphQL query hash المعروف للحصول على معلومات المنشور
+    const queryHashes = [
+        '2efa04f61586458cef44441f474eee7c',
+        '477b65a610463740ccdb83135b2014db',
+        '9f8827793ef34641b2fb195d4d41151c'
+    ];
+    
+    for (const queryHash of queryHashes) {
+        try {
+            const variables = JSON.stringify({ shortcode });
+            const graphqlUrl = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURIComponent(variables)}`;
+            
+            const response = await httpGet(graphqlUrl, {
+                'X-IG-App-ID': '936619743392459',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': '*/*',
+                'Referer': `https://www.instagram.com/p/${shortcode}/`
+            });
+            
+            if (response.statusCode !== 200) continue;
+            
+            const data = JSON.parse(response.body);
+            const media = data?.data?.shortcode_media;
+            if (!media) continue;
+            
+            return {
+                likes: media.edge_media_preview_like?.count || media.edge_liked_by?.count || 0,
+                comments: media.edge_media_to_comment?.count || media.edge_media_preview_comment?.count || 0,
+                title: media.edge_media_to_caption?.edges?.[0]?.node?.text?.substring(0, 200) || '',
+                uploader: media.owner?.username || '',
+                thumbnail: media.display_url || '',
+                video_url: media.video_url || '',
+                source: 'graphql'
+            };
+        } catch (e) {
+            continue;
+        }
+    }
+    
+    throw new Error('GraphQL all hashes failed');
+}
+
+// ============== الطريقة 5: Instagram Web Profile Info API ==============
+async function fetchFromWebAPI(url) {
+    const shortcode = extractInstagramShortcode(url);
+    if (!shortcode) throw new Error('Invalid Instagram URL');
+    
+    const apiUrl = `https://www.instagram.com/api/v1/media/${shortcode}/info/`;
+    
+    const response = await httpGet(apiUrl, {
+        'X-IG-App-ID': '936619743392459',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+        'Referer': `https://www.instagram.com/p/${shortcode}/`
+    });
+    
+    if (response.statusCode !== 200) {
+        throw new Error(`WebAPI HTTP ${response.statusCode}`);
+    }
+    
+    try {
+        const data = JSON.parse(response.body);
+        const item = data.items?.[0];
+        if (!item) throw new Error('No items in API response');
+        
+        return {
+            likes: item.like_count || 0,
+            views: item.play_count || item.view_count || 0,
+            comments: item.comment_count || 0,
+            title: item.caption?.text?.substring(0, 200) || '',
+            uploader: item.user?.username || '',
+            thumbnail: item.image_versions2?.candidates?.[0]?.url || '',
+            video_url: item.video_versions?.[0]?.url || '',
+            source: 'webapi'
+        };
+    } catch (e) {
+        throw new Error('WebAPI parse: ' + e.message);
+    }
+}
+
 // ============== Multi-Source Master Function ==============
-// يجرب كل طريقة ويرجع أعلى رقم لايكات (أكثر دقة)
 async function fetchInstagramData(url) {
     const results = [];
     const errors = [];
     
-    // الطريقة 1: Embed
+    // الطريقة 1: WebAPI (الأدق - يستخدم نفس API الموقع)
+    try {
+        const data = await fetchFromWebAPI(url);
+        if (data.likes > 0) {
+            results.push(data);
+            console.log(`[IG] WebAPI: likes=${data.likes}`);
+        }
+    } catch (e) {
+        errors.push(`webapi: ${e.message}`);
+    }
+    
+    // الطريقة 2: GraphQL
+    try {
+        const data = await fetchFromGraphQL(url);
+        if (data.likes > 0) {
+            results.push(data);
+            console.log(`[IG] GraphQL: likes=${data.likes}`);
+        }
+    } catch (e) {
+        errors.push(`graphql: ${e.message}`);
+    }
+    
+    // الطريقة 3: Embed
     try {
         const data = await fetchFromEmbed(url);
         if (data.likes > 0 || data.title) {
@@ -479,7 +689,7 @@ async function fetchInstagramData(url) {
         errors.push(`embed: ${e.message}`);
     }
     
-    // الطريقة 2: Public page
+    // الطريقة 4: Public page
     try {
         const data = await fetchFromPublicPage(url);
         if (data.likes > 0) {
@@ -490,7 +700,7 @@ async function fetchInstagramData(url) {
         errors.push(`public: ${e.message}`);
     }
     
-    // الطريقة 3: yt-dlp (دائماً نشغّلها للحصول على video_url و upload_date)
+    // الطريقة 5: yt-dlp (دائماً نشغّلها للحصول على video_url و upload_date)
     let ytdlpData = null;
     try {
         ytdlpData = await fetchFromYtdlp(url);
@@ -508,16 +718,19 @@ async function fetchInstagramData(url) {
     const maxLikes = Math.max(...results.map(r => r.likes || 0));
     const bestResult = results.find(r => r.likes === maxLikes) || results[0];
     
-    // نستخدم البيانات الإضافية من yt-dlp إن وُجدت
+    const originalThumb = bestResult.thumbnail || (ytdlpData && ytdlpData.thumbnail) || '';
+    const localThumb = await cacheThumbnail(originalThumb, url);
+    const finalThumb = localThumb || originalThumb;
+    
     return {
         likes: maxLikes,
-        views: (ytdlpData && ytdlpData.views) || 0,
+        views: (ytdlpData && ytdlpData.views) || bestResult.views || 0,
         comments: bestResult.comments || (ytdlpData && ytdlpData.comments) || 0,
         title: bestResult.title || (ytdlpData && ytdlpData.title) || '',
         uploader: bestResult.uploader || (ytdlpData && ytdlpData.uploader) || '',
         upload_date: (ytdlpData && ytdlpData.upload_date) || '',
-        thumbnail: bestResult.thumbnail || (ytdlpData && ytdlpData.thumbnail) || '',
-        video_url: (ytdlpData && ytdlpData.video_url) || '',
+        thumbnail: finalThumb,
+        video_url: (ytdlpData && ytdlpData.video_url) || bestResult.video_url || '',
         duration: (ytdlpData && ytdlpData.duration) || 0,
         sources: results.map(r => `${r.source}=${r.likes}`).join(', ')
     };
@@ -581,7 +794,7 @@ async function fetchPostData(url) {
     return new Promise((resolve, reject) => {
         const cookiesArg = getCookiesArg(platform);
         const command = `yt-dlp --dump-json --no-warnings --no-playlist --skip-download${cookiesArg} "${url}"`;
-        exec(command, { maxBuffer: 10 * 1024 * 1024, timeout: 30000 }, (error, stdout, stderr) => {
+        exec(command, { maxBuffer: 10 * 1024 * 1024, timeout: 30000 }, async (error, stdout, stderr) => {
             if (error) { reject(new Error(stderr.split('\n')[0] || error.message)); return; }
             try {
                 const lines = stdout.trim().split('\n').filter(l => l.trim());
@@ -601,12 +814,18 @@ async function fetchPostData(url) {
                     if (playable.length > 0) videoUrl = playable[playable.length - 1].url;
                 }
                 
+                // نزّل الـ thumbnail محلياً
+                const localThumb = await cacheThumbnail(thumbnail, url);
+                const finalThumb = localThumb || thumbnail;
+                
                 resolve({
                     url, likes: data.like_count || 0, views: data.view_count || 0,
                     comments: data.comment_count || 0,
                     title: (data.title || data.description || '').substring(0, 200),
                     uploader: data.uploader || data.channel || data.uploader_id || '',
-                    upload_date: data.upload_date || '', thumbnail, video_url: videoUrl,
+                    upload_date: data.upload_date || '', 
+                    thumbnail: finalThumb,
+                    video_url: videoUrl,
                     duration: data.duration || 0
                 });
             } catch (e) { reject(new Error('Parse error: ' + e.message)); }
@@ -756,7 +975,23 @@ app.post('/api/test-instagram', async (req, res) => {
     
     const results = { url, methods: {} };
     
-    // الطريقة 1
+    // الطريقة 1: WebAPI
+    try {
+        const data = await fetchFromWebAPI(url);
+        results.methods.webapi = { ok: true, likes: data.likes, comments: data.comments, views: data.views };
+    } catch (e) {
+        results.methods.webapi = { ok: false, error: e.message };
+    }
+    
+    // الطريقة 2: GraphQL
+    try {
+        const data = await fetchFromGraphQL(url);
+        results.methods.graphql = { ok: true, likes: data.likes, comments: data.comments };
+    } catch (e) {
+        results.methods.graphql = { ok: false, error: e.message };
+    }
+    
+    // الطريقة 3: Embed
     try {
         const data = await fetchFromEmbed(url);
         results.methods.embed = { ok: true, likes: data.likes, comments: data.comments };
@@ -764,7 +999,7 @@ app.post('/api/test-instagram', async (req, res) => {
         results.methods.embed = { ok: false, error: e.message };
     }
     
-    // الطريقة 2
+    // الطريقة 4: Public page
     try {
         const data = await fetchFromPublicPage(url);
         results.methods.public = { ok: true, likes: data.likes, comments: data.comments };
@@ -772,7 +1007,7 @@ app.post('/api/test-instagram', async (req, res) => {
         results.methods.public = { ok: false, error: e.message };
     }
     
-    // الطريقة 3
+    // الطريقة 5: yt-dlp
     try {
         const data = await fetchFromYtdlp(url);
         results.methods.ytdlp = { ok: true, likes: data.likes, comments: data.comments };
@@ -952,6 +1187,7 @@ app.get('/api/health', (req, res) => {
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/display', (req, res) => res.sendFile(path.join(__dirname, 'display.html')));
+app.get('/analytics', (req, res) => res.sendFile(path.join(__dirname, 'analytics.html')));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log('========================================');

@@ -2,944 +2,1175 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💎 شاشة العرض</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🏆 شاشة العرض - نظام المسابقات</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-    --bg-deep: #0a0a0f;
+    --bg-deep: #08080d;
     --bg-card: #14141c;
+    --bg-card-hover: #1c1c28;
     --gold: #d4af37;
-    --gold-light: #f4e5b0;
-    --gold-dark: #a58020;
-    --gold-glow: rgba(212, 175, 55, 0.3);
-    --text-primary: #f7e7ce;
-    --text-secondary: #b8a888;
-    --text-muted: #7a6f56;
-    --border-gold: rgba(212, 175, 55, 0.2);
-    --border-gold-strong: rgba(212, 175, 55, 0.4);
+    --gold-light: #f0d670;
+    --gold-dark: #b8941e;
+    --gold-glow: rgba(212, 175, 55, 0.4);
+    --silver: #c0c0c0;
+    --silver-light: #e8e8e8;
+    --silver-dark: #909090;
+    --bronze: #cd7f32;
+    --bronze-light: #e89860;
+    --bronze-dark: #a05a1f;
+    --text-primary: #ffffff;
+    --text-secondary: #c4b896;
+    --text-muted: #7a7068;
     --danger: #ef4444;
     --success: #4ade80;
-    --instagram: #e1306c;
-    --tiktok: #25f4ee;
-    --snapchat: #fffc00;
+    --warning: #fbbf24;
+    --info: #60a5fa;
+    --border-gold: rgba(212, 175, 55, 0.25);
+    --border-subtle: rgba(255, 255, 255, 0.06);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', 'Segoe UI', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+    overflow-x: hidden;
+}
 
 body {
-    min-height: 100vh;
+    font-family: 'Tajawal', sans-serif;
     background: var(--bg-deep);
-    background-image:
-        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.15) 0px, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0px, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(180, 130, 40, 0.08) 0px, transparent 60%);
     color: var(--text-primary);
-    overflow-x: hidden;
-    padding: 30px 20px;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at top, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+    padding-bottom: 120px;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.03) 50%, transparent 100%);
-    background-size: 200% 100%;
-    animation: shimmerBg 10s infinite;
-    pointer-events: none;
-    z-index: 0;
-}
-
-@keyframes shimmerBg {
-    0%, 100% { background-position: -200% 0; }
-    50% { background-position: 200% 0; }
-}
-
-.display-container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
-
-/* ============== HEADER ============== */
-.display-header {
-    text-align: center;
-    margin-bottom: 32px;
-    animation: fadeInDown 1s;
-    padding: 28px;
-    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(30, 25, 15, 0.6));
-    border: 1px solid var(--border-gold);
-    border-radius: 24px;
+/* ========== HEADER ========== */
+.app-header {
+    background: linear-gradient(180deg, rgba(20, 20, 28, 0.98), rgba(8, 8, 13, 0.95));
     backdrop-filter: blur(20px);
-    position: relative;
-    overflow: hidden;
+    border-bottom: 1px solid var(--border-gold);
+    padding: 14px 14px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-.display-header::before {
+.app-header::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    bottom: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-.display-logo {
-    width: 90px;
-    height: 90px;
-    margin: 0 auto 16px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+.header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.system-logo {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 42px;
+    font-size: 22px;
     overflow: hidden;
-    border: 3px solid var(--gold);
-    box-shadow: 0 8px 32px var(--gold-glow);
-    color: var(--bg-deep);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
 }
 
-.display-logo img { width: 100%; height: 100%; object-fit: cover; }
+.system-logo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
 
-.display-title {
-    font-family: 'Playfair Display', 'Tajawal', serif;
-    font-size: clamp(32px, 6vw, 60px);
-    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.system-title-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.system-title {
+    font-size: 16px;
     font-weight: 900;
-    margin-bottom: 10px;
-    animation: gradient-shift 5s ease infinite;
-    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-@keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+.system-subtitle {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
 }
 
-.display-subtitle {
-    font-size: clamp(13px, 2vw, 18px);
-    color: rgba(247, 231, 206, 0.7);
-    letter-spacing: 2px;
-}
-
-.live-indicator {
+.live-badge {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
-    padding: 7px 20px;
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.4);
-    border-radius: 20px;
-    font-size: 12px;
-    color: var(--success);
-    margin-top: 16px;
+    gap: 4px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid var(--danger);
+    border-radius: 50px;
+    padding: 3px 8px;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--danger);
 }
 
 .live-dot {
-    width: 9px; height: 9px;
-    background: #ef4444;
+    width: 6px; height: 6px;
+    background: var(--danger);
     border-radius: 50%;
-    animation: livePulse 1.2s infinite;
-    box-shadow: 0 0 12px #ef4444;
+    animation: pulse 1.5s infinite;
 }
 
-.live-indicator.pulse-glow {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: rgba(239, 68, 68, 0.4);
-    color: #ef4444;
-    animation: glowBox 2s infinite;
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
-@keyframes glowBox {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
-    50% { box-shadow: 0 0 16px 4px rgba(239, 68, 68, 0.15); }
-}
-
-#liveRefreshBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px var(--gold-glow) !important; }
-#liveRefreshBtn:disabled { opacity: 0.6; cursor: wait; }
-
-.spinner-display {
-    display: inline-block;
-    width: 12px; height: 12px;
-    border: 2px solid rgba(10, 10, 15, 0.3);
-    border-top-color: var(--bg-deep);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Live update flash effect */
-@keyframes flashUpdate {
-    0% { background: rgba(74, 222, 128, 0.2); }
-    100% { background: transparent; }
-}
-
-.lb-row.just-updated { animation: flashUpdate 1.5s; }
-
-@keyframes livePulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-/* ============== VIEW TOGGLE ============== */
-.view-toggle {
+/* Filter & View Tabs */
+.header-controls {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.view-btn {
-    padding: 13px 32px;
-    background: rgba(20, 20, 28, 0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border-gold);
-    border-radius: 14px;
-    color: rgba(247, 231, 206, 0.6);
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 700;
+.view-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+}
+
+.view-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
     font-family: inherit;
-    transition: all 0.3s;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.view-btn:hover { background: rgba(212, 175, 55, 0.08); color: var(--gold-light); }
-
-.view-btn.active {
+.view-tab.active {
     background: linear-gradient(135deg, var(--gold-dark), var(--gold));
     color: var(--bg-deep);
-    border-color: transparent;
-    box-shadow: 0 8px 24px var(--gold-glow);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
 }
 
-/* ============== STATS ============== */
+.period-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+
+.period-tabs::-webkit-scrollbar { display: none; }
+
+.period-tab {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.period-tab.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+/* ========== STATS ROW ========== */
 .stats-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 14px;
+    background: linear-gradient(180deg, rgba(20, 20, 28, 0.6), transparent);
 }
 
-@media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
-
-.stat-box {
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(30, 25, 15, 0.5));
-    backdrop-filter: blur(20px);
+.stat-mini {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
     border: 1px solid var(--border-gold);
-    border-radius: 18px;
+    border-radius: 12px;
+    padding: 10px 8px;
     text-align: center;
-    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-box:hover {
-    transform: translateY(-3px);
-    border-color: var(--border-gold-strong);
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.1);
+.stat-mini::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-.stat-box-label {
+.stat-mini-icon {
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.stat-mini-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+    line-height: 1;
+}
+
+.stat-mini-value {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1;
+}
+
+.stat-mini-value.red { color: var(--danger); }
+.stat-mini-value.green { color: var(--success); }
+
+/* ========== PODIUM (3 Top) ========== */
+.podium-section {
+    padding: 8px 14px 14px;
+    position: relative;
+}
+
+.podium-title {
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.podium-title::before, .podium-title::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 1px;
+    background: var(--border-gold);
+}
+
+.podium-title::before { right: 0; }
+.podium-title::after { left: 0; }
+
+.podium-title-text {
+    display: inline-block;
+    padding: 0 12px;
     font-size: 12px;
-    color: rgba(247, 231, 206, 0.5);
-    margin-bottom: 6px;
+    font-weight: 800;
+    color: var(--gold);
     letter-spacing: 1px;
 }
 
-.stat-box-value {
-    font-size: clamp(24px, 4vw, 38px);
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.podium {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    align-items: end;
+    gap: 8px;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
-/* ============== WINNER SPOTLIGHT ============== */
-.winner-spotlight {
+.podium-place {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 35px;
-    margin-bottom: 30px;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(20, 20, 28, 0.6));
-    border: 2px solid var(--gold);
-    border-radius: 24px;
-    animation: zoomIn 1s;
-    box-shadow: 0 12px 48px var(--gold-glow);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.podium-place:active { transform: scale(0.97); }
+
+.podium-avatar-wrapper {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.podium-avatar {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    overflow: hidden;
+    font-weight: 900;
+    color: var(--gold);
+}
+
+.podium-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+.podium-place-1 .podium-avatar {
+    width: 84px; height: 84px;
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 24px var(--gold-glow), 0 8px 20px rgba(0,0,0,0.5);
+    font-size: 32px;
+}
+
+.podium-place-2 .podium-avatar {
+    width: 68px; height: 68px;
+    border: 3px solid var(--silver);
+    box-shadow: 0 0 16px rgba(192, 192, 192, 0.3), 0 6px 16px rgba(0,0,0,0.5);
+    font-size: 26px;
+}
+
+.podium-place-3 .podium-avatar {
+    width: 68px; height: 68px;
+    border: 3px solid var(--bronze);
+    box-shadow: 0 0 16px rgba(205, 127, 50, 0.3), 0 6px 16px rgba(0,0,0,0.5);
+    font-size: 26px;
+}
+
+.podium-medal {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border: 3px solid var(--bg-deep);
+    z-index: 2;
+}
+
+.podium-place-1 .podium-medal {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+}
+
+.podium-place-2 .podium-medal {
+    background: linear-gradient(135deg, #e8e8e8, #b0b0b0);
+}
+
+.podium-place-3 .podium-medal {
+    background: linear-gradient(135deg, #e89860, #a05a1f);
+}
+
+.podium-crown {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    filter: drop-shadow(0 0 8px var(--gold-glow));
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.podium-name {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-primary);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+    padding: 0 4px;
+}
+
+.podium-place-1 .podium-name { font-size: 13px; }
+
+.podium-likes {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--danger);
+    margin-bottom: 6px;
+    line-height: 1;
+}
+
+.podium-place-1 .podium-likes { font-size: 18px; }
+
+.podium-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.podium-base {
+    width: 100%;
+    border-radius: 12px 12px 4px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--bg-deep);
     position: relative;
     overflow: hidden;
 }
 
-.winner-spotlight::before {
+.podium-base::before {
     content: '';
     position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.08), transparent);
-    animation: rotateShine 8s linear infinite;
+    top: 0; left: 0; right: 0; height: 60%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
 }
 
-@keyframes rotateShine { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-.crown-big { font-size: 76px; margin-bottom: 12px; animation: crownBounce 2s infinite; position: relative; }
-@keyframes crownBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-.crown-label {
-    font-size: 14px;
-    color: rgba(247, 231, 206, 0.7);
-    margin-bottom: 10px;
-    letter-spacing: 3px;
-    position: relative;
+.podium-place-1 .podium-base {
+    height: 90px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold), var(--gold-dark));
+    box-shadow: 0 -4px 20px var(--gold-glow);
 }
 
-.crown-name {
-    font-size: clamp(28px, 5vw, 50px);
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-    position: relative;
+.podium-place-2 .podium-base {
+    height: 70px;
+    background: linear-gradient(180deg, #e8e8e8, var(--silver), var(--silver-dark));
 }
 
-.crown-sub { font-size: 16px; color: rgba(247, 231, 206, 0.7); position: relative; }
-
-/* ============== LEADERBOARD ============== */
-.leaderboard { display: flex; flex-direction: column; gap: 12px; }
-
-.lb-row {
-    display: grid;
-    grid-template-columns: 70px 64px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 18px 22px;
-    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(20, 20, 28, 0.4));
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-gold);
-    border-radius: 18px;
-    animation: slideInRight 0.6s ease-out backwards;
-    transition: all 0.3s;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+.podium-place-3 .podium-base {
+    height: 55px;
+    background: linear-gradient(180deg, var(--bronze-light), var(--bronze), var(--bronze-dark));
+    color: white;
 }
 
-.lb-row:hover {
-    transform: scale(1.01);
-    border-color: var(--border-gold-strong);
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.12);
+.podium-rank-number {
+    font-size: 36px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-.lb-row.rank-1 {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(20, 20, 15, 0.5));
-    border-color: var(--gold);
-    box-shadow: 0 12px 40px var(--gold-glow);
-    transform: scale(1.02);
+.podium-place-1 .podium-rank-number {
+    font-size: 44px;
 }
 
-.lb-row.rank-2 {
-    background: linear-gradient(135deg, rgba(203, 213, 225, 0.12), rgba(20, 20, 28, 0.5));
-    border-color: rgba(203, 213, 225, 0.4);
+/* ========== RANK LIST (4+) ========== */
+.rank-list-section {
+    padding: 0 14px;
 }
 
-.lb-row.rank-3 {
-    background: linear-gradient(135deg, rgba(217, 119, 6, 0.15), rgba(20, 20, 28, 0.5));
-    border-color: rgba(217, 119, 6, 0.4);
-}
-
-.lb-rank-badge {
-    width: 56px; height: 56px;
+.section-divider {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    font-weight: 900;
-    font-size: 24px;
-    background: rgba(20, 20, 28, 0.6);
-    border: 1px solid var(--border-gold);
-    color: var(--gold-light);
+    gap: 10px;
+    margin: 20px 0 12px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
-.rank-1 .lb-rank-badge {
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    color: var(--bg-deep);
-    box-shadow: 0 6px 20px var(--gold-glow);
-    font-size: 28px;
-    border-color: var(--gold);
+.section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-subtle);
 }
 
-.rank-2 .lb-rank-badge { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: var(--bg-deep); }
-.rank-3 .lb-rank-badge { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
-
-.lb-avatar-big {
-    width: 64px; height: 64px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--bg-deep);
+.rank-list {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    font-weight: 900;
-    border: 2px solid var(--border-gold);
-}
-
-.lb-avatar-big img { width: 100%; height: 100%; object-fit: cover; }
-
-.lb-info-main {
-    font-size: clamp(18px, 2.5vw, 26px);
-    font-weight: 800;
-    margin-bottom: 4px;
-    color: var(--gold-light);
-}
-
-.lb-info-sub {
-    font-size: 13px;
-    color: rgba(247, 231, 206, 0.5);
-    display: flex;
+    flex-direction: column;
     gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
 }
 
-.lb-stats-display { text-align: center; min-width: 110px; }
+.rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
 
-.lb-likes-big {
-    font-size: clamp(22px, 3vw, 32px);
+.rank-item:active {
+    transform: scale(0.98);
+}
+
+.rank-item:hover {
+    border-color: var(--border-gold);
+    background: linear-gradient(135deg, var(--bg-card-hover), rgba(26, 26, 38, 0.8));
+}
+
+.rank-item-number {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--border-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--gold);
+    flex-shrink: 0;
+}
+
+.rank-item-avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+    border: 1px solid var(--border-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.rank-item-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+.rank-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rank-item-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rank-item-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rank-item-meta-dot {
+    width: 3px; height: 3px;
+    background: var(--text-muted);
+    border-radius: 50%;
+}
+
+.rank-item-stats {
+    text-align: left;
+    flex-shrink: 0;
+}
+
+.rank-item-likes {
+    font-size: 15px;
     font-weight: 900;
     color: var(--danger);
     line-height: 1;
 }
 
-.lb-likes-label {
-    font-size: 11px;
-    color: rgba(247, 231, 206, 0.5);
-    margin-top: 4px;
-}
-
-.click-hint {
-    position: absolute;
-    bottom: 6px;
-    left: 12px;
+.rank-item-likes-label {
     font-size: 9px;
-    color: rgba(212, 175, 55, 0.5);
-    letter-spacing: 1px;
-    pointer-events: none;
+    color: var(--text-muted);
+    margin-top: 2px;
 }
 
-/* ============== DETAILS MODAL ============== */
-.modal-overlay {
+/* Empty State */
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+}
+
+.empty-text {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ========== FLOATING ACTIONS ========== */
+.float-actions {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(15px);
-    display: none;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+}
+
+.float-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    border: 2px solid var(--gold);
+    display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--bg-deep);
+    font-size: 20px;
+    text-decoration: none;
+    box-shadow: 0 4px 16px var(--gold-glow);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.float-btn:active { transform: scale(0.92); }
+.float-btn:hover { transform: scale(1.05); }
+
+/* ========== FOOTER CREDIT ========== */
+.app-footer {
+    text-align: center;
+    padding: 20px 14px 30px;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.developer-credit {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.03));
+    border: 1px solid var(--border-gold);
+    border-radius: 50px;
+    padding: 8px 16px;
+    margin-top: 6px;
+    color: var(--gold-light);
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.developer-credit strong {
+    color: var(--gold);
+}
+
+/* ========== MODAL (Details) - Reuse Existing ========== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
     z-index: 200;
-    padding: 16px;
-    animation: fadeIn 0.3s;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px 10px;
 }
 
 .modal-overlay.active { display: flex; }
 
 .details-modal {
-    background: linear-gradient(135deg, var(--bg-card), rgba(30, 25, 15, 0.95));
-    border: 1px solid var(--border-gold-strong);
+    background: linear-gradient(180deg, var(--bg-card-hover), var(--bg-card));
+    border: 1px solid var(--border-gold);
     border-radius: 20px;
-    max-width: 1100px;
     width: 100%;
-    max-height: 92vh;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    animation: zoomIn 0.3s;
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6), 0 0 80px rgba(212, 175, 55, 0.2);
     position: relative;
 }
 
 .details-modal::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    top: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 .details-header {
-    padding: 22px 26px;
-    border-bottom: 1px solid var(--border-gold);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(212, 175, 55, 0.04);
 }
 
 .details-header-avatar {
-    width: 64px; height: 64px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--bg-deep);
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 28px;
-    font-weight: 900;
-    border: 2px solid var(--gold);
+    overflow: hidden;
     flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
-.details-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.details-header-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
 
 .details-header-info { flex: 1; min-width: 0; }
 
 .details-header-name {
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 900;
     color: var(--gold-light);
     margin-bottom: 4px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .details-header-sub {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
-    letter-spacing: 1px;
 }
 
 .details-close {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-    border: 1px solid rgba(239, 68, 68, 0.3);
     width: 36px; height: 36px;
     border-radius: 10px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+    font-size: 16px;
     cursor: pointer;
-    font-size: 18px;
-    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    transition: all 0.3s;
 }
-
-.details-close:hover { background: rgba(239, 68, 68, 0.2); }
 
 .details-stats-row {
-    padding: 14px 26px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    border-bottom: 1px solid var(--border-gold);
-    background: rgba(20, 20, 28, 0.3);
+    gap: 6px;
+    padding: 12px;
+    background: rgba(10, 10, 15, 0.4);
 }
 
-@media (max-width: 600px) { .details-stats-row { grid-template-columns: repeat(2, 1fr); } }
-
 .details-stat {
-    text-align: center;
-    padding: 8px;
-    background: rgba(212, 175, 55, 0.05);
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    border: 1px solid var(--border-subtle);
     border-radius: 10px;
-    border: 1px solid var(--border-gold);
+    padding: 8px 6px;
+    text-align: center;
 }
 
 .details-stat-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-muted);
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 
 .details-stat-value {
-    font-size: 17px;
-    font-weight: 800;
+    font-size: 14px;
+    font-weight: 900;
     color: var(--gold-light);
 }
 
 .details-platforms-tabs {
-    padding: 12px 26px;
     display: flex;
     gap: 6px;
+    padding: 12px;
     overflow-x: auto;
-    border-bottom: 1px solid var(--border-gold);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: rgba(10, 10, 15, 0.3);
 }
+
+.details-platforms-tabs::-webkit-scrollbar { display: none; }
 
 .details-platform-tab {
-    padding: 8px 16px;
-    background: rgba(20, 20, 28, 0.5);
-    border: 1px solid var(--border-gold);
-    border-radius: 10px;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50px;
     color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
     font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
     white-space: nowrap;
-    transition: all 0.3s;
 }
-
-.details-platform-tab:hover { background: rgba(212, 175, 55, 0.08); }
 
 .details-platform-tab.active {
     background: linear-gradient(135deg, var(--gold-dark), var(--gold));
     color: var(--bg-deep);
-    border-color: transparent;
+    border-color: var(--gold);
 }
 
 .details-posts-container {
-    flex: 1;
+    max-height: 60vh;
     overflow-y: auto;
-    padding: 18px 26px 26px;
-}
-
-.details-posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 12px;
 }
 
 .detail-post-item {
-    display: grid;
-    grid-template-columns: 70px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    padding: 12px;
-    background: linear-gradient(135deg, rgba(20, 20, 28, 0.6), rgba(20, 20, 28, 0.3));
-    border: 1px solid var(--border-gold);
+    display: flex;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+    border: 1px solid var(--border-subtle);
     border-radius: 12px;
-    transition: all 0.3s;
+    padding: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
 }
 
 .detail-post-item:hover {
-    border-color: var(--border-gold-strong);
-    background: rgba(212, 175, 55, 0.04);
+    border-color: var(--border-gold);
 }
 
 .detail-post-thumb {
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.4);
+    background: rgba(10, 10, 15, 0.6);
     background-size: cover;
     background-position: center;
-    cursor: pointer;
-    border: 1px solid var(--border-gold);
     position: relative;
-    overflow: hidden;
+    cursor: pointer;
     flex-shrink: 0;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
 }
 
-.detail-post-thumb.no-image::after {
+.detail-post-thumb.no-image::before {
     content: '🖼️';
     position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    opacity: 0.3;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    opacity: 0.4;
 }
 
 .detail-post-thumb-hint {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    bottom: 4px;
+    right: 4px;
+    width: 22px; height: 22px;
+    background: rgba(212, 175, 55, 0.9);
+    color: var(--bg-deep);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 11px;
     opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 20px;
-    color: white;
+    transition: opacity 0.2s;
 }
 
-.detail-post-thumb:hover .detail-post-thumb-hint { opacity: 1; }
+.detail-post-thumb:hover .detail-post-thumb-hint {
+    opacity: 1;
+}
 
-.detail-post-info { min-width: 0; }
+.detail-post-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
 .detail-post-title {
     font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-    line-height: 1.4;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-bottom: 4px;
 }
 
 .detail-post-meta {
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
-    align-items: center;
+    gap: 6px;
     font-size: 10px;
     color: var(--text-muted);
 }
 
 .platform-badge {
-    padding: 2px 7px;
-    border-radius: 6px;
-    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 50px;
     font-size: 9px;
+    font-weight: 800;
 }
 
-.platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: var(--instagram); }
-.platform-badge.tt { background: rgba(37, 244, 238, 0.15); color: var(--tiktok); }
-.platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: var(--snapchat); }
+.platform-badge.ig { background: rgba(225, 48, 108, 0.15); color: #ff6b9d; }
+.platform-badge.tt { background: rgba(255, 255, 255, 0.1); color: white; }
+.platform-badge.sn { background: rgba(255, 252, 0, 0.15); color: #fffc00; }
 
 .detail-post-stats {
+    text-align: center;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 4px;
-    text-align: center;
-    min-width: 80px;
+    min-width: 60px;
 }
 
 .detail-stat-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
     font-size: 11px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
+    font-weight: 700;
 }
 
 .detail-stat-row.primary {
+    font-size: 13px;
     color: var(--danger);
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 900;
 }
 
 .detail-post-link {
-    color: var(--gold);
-    text-decoration: none;
+    display: inline-block;
+    padding: 4px 8px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--border-gold);
+    border-radius: 6px;
+    color: var(--gold-light);
     font-size: 10px;
-    margin-top: 4px;
-    display: block;
-    text-align: center;
-}
-
-.detail-post-link:hover { color: var(--gold-light); }
-
-.empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: rgba(247, 231, 206, 0.4);
-    font-size: 16px;
-}
-
-.empty-icon { font-size: 56px; margin-bottom: 14px; opacity: 0.4; color: var(--gold); }
-
-.last-update {
-    text-align: center;
-    margin-top: 28px;
-    padding: 10px;
-    font-size: 12px;
-    color: rgba(247, 231, 206, 0.4);
-}
-
-.fullscreen-btn {
-    position: fixed;
-    top: 20px; left: 20px;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    border: none;
-    border-radius: 12px;
-    color: var(--bg-deep);
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
+    text-decoration: none;
     font-weight: 700;
-    z-index: 100;
-    box-shadow: 0 6px 16px var(--gold-glow);
-    transition: transform 0.3s;
+    text-align: center;
 }
 
-.fullscreen-btn:hover { transform: translateY(-2px); }
-
-/* ============== Date Filter ============== */
-.date-filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 22px;
-    padding: 18px 22px;
-    background: linear-gradient(135deg, rgba(20, 20, 28, 0.7), rgba(30, 25, 15, 0.6));
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-gold);
-    border-radius: 18px;
+/* Date Filter (Custom Range) */
+.date-filter-panel {
+    display: none;
+    padding: 12px;
+    background: rgba(10, 10, 15, 0.5);
+    border-top: 1px solid var(--border-subtle);
 }
 
-.filter-quick-btns {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+.date-filter-panel.active { display: block; }
 
-.quick-btn {
-    padding: 8px 16px;
-    background: rgba(20, 20, 28, 0.6);
-    border: 1px solid var(--border-gold);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: inherit;
-    transition: all 0.3s;
-}
-
-.quick-btn:hover { background: rgba(212, 175, 55, 0.08); color: var(--gold-light); }
-
-.quick-btn.active {
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--bg-deep);
-    border-color: transparent;
-    box-shadow: 0 4px 14px var(--gold-glow);
-}
-
-.date-inputs {
-    display: flex;
+.date-inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.date-input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+    margin-bottom: 8px;
 }
 
 .date-input-group label {
     font-size: 10px;
     color: var(--text-muted);
-    text-align: center;
+    margin-bottom: 4px;
+    display: block;
 }
 
 .date-input-group input {
-    padding: 7px 11px;
-    background: rgba(20, 20, 28, 0.6);
-    border: 1px solid var(--border-gold);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 13px;
+    width: 100%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: white;
     font-family: inherit;
-    text-align: center;
+    font-size: 12px;
 }
 
-.date-input-group input:focus {
-    outline: none;
-    border-color: var(--gold);
+.date-apply-btn {
+    width: 100%;
+    padding: 8px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-deep);
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
 }
 
-.filter-info-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    background: rgba(212, 175, 55, 0.1);
-    border: 1px solid var(--border-gold-strong);
-    border-radius: 14px;
-    font-size: 11px;
-    color: var(--gold-light);
+/* Highlights - animations */
+.rank-item.just-updated, .podium-place.just-updated {
+    animation: flashUpdate 1.5s;
 }
 
-/* ============== ANIMATIONS ============== */
-@keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes zoomIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes flashUpdate {
+    0% { background-color: rgba(212, 175, 55, 0.25); }
+    100% { background-color: transparent; }
+}
 
-.lb-row:nth-child(1) { animation-delay: 0.05s; }
-.lb-row:nth-child(2) { animation-delay: 0.1s; }
-.lb-row:nth-child(3) { animation-delay: 0.15s; }
-.lb-row:nth-child(4) { animation-delay: 0.2s; }
-.lb-row:nth-child(5) { animation-delay: 0.25s; }
-.lb-row:nth-child(6) { animation-delay: 0.3s; }
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.rank-item {
+    animation: slideIn 0.4s ease-out;
+}
+
+.podium-place {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Desktop adjustments */
+@media (min-width: 768px) {
+    body { padding-bottom: 30px; }
+    .app-header { padding: 20px 24px 16px; }
+    .system-title { font-size: 22px; }
+    .system-logo { width: 56px; height: 56px; font-size: 28px; }
+    .stats-row { grid-template-columns: repeat(6, 1fr); padding: 16px 24px; }
+    .podium-section, .rank-list-section { padding-left: 24px; padding-right: 24px; max-width: 800px; margin: 0 auto; }
+    .stat-mini-value { font-size: 18px; }
+    .stat-mini-icon { font-size: 20px; }
+    .stat-mini-label { font-size: 11px; }
+    .rank-item-name { font-size: 16px; }
+    .rank-item-likes { font-size: 18px; }
+    .podium-place-1 .podium-avatar { width: 110px; height: 110px; font-size: 44px; }
+    .podium-place-2 .podium-avatar, .podium-place-3 .podium-avatar { width: 88px; height: 88px; font-size: 34px; }
+    .podium-place-1 .podium-base { height: 130px; }
+    .podium-place-2 .podium-base { height: 100px; }
+    .podium-place-3 .podium-base { height: 80px; }
+    .podium-place-1 .podium-rank-number { font-size: 56px; }
+    .podium-rank-number { font-size: 44px; }
+}
 </style>
 </head>
 <body>
 
-<button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ ملء الشاشة</button>
-
-<div class="display-container">
-    <div class="display-header">
-        <div class="display-logo" id="displayLogo">💎</div>
-        <h1 class="display-title" id="displaySystemName">مجوهرات نفائس الألماس</h1>
-        <div class="display-subtitle">عرض مباشر للنتائج</div>
-        <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:16px;">
-            <div class="live-indicator pulse-glow">
-                <span class="live-dot"></span>
-                <span>🔴 LIVE · بث مباشر</span>
+<!-- HEADER -->
+<header class="app-header">
+    <div class="header-top">
+        <div class="system-logo" id="systemLogo">💎</div>
+        <div class="system-title-area">
+            <div class="system-title" id="systemTitle">نظام مسابقة الفروع</div>
+            <div class="system-subtitle">
+                <span class="live-badge">
+                    <span class="live-dot"></span>
+                    LIVE
+                </span>
+                <span id="periodLabel" style="margin-right: 4px;">جاري التحميل...</span>
             </div>
-            <button id="liveRefreshBtn" onclick="triggerLiveRefresh()" style="padding:7px 18px;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-deep);border:none;border-radius:20px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 14px var(--gold-glow);transition:all 0.3s;">
-                <span id="liveRefreshIcon">🔄</span>
-                <span>تحديث الأرقام الآن</span>
-            </button>
-        </div>
-        <div id="liveLastSync" style="text-align:center;margin-top:8px;font-size:10px;color:rgba(247,231,206,0.4);">
-            آخر مزامنة: --
         </div>
     </div>
-
-    <div class="winner-spotlight" id="winnerSpotlight" style="display:none;">
-        <div class="crown-big">👑</div>
-        <div class="crown-label" id="winnerLabel">الفائز الحالي</div>
-        <div class="crown-name" id="winnerName">-</div>
-        <div class="crown-sub" id="winnerSub">-</div>
-    </div>
-
-    <div class="view-toggle">
-        <button class="view-btn active" data-view="branches" onclick="setView('branches')">🏢 الفروع</button>
-        <button class="view-btn" data-view="members" onclick="setView('members')">👤 الموظفين</button>
-    </div>
-
-    <!-- Date Filter Bar -->
-    <div class="date-filter-bar">
-        <div class="filter-quick-btns">
-            <button class="quick-btn active" data-period="current_week" onclick="setQuickPeriod('current_week')">📅 الأسبوع الحالي</button>
-            <button class="quick-btn" data-period="last_week" onclick="setQuickPeriod('last_week')">⏮️ الأسبوع الماضي</button>
-            <button class="quick-btn" data-period="last_2_weeks" onclick="setQuickPeriod('last_2_weeks')">⏪ آخر أسبوعين</button>
-            <button class="quick-btn" data-period="this_month" onclick="setQuickPeriod('this_month')">📆 الشهر الحالي</button>
-            <button class="quick-btn" data-period="all" onclick="setQuickPeriod('all')">🌐 كل الفترات</button>
+    
+    <div class="header-controls">
+        <div class="view-tabs">
+            <button class="view-tab active" data-view="branches" onclick="setView('branches')">🏢 الفروع</button>
+            <button class="view-tab" data-view="members" onclick="setView('members')">👥 الموظفون</button>
         </div>
         
-        <div class="date-inputs">
-            <div class="date-input-group">
-                <label>من تاريخ</label>
-                <input type="date" id="filterStartDate" onchange="onDateChange()">
-            </div>
-            <div class="date-input-group">
-                <label>إلى تاريخ</label>
-                <input type="date" id="filterEndDate" onchange="onDateChange()">
-            </div>
+        <div class="period-tabs">
+            <button class="period-tab active" data-period="current_week" onclick="setPeriod('current_week')">🗓️ الأسبوع الحالي</button>
+            <button class="period-tab" data-period="last_week" onclick="setPeriod('last_week')">⏮️ الأسبوع الماضي</button>
+            <button class="period-tab" data-period="current_month" onclick="setPeriod('current_month')">📅 هذا الشهر</button>
+            <button class="period-tab" data-period="all" onclick="setPeriod('all')">🌐 كل الفترات</button>
+            <button class="period-tab" data-period="custom" onclick="toggleCustomDate()">📌 تخصيص</button>
         </div>
         
-        <div class="filter-info-pill" id="filterInfoPill">
-            📊 <span id="filterInfoText">يعرض الأسبوع الحالي</span>
+        <div class="date-filter-panel" id="dateFilterPanel">
+            <div class="date-inputs-row">
+                <div class="date-input-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="date-input-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+            <button class="date-apply-btn" onclick="applyCustomDate()">✓ تطبيق</button>
         </div>
     </div>
+</header>
 
-    <div class="stats-row">
-        <div class="stat-box"><div class="stat-box-label">الفروع</div><div class="stat-box-value" id="statBranches">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">الموظفين</div><div class="stat-box-value" id="statMembers">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">المنشورات</div><div class="stat-box-value" id="statPosts">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">إجمالي اللايكات</div><div class="stat-box-value" id="statLikes">0</div></div>
+<!-- STATS ROW -->
+<div class="stats-row" id="statsRow">
+    <div class="stat-mini">
+        <div class="stat-mini-icon">🏢</div>
+        <div class="stat-mini-label">الفروع</div>
+        <div class="stat-mini-value" id="statBranches">0</div>
     </div>
-
-    <div class="leaderboard" id="leaderboardList">
-        <div class="empty"><div class="empty-icon">🎯</div><div>لا توجد بيانات بعد</div></div>
+    <div class="stat-mini">
+        <div class="stat-mini-icon">👥</div>
+        <div class="stat-mini-label">الموظفون</div>
+        <div class="stat-mini-value" id="statMembers">0</div>
     </div>
-
-    <div class="last-update" id="lastUpdate">آخر تحديث: --</div>
+    <div class="stat-mini">
+        <div class="stat-mini-icon">📹</div>
+        <div class="stat-mini-label">المنشورات</div>
+        <div class="stat-mini-value green" id="statPosts">0</div>
+    </div>
+    <div class="stat-mini">
+        <div class="stat-mini-icon">❤️</div>
+        <div class="stat-mini-label">اللايكات</div>
+        <div class="stat-mini-value red" id="statLikes">0</div>
+    </div>
+    <div class="stat-mini">
+        <div class="stat-mini-icon">👁️</div>
+        <div class="stat-mini-label">المشاهدات</div>
+        <div class="stat-mini-value" id="statViews">0</div>
+    </div>
+    <div class="stat-mini">
+        <div class="stat-mini-icon">💬</div>
+        <div class="stat-mini-label">التعليقات</div>
+        <div class="stat-mini-value" id="statComments">0</div>
+    </div>
 </div>
 
-<!-- ============== DETAILS MODAL ============== -->
+<!-- PODIUM (TOP 3) -->
+<section class="podium-section" id="podiumSection" style="display:none;">
+    <div class="podium-title">
+        <span class="podium-title-text">🏆 منصة الأبطال</span>
+    </div>
+    <div class="podium" id="podiumContainer"></div>
+</section>
+
+<!-- RANK LIST (4+) -->
+<section class="rank-list-section">
+    <div class="section-divider" id="rankListDivider" style="display:none;">
+        <span>📊 باقي الترتيب</span>
+    </div>
+    <div class="rank-list" id="rankList"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="app-footer">
+    <div class="developer-credit">
+        💎 تطوير وبرمجة: <strong>م/محمد الرفاعي</strong>
+    </div>
+</footer>
+
+<!-- FLOATING ACTIONS -->
+<div class="float-actions">
+    <a href="/analytics" class="float-btn" title="التحليلات">📊</a>
+    <a href="/" class="float-btn" title="الإدارة">⚙️</a>
+    <button class="float-btn" onclick="toggleFullscreen()" title="ملء الشاشة">⛶</button>
+</div>
+
+<!-- DETAILS MODAL -->
 <div class="modal-overlay" id="detailsModal">
     <div class="details-modal">
         <div class="details-header">
@@ -953,19 +1184,19 @@ body::before {
 
         <div class="details-stats-row">
             <div class="details-stat">
-                <div class="details-stat-label">المنشورات</div>
+                <div class="details-stat-label">📹 منشورات</div>
                 <div class="details-stat-value" id="detailsTotalPosts">0</div>
             </div>
             <div class="details-stat">
-                <div class="details-stat-label">اللايكات</div>
-                <div class="details-stat-value" id="detailsTotalLikes" style="color:var(--danger);">0</div>
+                <div class="details-stat-label">❤️ لايكات</div>
+                <div class="details-stat-value" style="color:var(--danger);" id="detailsTotalLikes">0</div>
             </div>
             <div class="details-stat">
-                <div class="details-stat-label">المشاهدات</div>
+                <div class="details-stat-label">👁️ مشاهدات</div>
                 <div class="details-stat-value" id="detailsTotalViews">0</div>
             </div>
             <div class="details-stat">
-                <div class="details-stat-label">التعليقات</div>
+                <div class="details-stat-label">💬 تعليقات</div>
                 <div class="details-stat-value" id="detailsTotalComments">0</div>
             </div>
         </div>
@@ -989,10 +1220,12 @@ let currentView = 'branches';
 let currentDetailsType = null;
 let currentDetailsId = null;
 let currentDetailsPlatform = 'all';
-let currentQuickPeriod = 'current_week';
-let filterStartDate = null; // Date object or null
-let filterEndDate = null;
+let currentPeriod = 'current_week';
+let customStartDate = null;
+let customEndDate = null;
+let previousRanking = {};
 
+// ============== Utilities ==============
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = String(text || '');
@@ -1006,496 +1239,420 @@ function formatDate(dateStr) {
     return `${dateStr.substring(0, 4)}/${dateStr.substring(4, 6)}/${dateStr.substring(6, 8)}`;
 }
 
-// ============== Date Filter Helpers ==============
-// الأسبوع يبدأ من السبت في السعودية
-// JS: getDay() returns: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
-// نريد: السبت = بداية الأسبوع
+function parseUploadDate(str) {
+    if (!str) return null;
+    if (/^\d{8}$/.test(str)) {
+        return new Date(parseInt(str.substring(0,4)), parseInt(str.substring(4,6))-1, parseInt(str.substring(6,8)));
+    }
+    const d = new Date(str);
+    return isNaN(d) ? null : d;
+}
 
+// ============== Date Helpers (Saudi Week: Sat-Fri) ==============
 function getCurrentSaturday() {
     const now = new Date();
-    const day = now.getDay(); // 0=Sun..6=Sat
-    // عدد الأيام منذ آخر سبت
-    // إذا اليوم سبت (6): 0 أيام
-    // إذا اليوم أحد (0): 1 يوم
-    // إذا اليوم اثنين (1): 2 يوم
-    // ...الخميس(4): 5 أيام، الجمعة(5): 6 أيام
+    const day = now.getDay(); // 0=Sun
     const daysSinceSat = (day + 1) % 7;
-    const saturday = new Date(now);
-    saturday.setDate(now.getDate() - daysSinceSat);
-    saturday.setHours(0, 0, 0, 0);
-    return saturday;
+    const sat = new Date(now);
+    sat.setDate(now.getDate() - daysSinceSat);
+    sat.setHours(0, 0, 0, 0);
+    return sat;
 }
 
-function getCurrentFriday() {
-    // الجمعة = السبت + 6 أيام
-    const sat = getCurrentSaturday();
-    const fri = new Date(sat);
-    fri.setDate(sat.getDate() + 6);
-    fri.setHours(23, 59, 59, 999);
-    return fri;
+function getLastSaturday() {
+    const cur = getCurrentSaturday();
+    const last = new Date(cur);
+    last.setDate(cur.getDate() - 7);
+    return last;
 }
 
-function isoDate(d) {
-    return d.toISOString().split('T')[0];
+function getCurrentMonthStart() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
 }
 
-function setQuickPeriod(period) {
-    currentQuickPeriod = period;
-    document.querySelectorAll('.quick-btn').forEach(b => b.classList.toggle('active', b.dataset.period === period));
-    
+function getPeriodRange() {
     const now = new Date();
-    let start = null, end = null;
-    let infoText = '';
-    
-    if (period === 'current_week') {
-        start = getCurrentSaturday();
-        end = getCurrentFriday();
-        infoText = `الأسبوع الحالي (${start.toLocaleDateString('ar-EG')} - ${end.toLocaleDateString('ar-EG')})`;
-    } else if (period === 'last_week') {
-        end = getCurrentSaturday();
-        end.setMilliseconds(end.getMilliseconds() - 1); // الجمعة الماضية 23:59:59
-        start = new Date(end);
-        start.setDate(end.getDate() - 6);
-        start.setHours(0, 0, 0, 0);
-        infoText = `الأسبوع الماضي (${start.toLocaleDateString('ar-EG')} - ${end.toLocaleDateString('ar-EG')})`;
-    } else if (period === 'last_2_weeks') {
-        end = getCurrentFriday();
-        start = new Date(getCurrentSaturday());
-        start.setDate(start.getDate() - 7);
-        start.setHours(0, 0, 0, 0);
-        infoText = `آخر أسبوعين (${start.toLocaleDateString('ar-EG')} - ${end.toLocaleDateString('ar-EG')})`;
-    } else if (period === 'this_month') {
-        start = new Date(now.getFullYear(), now.getMonth(), 1);
-        end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        end.setHours(23, 59, 59, 999);
-        infoText = `الشهر الحالي (${start.toLocaleDateString('ar-EG')} - ${end.toLocaleDateString('ar-EG')})`;
-    } else if (period === 'all') {
-        start = null;
-        end = null;
-        infoText = 'كل الفترات';
+    if (currentPeriod === 'all') return { start: null, end: null };
+    if (currentPeriod === 'current_week') {
+        return { start: getCurrentSaturday(), end: now };
     }
-    
-    filterStartDate = start;
-    filterEndDate = end;
-    
-    // حدّث inputs
-    const startInput = document.getElementById('filterStartDate');
-    const endInput = document.getElementById('filterEndDate');
-    if (start && startInput) startInput.value = isoDate(start);
-    else if (startInput) startInput.value = '';
-    if (end && endInput) endInput.value = isoDate(end);
-    else if (endInput) endInput.value = '';
-    
-    document.getElementById('filterInfoText').textContent = infoText;
-    render();
-}
-
-function onDateChange() {
-    // تعديل يدوي للتاريخ
-    const startVal = document.getElementById('filterStartDate').value;
-    const endVal = document.getElementById('filterEndDate').value;
-    
-    if (startVal) {
-        filterStartDate = new Date(startVal);
-        filterStartDate.setHours(0, 0, 0, 0);
-    } else filterStartDate = null;
-    
-    if (endVal) {
-        filterEndDate = new Date(endVal);
-        filterEndDate.setHours(23, 59, 59, 999);
-    } else filterEndDate = null;
-    
-    // إذا غيّر يدوياً، نعطّل الأزرار السريعة
-    currentQuickPeriod = 'custom';
-    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
-    
-    let infoText = 'مخصص';
-    if (filterStartDate && filterEndDate) {
-        infoText = `${filterStartDate.toLocaleDateString('ar-EG')} - ${filterEndDate.toLocaleDateString('ar-EG')}`;
-    } else if (filterStartDate) {
-        infoText = `من ${filterStartDate.toLocaleDateString('ar-EG')}`;
-    } else if (filterEndDate) {
-        infoText = `حتى ${filterEndDate.toLocaleDateString('ar-EG')}`;
-    } else {
-        infoText = 'كل الفترات';
+    if (currentPeriod === 'last_week') {
+        const last = getLastSaturday();
+        const end = new Date(getCurrentSaturday().getTime() - 1);
+        return { start: last, end };
     }
-    document.getElementById('filterInfoText').textContent = infoText;
-    
-    render();
+    if (currentPeriod === 'current_month') {
+        return { start: getCurrentMonthStart(), end: now };
+    }
+    if (currentPeriod === 'custom') {
+        return { start: customStartDate, end: customEndDate };
+    }
+    return { start: null, end: null };
 }
 
-function parseUploadDate(dateStr) {
-    // dateStr من yt-dlp = "YYYYMMDD"
-    if (!dateStr || dateStr.length !== 8) return null;
-    const y = parseInt(dateStr.substring(0, 4));
-    const m = parseInt(dateStr.substring(4, 6)) - 1;
-    const d = parseInt(dateStr.substring(6, 8));
-    return new Date(y, m, d);
+function getPeriodLabel() {
+    if (currentPeriod === 'all') return 'كل الفترات';
+    if (currentPeriod === 'current_week') {
+        const sat = getCurrentSaturday();
+        return `الأسبوع الحالي (السبت ${sat.getDate()}/${sat.getMonth()+1})`;
+    }
+    if (currentPeriod === 'last_week') return 'الأسبوع الماضي';
+    if (currentPeriod === 'current_month') {
+        const d = new Date();
+        const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        return `${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+    if (currentPeriod === 'custom' && customStartDate && customEndDate) {
+        const s = customStartDate, e = customEndDate;
+        return `${s.getDate()}/${s.getMonth()+1} - ${e.getDate()}/${e.getMonth()+1}`;
+    }
+    return 'مخصص';
 }
 
-function postPassesFilter(post) {
-    if (!filterStartDate && !filterEndDate) return true; // كل الفترات
-    
-    const uploadDate = parseUploadDate(post.upload_date);
-    if (!uploadDate) return true; // ما عندنا تاريخ، نسمح به
-    
-    if (filterStartDate && uploadDate < filterStartDate) return false;
-    if (filterEndDate && uploadDate > filterEndDate) return false;
+function isPostInPeriod(post) {
+    const { start, end } = getPeriodRange();
+    if (!start && !end) return true;
+    const d = parseUploadDate(post.upload_date);
+    if (!d) return true; // إذا ما له تاريخ، نخليه يظهر
+    if (start && d < start) return false;
+    if (end && d > end) return false;
     return true;
 }
 
+// ============== Data Helpers ==============
+function getAllPosts() {
+    if (!state) return [];
+    return [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
+}
+
+function getFilteredPosts() {
+    return getAllPosts().filter(p => p.assignedTo && isPostInPeriod(p));
+}
+
+function getMemberPosts(memberId) {
+    return getFilteredPosts().filter(p => p.assignedTo === memberId);
+}
+
+function getMemberStats(memberId) {
+    const posts = getMemberPosts(memberId);
+    return {
+        posts: posts.length,
+        likes: posts.reduce((s, p) => s + (p.likes || 0), 0),
+        views: posts.reduce((s, p) => s + (p.views || 0), 0),
+        comments: posts.reduce((s, p) => s + (p.comments || 0), 0)
+    };
+}
+
+function getBranchStats(branch) {
+    const memberIds = (branch.members || []).map(m => m.id);
+    const posts = getFilteredPosts().filter(p => memberIds.includes(p.assignedTo));
+    return {
+        posts: posts.length,
+        likes: posts.reduce((s, p) => s + (p.likes || 0), 0),
+        views: posts.reduce((s, p) => s + (p.views || 0), 0),
+        comments: posts.reduce((s, p) => s + (p.comments || 0), 0),
+        members: (branch.members || []).length
+    };
+}
+
+// ============== View Switching ==============
 function setView(view) {
     currentView = view;
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
-    render();
+    document.querySelectorAll('[data-view]').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === view);
+    });
+    renderAll();
 }
 
-// ============== Live Refresh Trigger ==============
-async function triggerLiveRefresh() {
-    const btn = document.getElementById('liveRefreshBtn');
-    const icon = document.getElementById('liveRefreshIcon');
-    if (!btn) return;
-    
-    btn.disabled = true;
-    icon.innerHTML = '<span class="spinner-display"></span>';
-    
-    try {
-        // طلب تحديث الأرقام من المنصات
-        const response = await fetch('/api/refresh-all', { method: 'POST' });
-        const data = await response.json();
-        
-        // ثم جلب الحالة الجديدة
-        await fetchState();
-        
-        // إشعار بصري
-        document.querySelectorAll('.lb-row').forEach(r => {
-            r.classList.add('just-updated');
-            setTimeout(() => r.classList.remove('just-updated'), 1500);
-        });
-        
-        icon.textContent = '✓';
-        setTimeout(() => { icon.textContent = '🔄'; }, 2000);
-    } catch (e) {
-        icon.textContent = '❌';
-        setTimeout(() => { icon.textContent = '🔄'; }, 2000);
-        console.error('Live refresh failed:', e);
+function setPeriod(period) {
+    currentPeriod = period;
+    document.querySelectorAll('[data-period]').forEach(b => {
+        b.classList.toggle('active', b.dataset.period === period);
+    });
+    if (period !== 'custom') {
+        document.getElementById('dateFilterPanel').classList.remove('active');
     }
-    
-    btn.disabled = false;
+    renderAll();
 }
 
-function updateLastSyncDisplay() {
-    const el = document.getElementById('liveLastSync');
-    if (!el) return;
-    const now = new Date();
-    el.textContent = 'آخر مزامنة: ' + now.toLocaleTimeString('ar-EG');
+function toggleCustomDate() {
+    setPeriod('custom');
+    document.getElementById('dateFilterPanel').classList.add('active');
 }
 
-// ============== Calculations ==============
-function getMemberPosts(memberId) {
-    if (!state) return [];
-    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
-    return allPosts.filter(p => p.assignedTo && p.assignedTo.memberId === memberId && postPassesFilter(p));
-}
-
-function getBranchPosts(branch) {
-    const memberIds = branch.members.map(m => m.id);
-    if (!state) return [];
-    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
-    return allPosts.filter(p => p.assignedTo && memberIds.includes(p.assignedTo.memberId) && postPassesFilter(p));
-}
-
-function getMemberTotalLikes(memberId) {
-    return getMemberPosts(memberId).reduce((s, p) => s + (p.likes || 0), 0);
-}
-
-function getMemberPostsCount(memberId) {
-    return getMemberPosts(memberId).length;
-}
-
-function getBranchTotalLikes(branch) {
-    return branch.members.reduce((s, m) => s + getMemberTotalLikes(m.id), 0);
-}
-
-function getBranchPostsCount(branch) {
-    return branch.members.reduce((s, m) => s + getMemberPostsCount(m.id), 0);
-}
-
-// ============== Server Fetch ==============
-async function fetchState() {
-    try {
-        // مقارنة بسيطة: نحفظ snapshot لاكتشاف التغييرات
-        const oldSnapshot = state ? JSON.stringify({
-            posts: (state.discoveredPosts || []).map(p => ({id: p.id, likes: p.likes})),
-            manual: (state.manualPosts || []).map(p => ({id: p.id, likes: p.likes}))
-        }) : null;
-        
-        const response = await fetch('/api/state');
-        state = await response.json();
-        render();
-        
-        // كشف التغييرات في اللايكات
-        const newSnapshot = JSON.stringify({
-            posts: (state.discoveredPosts || []).map(p => ({id: p.id, likes: p.likes})),
-            manual: (state.manualPosts || []).map(p => ({id: p.id, likes: p.likes}))
-        });
-        
-        if (oldSnapshot && oldSnapshot !== newSnapshot) {
-            // فيه تغيير - flash effect
-            document.querySelectorAll('.lb-row').forEach(r => {
-                r.classList.add('just-updated');
-                setTimeout(() => r.classList.remove('just-updated'), 1500);
-            });
-        }
-        
-        // إذا الـ modal مفتوح، حدّث محتواه أيضًا
-        if (document.getElementById('detailsModal').classList.contains('active')) {
-            renderDetailsContent();
-        }
-        
-        updateLastSyncDisplay();
-    } catch (e) { console.error('Failed to fetch state:', e); }
-}
-
-function updateHeader() {
-    if (!state) return;
-    if (state.systemName) {
-        document.getElementById('displaySystemName').textContent = state.systemName;
-        document.title = '💎 ' + state.systemName;
+function applyCustomDate() {
+    const startVal = document.getElementById('startDate').value;
+    const endVal = document.getElementById('endDate').value;
+    if (!startVal || !endVal) {
+        alert('الرجاء اختيار التواريخ');
+        return;
     }
-    const logoEl = document.getElementById('displayLogo');
-    if (state.systemLogo) {
-        logoEl.innerHTML = `<img src="${escapeHtml(state.systemLogo)}" alt="logo">`;
-    } else {
-        logoEl.textContent = '💎';
-    }
+    customStartDate = new Date(startVal);
+    customStartDate.setHours(0,0,0,0);
+    customEndDate = new Date(endVal);
+    customEndDate.setHours(23,59,59,999);
+    renderAll();
 }
 
-function render() {
-    if (!state) return;
-    updateHeader();
-
+// ============== Render Stats Row ==============
+function renderStats() {
     const branches = state.branches || [];
-    const totalMembers = branches.reduce((s, b) => s + b.members.length, 0);
-    const allPosts = [...(state.discoveredPosts || []), ...(state.manualPosts || [])];
-    // تطبيق الفلتر على الإحصائيات الإجمالية
-    const assignedPosts = allPosts.filter(p => p.assignedTo && postPassesFilter(p));
-    const totalLikes = assignedPosts.reduce((s, p) => s + (p.likes || 0), 0);
-
-    document.getElementById('statBranches').textContent = branches.length;
-    document.getElementById('statMembers').textContent = totalMembers;
-    document.getElementById('statPosts').textContent = formatNumber(assignedPosts.length);
+    const totalMembers = branches.reduce((s, b) => s + (b.members || []).length, 0);
+    const posts = getFilteredPosts();
+    const totalLikes = posts.reduce((s, p) => s + (p.likes || 0), 0);
+    const totalViews = posts.reduce((s, p) => s + (p.views || 0), 0);
+    const totalComments = posts.reduce((s, p) => s + (p.comments || 0), 0);
+    
+    document.getElementById('statBranches').textContent = formatNumber(branches.length);
+    document.getElementById('statMembers').textContent = formatNumber(totalMembers);
+    document.getElementById('statPosts').textContent = formatNumber(posts.length);
     document.getElementById('statLikes').textContent = formatNumber(totalLikes);
-
-    const list = document.getElementById('leaderboardList');
-    const spotlight = document.getElementById('winnerSpotlight');
-
-    if (currentView === 'branches') renderBranches(list, spotlight);
-    else renderMembers(list, spotlight);
-
-    const lastUpdateEl = document.getElementById('lastUpdate');
-    if (state.lastUpdate) {
-        const d = new Date(state.lastUpdate);
-        lastUpdateEl.textContent = `🔄 آخر تحديث: ${d.toLocaleString('ar-EG')}`;
-    } else {
-        lastUpdateEl.textContent = '🔄 لم يتم التحديث بعد';
-    }
+    document.getElementById('statViews').textContent = formatNumber(totalViews);
+    document.getElementById('statComments').textContent = formatNumber(totalComments);
+    
+    document.getElementById('periodLabel').textContent = getPeriodLabel();
 }
 
-function renderBranches(list, spotlight) {
-    const branches = state.branches || [];
-    if (branches.length === 0) {
-        list.innerHTML = `<div class="empty"><div class="empty-icon">🏢</div><div>لا توجد فروع بعد</div></div>`;
-        spotlight.style.display = 'none';
+// ============== Render Podium (Top 3) ==============
+function renderPodium(items) {
+    const podiumSection = document.getElementById('podiumSection');
+    const podiumContainer = document.getElementById('podiumContainer');
+    const divider = document.getElementById('rankListDivider');
+    
+    const top3 = items.filter(it => it.likes > 0).slice(0, 3);
+    
+    if (top3.length === 0) {
+        podiumSection.style.display = 'none';
+        divider.style.display = 'none';
         return;
     }
-
-    const sorted = [...branches].map(b => ({
-        ...b, totalLikes: getBranchTotalLikes(b), postsCount: getBranchPostsCount(b)
-    })).sort((a, b) => b.totalLikes - a.totalLikes);
-
-    list.innerHTML = sorted.map((branch, idx) => {
-        const rank = idx + 1;
-        const rankClass = rank <= 3 ? `rank-${rank}` : '';
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        const avatar = branch.image
-            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
-            : (branch.name[0] || '🏢');
+    
+    podiumSection.style.display = 'block';
+    if (items.length > 3) divider.style.display = 'flex';
+    else divider.style.display = 'none';
+    
+    // ترتيب الـ podium: 2 - 1 - 3 (للعرض)
+    const order = [];
+    if (top3[1]) order.push({ ...top3[1], rank: 2 });
+    if (top3[0]) order.push({ ...top3[0], rank: 1 });
+    if (top3[2]) order.push({ ...top3[2], rank: 3 });
+    
+    podiumContainer.innerHTML = order.map(item => {
+        const avatar = item.image
+            ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`
+            : (item.name[0] || (currentView === 'branches' ? '🏢' : '👤'));
+        const medal = item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : '🥉';
+        const crown = item.rank === 1 ? '<div class="podium-crown">👑</div>' : '';
+        const onclickFn = currentView === 'branches' 
+            ? `openBranchDetails('${item.id}')` 
+            : `openMemberDetails('${item.id}')`;
+        const subText = currentView === 'branches'
+            ? `${item.members} موظف · ${item.posts} منشور`
+            : `${item.branchName} · ${item.posts} منشور`;
+        
         return `
-            <div class="lb-row ${rankClass}" onclick="openBranchDetails('${branch.id}')">
-                <div class="lb-rank-badge">${medal}</div>
-                <div class="lb-avatar-big">${avatar}</div>
-                <div>
-                    <div class="lb-info-main">${escapeHtml(branch.name)}</div>
-                    <div class="lb-info-sub">
-                        <span>${branch.members.length} موظف</span>
-                        <span>•</span>
-                        <span>${formatNumber(branch.postsCount)} منشور</span>
-                    </div>
+            <div class="podium-place podium-place-${item.rank}" onclick="${onclickFn}">
+                <div class="podium-avatar-wrapper">
+                    ${crown}
+                    <div class="podium-avatar">${avatar}</div>
+                    <div class="podium-medal">${medal}</div>
                 </div>
-                <div class="lb-stats-display">
-                    <div class="lb-likes-big">${formatNumber(branch.totalLikes)}</div>
-                    <div class="lb-likes-label">❤️ لايك</div>
+                <div class="podium-name">${escapeHtml(item.name)}</div>
+                <div class="podium-likes">${formatNumber(item.likes)} ❤️</div>
+                <div class="podium-meta">${escapeHtml(subText)}</div>
+                <div class="podium-base">
+                    <span class="podium-rank-number">${item.rank}</span>
                 </div>
-                <div class="click-hint">انقر للتفاصيل</div>
             </div>
         `;
     }).join('');
-
-    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
-        document.getElementById('winnerLabel').textContent = '🏢 الفرع المتصدر';
-        document.getElementById('winnerName').textContent = sorted[0].name;
-        document.getElementById('winnerSub').textContent = `${formatNumber(sorted[0].totalLikes)} لايك · ${sorted[0].postsCount} منشور`;
-        spotlight.style.display = 'block';
-    } else {
-        spotlight.style.display = 'none';
-    }
 }
 
-function renderMembers(list, spotlight) {
-    const branches = state.branches || [];
-    const allMembers = branches.flatMap(b => b.members.map(m => ({
-        ...m, branchName: b.name, branchId: b.id,
-        totalLikes: getMemberTotalLikes(m.id),
-        postsCount: getMemberPostsCount(m.id)
-    })));
-
-    if (allMembers.length === 0) {
-        list.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div>لا يوجد موظفون بعد</div></div>`;
-        spotlight.style.display = 'none';
-        return;
-    }
-
-    const sorted = allMembers.sort((a, b) => b.totalLikes - a.totalLikes);
-
-    list.innerHTML = sorted.map((member, idx) => {
-        const rank = idx + 1;
-        const rankClass = rank <= 3 ? `rank-${rank}` : '';
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        const avatar = member.image
-            ? `<img src="${escapeHtml(member.image)}" alt="${escapeHtml(member.name)}">`
-            : (member.name[0] || '👤');
-        return `
-            <div class="lb-row ${rankClass}" onclick="openMemberDetails('${member.id}')">
-                <div class="lb-rank-badge">${medal}</div>
-                <div class="lb-avatar-big">${avatar}</div>
-                <div>
-                    <div class="lb-info-main">${escapeHtml(member.name)}</div>
-                    <div class="lb-info-sub">
-                        <span>🏢 ${escapeHtml(member.branchName)}</span>
-                        <span>•</span>
-                        <span>${formatNumber(member.postsCount)} منشور</span>
-                    </div>
-                </div>
-                <div class="lb-stats-display">
-                    <div class="lb-likes-big">${formatNumber(member.totalLikes)}</div>
-                    <div class="lb-likes-label">❤️ لايك</div>
-                </div>
-                <div class="click-hint">انقر للتفاصيل</div>
+// ============== Render Rank List (4+) ==============
+function renderRankList(items) {
+    const rankList = document.getElementById('rankList');
+    const rest = items.slice(3);
+    
+    if (items.length === 0) {
+        rankList.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">${currentView === 'branches' ? '🏢' : '👤'}</div>
+                <div class="empty-text">لا توجد ${currentView === 'branches' ? 'فروع' : 'موظفون'} بعد</div>
             </div>
         `;
-    }).join('');
+        return;
+    }
+    
+    // إذا كل الـ items <= 3، اعرض الكل في podium
+    if (items.length <= 3 && items[0].likes > 0) {
+        rankList.innerHTML = '';
+        return;
+    }
+    
+    // إذا أول item لايكاته 0، اعرض كل الـ items في القائمة
+    if (items[0].likes === 0) {
+        rankList.innerHTML = items.map((item, idx) => buildRankItem(item, idx + 1)).join('');
+        return;
+    }
+    
+    if (rest.length === 0) {
+        rankList.innerHTML = '';
+        return;
+    }
+    
+    rankList.innerHTML = rest.map((item, idx) => buildRankItem(item, idx + 4)).join('');
+}
 
-    if (sorted.length > 0 && sorted[0].totalLikes > 0) {
-        document.getElementById('winnerLabel').textContent = '👤 الموظف المتصدر';
-        document.getElementById('winnerName').textContent = sorted[0].name;
-        document.getElementById('winnerSub').textContent = `${escapeHtml(sorted[0].branchName)} · ${formatNumber(sorted[0].totalLikes)} لايك`;
-        spotlight.style.display = 'block';
-    } else {
-        spotlight.style.display = 'none';
+function buildRankItem(item, rank) {
+    const avatar = item.image
+        ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`
+        : (item.name[0] || (currentView === 'branches' ? '🏢' : '👤'));
+    const onclickFn = currentView === 'branches' 
+        ? `openBranchDetails('${item.id}')` 
+        : `openMemberDetails('${item.id}')`;
+    const meta = currentView === 'branches'
+        ? `<span>${item.members} موظف</span><span class="rank-item-meta-dot"></span><span>${item.posts} منشور</span>`
+        : `<span>🏢 ${escapeHtml(item.branchName)}</span><span class="rank-item-meta-dot"></span><span>${item.posts} منشور</span>`;
+    
+    return `
+        <div class="rank-item" onclick="${onclickFn}">
+            <div class="rank-item-number">${rank}</div>
+            <div class="rank-item-avatar">${avatar}</div>
+            <div class="rank-item-info">
+                <div class="rank-item-name">${escapeHtml(item.name)}</div>
+                <div class="rank-item-meta">${meta}</div>
+            </div>
+            <div class="rank-item-stats">
+                <div class="rank-item-likes">${formatNumber(item.likes)}</div>
+                <div class="rank-item-likes-label">❤️ لايك</div>
+            </div>
+        </div>
+    `;
+}
+
+// ============== Render Branches ==============
+function renderBranches() {
+    const branches = state.branches || [];
+    const items = branches.map(b => {
+        const stats = getBranchStats(b);
+        return { ...b, ...stats };
+    }).sort((a, b) => b.likes - a.likes);
+    
+    renderPodium(items);
+    renderRankList(items);
+}
+
+// ============== Render Members ==============
+function renderMembers() {
+    const branches = state.branches || [];
+    const allMembers = branches.flatMap(b => 
+        (b.members || []).map(m => {
+            const stats = getMemberStats(m.id);
+            return { ...m, ...stats, branchName: b.name, branchId: b.id };
+        })
+    ).sort((a, b) => b.likes - a.likes);
+    
+    renderPodium(allMembers);
+    renderRankList(allMembers);
+}
+
+// ============== Render All ==============
+function renderAll() {
+    if (!state) return;
+    
+    // Update system info
+    if (state.systemName) {
+        document.getElementById('systemTitle').textContent = state.systemName;
+    }
+    if (state.systemLogo) {
+        document.getElementById('systemLogo').innerHTML = `<img src="${escapeHtml(state.systemLogo)}" alt="logo">`;
+    }
+    
+    renderStats();
+    if (currentView === 'branches') renderBranches();
+    else renderMembers();
+    
+    // إذا الـ modal مفتوح، حدّث محتواه
+    if (currentDetailsId) {
+        if (currentDetailsType === 'branch') openBranchDetails(currentDetailsId, true);
+        else if (currentDetailsType === 'member') openMemberDetails(currentDetailsId, true);
     }
 }
 
 // ============== Details Modal ==============
-function openBranchDetails(branchId) {
-    if (!state) return;
-    const branch = state.branches.find(b => b.id === branchId);
+function openBranchDetails(branchId, isRefresh = false) {
+    const branch = (state.branches || []).find(b => b.id === branchId);
     if (!branch) return;
+    
     currentDetailsType = 'branch';
     currentDetailsId = branchId;
-    currentDetailsPlatform = 'all';
-    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === 'all'));
-    renderDetailsContent();
+    if (!isRefresh) currentDetailsPlatform = 'all';
+    
+    const avatar = branch.image
+        ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
+        : (branch.name[0] || '🏢');
+    document.getElementById('detailsAvatar').innerHTML = avatar;
+    document.getElementById('detailsName').textContent = branch.name;
+    document.getElementById('detailsSub').textContent = `🏢 فرع · ${(branch.members || []).length} موظف`;
+    
+    const stats = getBranchStats(branch);
+    document.getElementById('detailsTotalPosts').textContent = formatNumber(stats.posts);
+    document.getElementById('detailsTotalLikes').textContent = formatNumber(stats.likes);
+    document.getElementById('detailsTotalViews').textContent = formatNumber(stats.views);
+    document.getElementById('detailsTotalComments').textContent = formatNumber(stats.comments);
+    
+    renderDetailsPosts();
     document.getElementById('detailsModal').classList.add('active');
 }
 
-function openMemberDetails(memberId) {
-    if (!state) return;
+function openMemberDetails(memberId, isRefresh = false) {
+    let member = null, branchName = '';
+    for (const b of state.branches || []) {
+        const m = (b.members || []).find(m => m.id === memberId);
+        if (m) { member = m; branchName = b.name; break; }
+    }
+    if (!member) return;
+    
     currentDetailsType = 'member';
     currentDetailsId = memberId;
-    currentDetailsPlatform = 'all';
-    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === 'all'));
-    renderDetailsContent();
+    if (!isRefresh) currentDetailsPlatform = 'all';
+    
+    const avatar = member.image
+        ? `<img src="${escapeHtml(member.image)}" alt="${escapeHtml(member.name)}">`
+        : (member.name[0] || '👤');
+    document.getElementById('detailsAvatar').innerHTML = avatar;
+    document.getElementById('detailsName').textContent = member.name;
+    document.getElementById('detailsSub').textContent = `👤 موظف · 🏢 ${branchName}`;
+    
+    const stats = getMemberStats(memberId);
+    document.getElementById('detailsTotalPosts').textContent = formatNumber(stats.posts);
+    document.getElementById('detailsTotalLikes').textContent = formatNumber(stats.likes);
+    document.getElementById('detailsTotalViews').textContent = formatNumber(stats.views);
+    document.getElementById('detailsTotalComments').textContent = formatNumber(stats.comments);
+    
+    renderDetailsPosts();
     document.getElementById('detailsModal').classList.add('active');
-}
-
-function closeDetailsModal() {
-    document.getElementById('detailsModal').classList.remove('active');
-    currentDetailsType = null;
-    currentDetailsId = null;
 }
 
 function setDetailsPlatform(platform) {
     currentDetailsPlatform = platform;
-    document.querySelectorAll('.details-platform-tab').forEach(t => t.classList.toggle('active', t.dataset.dp === platform));
-    renderDetailsPosts();
-}
-
-function renderDetailsContent() {
-    if (!currentDetailsType || !currentDetailsId || !state) return;
-
-    const avatarEl = document.getElementById('detailsAvatar');
-    const nameEl = document.getElementById('detailsName');
-    const subEl = document.getElementById('detailsSub');
-
-    if (currentDetailsType === 'branch') {
-        const branch = state.branches.find(b => b.id === currentDetailsId);
-        if (!branch) { closeDetailsModal(); return; }
-
-        avatarEl.innerHTML = branch.image
-            ? `<img src="${escapeHtml(branch.image)}" alt="${escapeHtml(branch.name)}">`
-            : (branch.name[0] || '🏢');
-        nameEl.textContent = '🏢 ' + branch.name;
-        subEl.textContent = `${branch.members.length} موظف · فرع`;
-    } else {
-        // member
-        let foundMember = null, foundBranch = null;
-        for (const b of state.branches) {
-            const m = b.members.find(m => m.id === currentDetailsId);
-            if (m) { foundMember = m; foundBranch = b; break; }
-        }
-        if (!foundMember) { closeDetailsModal(); return; }
-
-        avatarEl.innerHTML = foundMember.image
-            ? `<img src="${escapeHtml(foundMember.image)}" alt="${escapeHtml(foundMember.name)}">`
-            : (foundMember.name[0] || '👤');
-        nameEl.textContent = '👤 ' + foundMember.name;
-        subEl.textContent = `🏢 ${foundBranch.name}`;
-    }
-
-    // Stats
-    const posts = getDetailsPosts();
-    const totalLikes = posts.reduce((s, p) => s + (p.likes || 0), 0);
-    const totalViews = posts.reduce((s, p) => s + (p.views || 0), 0);
-    const totalComments = posts.reduce((s, p) => s + (p.comments || 0), 0);
-
-    document.getElementById('detailsTotalPosts').textContent = formatNumber(posts.length);
-    document.getElementById('detailsTotalLikes').textContent = formatNumber(totalLikes);
-    document.getElementById('detailsTotalViews').textContent = formatNumber(totalViews);
-    document.getElementById('detailsTotalComments').textContent = formatNumber(totalComments);
-
+    document.querySelectorAll('[data-dp]').forEach(b => {
+        b.classList.toggle('active', b.dataset.dp === platform);
+    });
     renderDetailsPosts();
 }
 
 function getDetailsPosts() {
-    if (!currentDetailsType || !currentDetailsId || !state) return [];
     if (currentDetailsType === 'branch') {
-        const branch = state.branches.find(b => b.id === currentDetailsId);
+        const branch = (state.branches || []).find(b => b.id === currentDetailsId);
         if (!branch) return [];
-        return getBranchPosts(branch);
-    } else {
+        const memberIds = (branch.members || []).map(m => m.id);
+        return getFilteredPosts().filter(p => memberIds.includes(p.assignedTo));
+    } else if (currentDetailsType === 'member') {
         return getMemberPosts(currentDetailsId);
     }
+    return [];
 }
 
 function renderDetailsPosts() {
@@ -1506,11 +1663,10 @@ function renderDetailsPosts() {
 
     const container = document.getElementById('detailsPostsList');
     if (posts.length === 0) {
-        container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>لا توجد منشورات في هذه المنصة</div></div>`;
+        container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">لا توجد منشورات</div></div>`;
         return;
     }
 
-    // ترتيب حسب اللايكات (الأعلى أولاً)
     const sorted = [...posts].sort((a, b) => (b.likes || 0) - (a.likes || 0));
 
     const PLATFORMS = {
@@ -1530,11 +1686,10 @@ function renderDetailsPosts() {
                     <div class="detail-post-thumb-hint">🔗</div>
                 </div>
                 <div class="detail-post-info">
-                    <div class="detail-post-title">${escapeHtml(post.title || '(بدون نص)')}</div>
+                    <div class="detail-post-title">${escapeHtml(post.title || 'منشور بدون عنوان')}</div>
                     <div class="detail-post-meta">
                         <span class="platform-badge ${p.class}">${p.icon} ${p.name}</span>
                         <span>📅 ${formatDate(post.upload_date)}</span>
-                        ${post.uploader ? `<span>@${escapeHtml(post.uploader)}</span>` : ''}
                     </div>
                 </div>
                 <div class="detail-post-stats">
@@ -1548,9 +1703,10 @@ function renderDetailsPosts() {
     }).join('');
 }
 
-function toggleFullscreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
+function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.remove('active');
+    currentDetailsId = null;
+    currentDetailsType = null;
 }
 
 // إغلاق الـ modal عند الضغط خارجه
@@ -1563,17 +1719,28 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDetailsModal();
 });
 
-// تحديث مباشر من السيرفر كل 5 ثوان (Live)
-setInterval(fetchState, 5000);
+function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+}
 
-// تطبيق الفلتر الافتراضي (الأسبوع الحالي) عند التحميل
-document.addEventListener('DOMContentLoaded', () => {
-    setQuickPeriod('current_week');
-});
+// ============== Auto Refresh ==============
+async function loadData() {
+    try {
+        const response = await fetch('/api/state', { cache: 'no-cache' });
+        state = await response.json();
+        renderAll();
+    } catch (e) {
+        console.error('Load error:', e);
+    }
+}
 
-// تحميل أول مرة
-fetchState();
+// التحديث الأولي
+loadData();
+
+// تحديث كل 5 ثوان (LIVE)
+setInterval(loadData, 5000);
+
 </script>
-
 </body>
 </html>

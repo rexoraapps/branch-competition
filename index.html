@@ -2952,7 +2952,9 @@ async function testInstagramFetch() {
         html += '<div style="font-weight:700;margin-bottom:10px;color:var(--gold-light);">📊 نتيجة الاختبار:</div>';
         
         for (const [method, result] of Object.entries(data.methods)) {
-            const methodName = method === 'embed' ? '📄 Embed Endpoint' :
+            const methodName = method === 'webapi' ? '⭐ Web API (الأدق)' :
+                              method === 'graphql' ? '🔷 GraphQL' :
+                              method === 'embed' ? '📄 Embed Endpoint' :
                               method === 'public' ? '🌐 Public Page' :
                               method === 'ytdlp' ? '🛠️ yt-dlp' : method;
             
@@ -3616,6 +3618,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+
+
+<a href="/analytics" style="position:fixed;bottom:20px;left:20px;width:56px;height:56px;background:linear-gradient(135deg,#b8941e,#d4af37);color:#0a0a0f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;box-shadow:0 4px 16px rgba(212,175,55,0.4);z-index:1000;border:2px solid #e8c252;" title="📊 لوحة التحليلات">📊</a>
 
 </body>
 </html>
