@@ -3006,6 +3006,90 @@ async function testInstagramFetch() {
     btn.innerHTML = '🔬 اختبر الرابط';
 }
 
+async function diagnoseAssignments() {
+    const resultEl = document.getElementById('diagnoseResult');
+    resultEl.innerHTML = '<div class="info-box">⏳ جاري التشخيص...</div>';
+    
+    try {
+        const response = await fetch('/api/diagnose');
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        const s = data.summary;
+        
+        let html = '<div style="background:rgba(20,20,28,0.6);border:1px solid var(--border-gold);border-radius:11px;padding:14px;font-size:12px;">';
+        html += '<div style="font-weight:700;margin-bottom:10px;color:var(--gold-light);">📊 نتائج التشخيص:</div>';
+        
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+            '<div style="padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;">' +
+                '<div style="font-size:10px;color:var(--text-muted);">📹 إجمالي</div>' +
+                '<div style="font-size:16px;font-weight:800;">' + s.totalPosts + '</div>' +
+            '</div>' +
+            '<div style="padding:8px;background:rgba(74,222,128,0.1);border-radius:8px;">' +
+                '<div style="font-size:10px;color:var(--text-muted);">✅ منسوبة صحيحاً</div>' +
+                '<div style="font-size:16px;font-weight:800;color:#4ade80;">' + s.assigned + '</div>' +
+            '</div>' +
+            '<div style="padding:8px;background:rgba(251,191,36,0.1);border-radius:8px;">' +
+                '<div style="font-size:10px;color:var(--text-muted);">⚠️ غير منسوبة</div>' +
+                '<div style="font-size:16px;font-weight:800;color:#fbbf24;">' + s.unassigned + '</div>' +
+            '</div>' +
+            '<div style="padding:8px;background:rgba(239,68,68,0.1);border-radius:8px;">' +
+                '<div style="font-size:10px;color:var(--text-muted);">❌ معزولة (ID خاطئ)</div>' +
+                '<div style="font-size:16px;font-weight:800;color:#ef4444;">' + s.orphaned + '</div>' +
+            '</div>' +
+        '</div>';
+        
+        if (s.orphaned > 0) {
+            html += '<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;margin-bottom:10px;">' +
+                '<div style="font-weight:700;color:#ef4444;margin-bottom:8px;">⚠️ توجد ' + s.orphaned + ' منشورات معيّنة لموظفين محذوفين</div>' +
+                '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px;">اضغط الزر لإزالة الربط القديم (لن يحذف المنشور).</div>' +
+                '<button class="btn btn-danger" onclick="fixOrphaned()" style="width:100%;">🔧 إصلاح: إزالة الربط القديم</button>' +
+            '</div>';
+        }
+        
+        if (s.assigned > 0) {
+            html += '<div style="margin-top:10px;font-size:11px;color:var(--text-muted);"><strong>أمثلة المنشورات المنسوبة:</strong></div>';
+            data.assigned.slice(0, 5).forEach(function(p) {
+                html += '<div style="padding:6px;background:rgba(0,0,0,0.2);border-radius:6px;margin-top:4px;font-size:10px;">' +
+                    '👤 ' + escapeHtml(p.memberName) + ' (🏢 ' + escapeHtml(p.branchName) + ') · ❤️ ' + formatNumber(p.likes) +
+                '</div>';
+            });
+        }
+        
+        if (s.orphaned > 0) {
+            html += '<div style="margin-top:10px;font-size:11px;color:var(--text-muted);"><strong>المنشورات المعزولة (أول 5):</strong></div>';
+            data.orphaned.slice(0, 5).forEach(function(p) {
+                html += '<div style="padding:6px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:6px;margin-top:4px;font-size:10px;">' +
+                    '❌ ID قديم: ' + escapeHtml(p.assignedTo) + ' · ❤️ ' + formatNumber(p.likes) + '<br>' +
+                    '<span style="color:var(--text-muted);">' + escapeHtml((p.title || '').substring(0, 60)) + '</span>' +
+                '</div>';
+            });
+        }
+        
+        html += '</div>';
+        resultEl.innerHTML = html;
+    } catch (e) {
+        resultEl.innerHTML = '<div class="info-box warning">❌ خطأ: ' + escapeHtml(e.message) + '</div>';
+    }
+}
+
+async function fixOrphaned() {
+    if (!confirm('سيتم إزالة الربط القديم من المنشورات المعزولة. بعد ذلك ستحتاج لإعادة نسبها يدوياً من تبويب اكتشاف.\n\nهل تريد المتابعة؟')) return;
+    
+    try {
+        const response = await fetch('/api/fix-orphaned', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.ok) {
+            showToast('✓ ' + data.message);
+            setTimeout(diagnoseAssignments, 500);
+        } else {
+            showToast('❌ ' + (data.error || 'فشل'), 'error');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
+}
+
 async function checkAutoUpdateStatus() {
     try {
         const response = await fetch('/api/health');
