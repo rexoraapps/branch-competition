@@ -883,32 +883,55 @@ async function fetchPostData(url) {
 function discoverUserPosts(username, platform, maxPosts) {
     return new Promise((resolve, reject) => {
         const cleanUser = cleanUsername(username);
-        let url;
-        if (platform === 'tiktok') url = `https://www.tiktok.com/@${encodeURIComponent(cleanUser)}`;
-        else if (platform === 'instagram') url = `https://www.instagram.com/${encodeURIComponent(cleanUser)}/`;
-        else return reject(new Error('Unsupported platform'));
-        
         const cookiesArg = getCookiesArg(platform);
         console.log(`[${platform}] Discovering @${cleanUser}...`);
-        const command = `yt-dlp --flat-playlist --dump-json --no-warnings --playlist-end ${maxPosts}${cookiesArg} "${url}"`;
         
-        exec(command, { maxBuffer: 30 * 1024 * 1024, timeout: 120000 }, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`[${platform}] Error:`, stderr.substring(0, 300));
-                reject(new Error(stderr.split('\n')[0] || error.message));
+        // نجرب عدة روابط للـ Instagram (يتغير API أحياناً)
+        let urlsToTry = [];
+        if (platform === 'tiktok') {
+            urlsToTry = [`https://www.tiktok.com/@${encodeURIComponent(cleanUser)}`];
+        } else if (platform === 'instagram') {
+            urlsToTry = [
+                `https://www.instagram.com/${encodeURIComponent(cleanUser)}/`,
+                `https://www.instagram.com/${encodeURIComponent(cleanUser)}`
+            ];
+        } else {
+            return reject(new Error('Unsupported platform'));
+        }
+        
+        const ua = '--user-agent "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"';
+        
+        function tryUrl(index) {
+            if (index >= urlsToTry.length) {
+                reject(new Error('فشل جلب المنشورات. حدّث cookies من تبويب متقدم وحاول مرة ثانية، أو استخدم تبويب روابط للإضافة اليدوية.'));
                 return;
             }
-            const urls = [];
-            const lines = stdout.trim().split('\n').filter(l => l.trim());
-            for (const line of lines) {
-                try {
-                    const d = JSON.parse(line);
-                    if (d.url || d.webpage_url) urls.push(d.url || d.webpage_url);
-                } catch (e) {}
-            }
-            console.log(`[${platform}] Found ${urls.length} posts`);
-            resolve(urls);
-        });
+            
+            const url = urlsToTry[index];
+            const command = `yt-dlp --flat-playlist --dump-json --no-warnings --ignore-errors --playlist-end ${maxPosts}${cookiesArg} ${ua} "${url}"`;
+            
+            exec(command, { maxBuffer: 30 * 1024 * 1024, timeout: 120000 }, (error, stdout, stderr) => {
+                const urls = [];
+                const lines = (stdout || '').trim().split('\n').filter(l => l.trim());
+                for (const line of lines) {
+                    try {
+                        const d = JSON.parse(line);
+                        if (d.url || d.webpage_url) urls.push(d.url || d.webpage_url);
+                    } catch (e) {}
+                }
+                
+                if (urls.length > 0) {
+                    console.log(`[${platform}] Found ${urls.length} posts (url ${index})`);
+                    resolve(urls);
+                } else {
+                    console.log(`[${platform}] URL ${index} failed, trying next...`);
+                    if (stderr) console.error(`[${platform}]`, stderr.substring(0, 200));
+                    tryUrl(index + 1);
+                }
+            });
+        }
+        
+        tryUrl(0);
     });
 }
 
@@ -1168,10 +1191,12 @@ app.post('/api/fix-orphaned', (req, res) => {
 // حذف جميع المنشورات (يبقي الفروع والموظفين)
 app.post('/api/delete-all-posts', (req, res) => {
     const before = (sharedState.discoveredPosts || []).length + (sharedState.manualPosts || []).length;
+    // نعمل نسخة احتياطية قبل الحذف (للأمان)
+    createBackup('before-delete-posts');
     sharedState.discoveredPosts = [];
     sharedState.manualPosts = [];
     saveState();
-    res.json({ ok: true, deleted: before, message: `تم حذف ${before} منشور` });
+    res.json({ ok: true, deleted: before, message: `تم حذف ${before} منشور (تم حفظ نسخة احتياطية)` });
 });
 
 app.post('/api/refresh-all', async (req, res) => {
