@@ -1282,10 +1282,10 @@ body::before {
             <span class="tab-icon">🔗</span>
             <span>روابط</span>
         </button>
-        <button class="main-tab" data-tab="leaderboard" onclick="switchTab('leaderboard')">
-            <span class="tab-icon">🏅</span>
-            <span>ترتيب</span>
-        </button>
+        <a href="/display" class="main-tab" style="text-decoration:none;">
+            <span class="tab-icon">📺</span>
+            <span>العرض</span>
+        </a>
         <button class="main-tab" data-tab="advanced" onclick="switchTab('advanced')">
             <span class="tab-icon">🔧</span>
             <span>متقدم</span>
@@ -1521,6 +1521,19 @@ body::before {
                 🔬 اختبر الرابط
             </button>
             <div id="testIgResult" style="margin-top:12px;"></div>
+        </div>
+
+        <div class="luxury-card" style="border:1px solid var(--danger);">
+            <div class="card-title">
+                <div class="card-icon-box" style="background:linear-gradient(135deg,#dc2626,#ef4444);">🗑️</div>
+                حذف المنشورات
+            </div>
+            <div class="info-box warning">
+                ⚠️ يحذف جميع المنشورات (الفروع والموظفين يبقون). استخدمه عند بداية مسابقة جديدة.
+            </div>
+            <button class="btn btn-danger" onclick="deleteAllPosts()" style="width:100%;padding:12px;">
+                🗑️ حذف جميع المنشورات
+            </button>
         </div>
 
         <div class="luxury-card" style="border:1px solid var(--danger);">
@@ -3004,6 +3017,31 @@ async function testInstagramFetch() {
     
     btn.disabled = false;
     btn.innerHTML = '🔬 اختبر الرابط';
+}
+
+async function deleteAllPosts() {
+    if (!confirm('⚠️ هل أنت متأكد من حذف جميع المنشورات؟\n\nسيتم حذف كل المنشورات (اكتشاف + روابط).\nالفروع والموظفين لن يُحذفوا.\n\nهذا الإجراء لا يمكن التراجع عنه!')) return;
+    if (!confirm('🛑 تأكيد أخير: حذف جميع المنشورات نهائياً؟')) return;
+    
+    try {
+        const response = await fetch('/api/delete-all-posts', { method: 'POST' });
+        const data = await response.json();
+        if (data.ok) {
+            showToast('✓ ' + data.message);
+            // إعادة تحميل البيانات
+            discoveredPosts = [];
+            manualPosts = [];
+            saveData();
+            if (typeof renderDiscovery === 'function') renderDiscovery();
+            if (typeof renderManualPosts === 'function') renderManualPosts();
+            if (typeof renderSetupSummary === 'function') renderSetupSummary();
+            if (typeof renderBranches === 'function') renderBranches();
+        } else {
+            showToast('❌ ' + (data.error || 'فشل'), 'error');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
 }
 
 async function diagnoseAssignments() {

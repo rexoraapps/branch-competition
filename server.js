@@ -283,13 +283,42 @@ function getRandomUA() {
 }
 
 // HTTP GET مبسّط مع إعادة توجيه و timeout
+// قراءة cookies من ملف cookies.txt لاستخدامها في HTTP requests
+function getCookiesHeader() {
+    try {
+        if (!fs.existsSync(COOKIES_FILE)) return '';
+        const content = fs.readFileSync(COOKIES_FILE, 'utf8');
+        const cookies = [];
+        content.split('\n').forEach(line => {
+            line = line.trim();
+            if (!line || line.startsWith('#')) return;
+            const parts = line.split('\t');
+            if (parts.length >= 7) {
+                const domain = parts[0];
+                const name = parts[5];
+                const value = parts[6];
+                if (domain.includes('instagram') && name && value) {
+                    cookies.push(`${name}=${value}`);
+                }
+            }
+        });
+        return cookies.join('; ');
+    } catch (e) {
+        console.error('[Cookies] Read error:', e.message);
+        return '';
+    }
+}
+
 function httpGet(url, headers = {}, maxRedirects = 5) {
     return new Promise((resolve, reject) => {
+        const isInstagram = url.includes('instagram.com');
+        const cookiesHeader = isInstagram ? getCookiesHeader() : '';
         const finalHeaders = {
             'User-Agent': getRandomUA(),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8',
-            'Accept-Encoding': 'identity', // ما نستخدم gzip عشان نقرا النص مباشرة
+            'Accept-Encoding': 'identity',
+            ...(cookiesHeader ? { 'Cookie': cookiesHeader } : {}),
             ...headers
         };
         
@@ -715,8 +744,26 @@ async function fetchInstagramData(url) {
     }
     
     // نأخذ أعلى رقم لايكات (الأكثر دقة)
-    const maxLikes = Math.max(...results.map(r => r.likes || 0));
-    const bestResult = results.find(r => r.likes === maxLikes) || results[0];
+    // ملاحظة: Instagram Embed أحياناً يعطي رقم تقريبي قديم
+    // لذا نفضّل yt-dlp و WebAPI و GraphQL على Embed إذا كانت متوفرة
+    const prioritized = results.filter(r => r.source !== 'embed' && r.source !== 'public');
+    let maxLikes, bestResult;
+    
+    if (prioritized.length > 0) {
+        // نأخذ أعلى رقم من المصادر الموثوقة
+        maxLikes = Math.max(...prioritized.map(r => r.likes || 0));
+        bestResult = prioritized.find(r => r.likes === maxLikes) || prioritized[0];
+        
+        // لكن إذا embed/public أعلى بكثير (أكثر من 50%) ربما الموثوقة عاطلة
+        const embedMax = Math.max(...results.filter(r => r.source === 'embed' || r.source === 'public').map(r => r.likes || 0), 0);
+        if (embedMax > maxLikes * 1.5 && maxLikes > 0) {
+            maxLikes = embedMax;
+            bestResult = results.find(r => r.likes === embedMax) || bestResult;
+        }
+    } else {
+        maxLikes = Math.max(...results.map(r => r.likes || 0));
+        bestResult = results.find(r => r.likes === maxLikes) || results[0];
+    }
     
     const originalThumb = bestResult.thumbnail || (ytdlpData && ytdlpData.thumbnail) || '';
     const localThumb = await cacheThumbnail(originalThumb, url);
@@ -1116,6 +1163,16 @@ app.post('/api/fix-orphaned', (req, res) => {
     res.json({ ok: true, cleaned: removed, message: `تم إزالة ${removed} نسبة قديمة` });
 });
 
+
+
+// حذف جميع المنشورات (يبقي الفروع والموظفين)
+app.post('/api/delete-all-posts', (req, res) => {
+    const before = (sharedState.discoveredPosts || []).length + (sharedState.manualPosts || []).length;
+    sharedState.discoveredPosts = [];
+    sharedState.manualPosts = [];
+    saveState();
+    res.json({ ok: true, deleted: before, message: `تم حذف ${before} منشور` });
+});
 
 app.post('/api/refresh-all', async (req, res) => {
     console.log('[Refresh] Starting...');
